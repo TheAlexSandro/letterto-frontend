@@ -1,0 +1,81 @@
+.settings {
+	min-height: calc(100vh - 100px);
+	display: flex;
+	flex-direction: column;
+	margin-top: 100px;
+	padding: 0 80px;
+}
+
+.settings .container {
+	margin: 0 auto;
+	width: 100%;
+	max-width: 450px;
+}
+
+.settings .container .menu {
+	margin-top: 25px;
+	background: #fff;
+	padding: 15px 20px;
+	border: 1px solid var(--color-border);
+	border-radius: 10px;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.settings .container .menu h1 {
+	font-size: 18px;
+	font-weight: var(--font-semibold);
+	margin-bottom: -5px;
+}
+
+.settings .container .menu .item {
+	display: flex;
+	justify-content: space-between;
+	padding: 10px 12px;
+	width: 100%;
+	border: 1px solid var(--color-border);
+	border-radius: 5px;
+	outline: 0;
+	cursor: pointer;
+	font-family: inherit;
+	background: transparent;
+}
+
+.settings .container .menu .item .left i {
+	margin-right: 5px;
+}
+
+.settings .container .menu .item .right {
+	margin-right: 10px;
+    transition: all 0.2s ease-in-out;
+}
+
+.settings .container .menu .item:hover .right {
+	margin-right: 2px;
+    transition: all 0.2s ease-in-out;
+}
+
+@media (max-width: 768px) {
+	.settings {
+		padding: 0 20px;
+	}
+}
+
+@media (max-width: 400px) {
+	.settings {
+		padding: 0 12px;
+		margin-top: 80px;
+	}
+
+	.settings .container .menu {
+		padding: 12px 14px;
+	}
+}
+
+@media (min-width: 1440px) {
+	.settings .container {
+		max-width: 850px;
+	}
+}

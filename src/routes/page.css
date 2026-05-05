@@ -1,0 +1,517 @@
+main .head {
+	background: linear-gradient(180deg, #e7f0fd 0%, #faf9f6 100%);
+	min-height: calc(50vh - 50px);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-top: 50px;
+	border-bottom: 1px solid var(--color-border);
+}
+
+main .head .desc {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+}
+
+main .head .desc h1 {
+	font-size: 2.5rem;
+	color: var(--color-primary);
+}
+
+main .head .desc p {
+	margin-top: 10px;
+	max-width: 70%;
+}
+
+main .box {
+	padding: 0 var(--padding-g);
+}
+
+main .browse h1 {
+	font-size: 1.8rem;
+	color: var(--color-menu);
+	margin: 0;
+}
+
+main .browse .form {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 40px 20px 20px;
+}
+
+main .browse .form .search-box {
+	display: flex;
+	align-items: center;
+	width: 55%;
+	background: #fff;
+	border: 1.5px solid var(--color-border);
+	border-radius: 5px;
+	padding: 6px 6px 6px 20px;
+	box-shadow: var(--shadow-md);
+	transition: border 0.2s;
+}
+
+main .browse .form .search-box:focus-within {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+}
+
+main .browse .form .search-box .user-icon {
+	color: var(--color-text-muted);
+	font-size: 1.1rem;
+	margin-right: 10px;
+	line-height: 1.5;
+}
+
+main .browse .form .search-box input {
+	flex: 1;
+	border: none;
+	outline: none;
+	font-size: 0.95rem;
+	background: transparent;
+	color: var(--color-text-primary);
+	font-style: inherit;
+}
+
+main .browse .spinner-wrap {
+	display: flex;
+	flex-direction: row;
+	gap: 7px;
+	align-items: center;
+	justify-content: center;
+	margin: 30px 0;
+}
+
+main .browse .spinner {
+	display: flex;
+	width: 30px;
+	height: 30px;
+	border: 2px solid transparent;
+	border-top-color: var(--color-accent);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+main .browse .form .search-box input:disabled {
+	opacity: 0.6 !important;
+}
+
+main .browse .form .search-box button {
+	padding: 10px 22px;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.9rem;
+	font-weight: 500;
+	transition: background 0.2s;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	line-height: 1.1;
+}
+
+main .browse .form .search-box button:hover {
+	background: var(--color-primary-hover);
+}
+
+main .browse .form .search-box #f {
+	background: var(--color-primary);
+}
+
+main .browse .form .search-box #g {
+	background: var(--color-text-muted);
+}
+
+main .browse .form .search-box #g:hover,
+main .browse .form .search-box #f:hover {
+	opacity: 0.8;
+}
+
+main .browse .form .search-box .btn {
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+}
+
+main .browse .form button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+main .browse .form button:disabled:hover {
+	opacity: 0.6 !important;
+}
+
+main .browse .result {
+	padding: 0 40px;
+}
+
+main .browse .result .card-list {
+	margin-top: 10px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+main .browse .result .no-result {
+	text-align: center;
+	color: var(--color-text-muted);
+	display: block;
+	margin: 20px 0 50px 0;
+}
+
+main .browse .result .card {
+	background: #fff;
+	border: 1.5px solid var(--color-border);
+	border-radius: 5px;
+	padding: 20px;
+	box-shadow: var(--shadow-md);
+	transition:
+		transform 0.2s,
+		box-shadow 0.2s;
+	min-width: 35%;
+	max-width: 35%;
+}
+
+main .browse .result .card .profile {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 10px;
+	line-height: 1.1;
+	justify-content: space-between;
+}
+
+main .browse .result .card .profile .left {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+}
+
+main .browse .result .card .profile .left .info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+main .browse .result .card .profile .left .info span {
+	font-weight: var(--font-semibold);
+	color: var(--color-menu);
+}
+
+main .browse .result .card .profile .left .info #t {
+	font-size: 12px;
+	color: var(--color-text-muted);
+	font-weight: var(--font-medium);
+}
+
+main .browse .result .card .profile .left img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+main .browse .result .card .content {
+	margin-top: 20px;
+	border-radius: 5px;
+	font-family: 'Playwrite NZ Guides', cursive;
+	font-weight: 400;
+	font-style: normal;
+	background: var(--color-bg-secondary);
+	padding: 10px;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	transition: all 0.1s ease-in-out;
+}
+
+main .browse .result .card .content:hover {
+	transform: scale(1.02);
+	transition: all 0.1s ease-in-out;
+}
+
+main .browse .result .card .content a {
+	text-decoration: none;
+	color: black;
+}
+
+main .browse .result .card .bottom {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+main .browse .result .card .bottom .date,
+main .browse .result .card .bottom span {
+	margin-top: 10px;
+	font-size: 12px;
+	color: var(--color-text-muted);
+}
+
+main .browse .result .card .bottom span {
+	display: flex;
+	align-items: center;
+	color: var(--color-text-primary);
+	gap: 3px;
+}
+
+main .browse .result .card .bottom span i {
+	font-size: 17px;
+}
+
+main .features {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	margin: var(--padding-g) auto;
+	padding: 32px 36px;
+	border: 1px solid rgba(24, 119, 242, 0.2);
+	border-radius: 10px;
+	background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
+	box-shadow: var(--shadow-md);
+}
+
+main .features h1 {
+	font-size: 1.8rem;
+	color: var(--color-menu);
+	margin: 0;
+}
+
+main .features .list {
+	display: flex;
+	flex-direction: row;
+	gap: 16px;
+}
+
+main .features .item {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 16px;
+	width: 50%;
+}
+
+main .features .item i {
+	font-size: 1.4rem;
+	color: var(--color-accent);
+	margin-top: 2px;
+	flex-shrink: 0;
+}
+
+main .features .item .text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+main .features .item span {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: var(--color-text-primary);
+}
+
+main .features .item p {
+	font-size: 0.9rem;
+	color: var(--color-text-secondary);
+	margin: 0;
+	line-height: 1.5;
+}
+
+main .features .more {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+	align-items: center;
+	justify-content: center;
+}
+
+main .features .more p {
+	font-size: 1rem;
+	color: var(--color-text-muted);
+	margin: 10px 0;
+}
+
+main .features .more button {
+	padding: 12px 32px;
+	background: var(--color-primary);
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 0.95rem;
+	font-weight: 500;
+	transition: background 0.2s;
+}
+
+main .features .more button:hover {
+	background: var(--color-primary-hover);
+}
+
+@media (max-width: 400px) {
+	main .box {
+		padding: 0 8px;
+	}
+
+	main .browse .form {
+		padding: 20px 0 12px;
+	}
+
+	main .browse .form .search-box {
+		padding: 4px 4px 4px 10px;
+		width: 100%;
+		box-sizing: border-box;
+	}
+
+	main .browse .form .search-box button {
+		padding: 8px 10px;
+	}
+
+	main .browse .form .search-box .btn {
+		margin-left: -10px;
+	}
+
+	main .browse .form .search-box input {
+		max-width: fit-content;
+	}
+}
+
+@media (min-width: 1800px) {
+	main .box {
+		padding: 0 10%;
+	}
+
+	main .browse .form .search-box {
+		width: 40%;
+	}
+
+	main .features {
+		max-width: 900px;
+	}
+
+	main .browse .result .card {
+		max-width: 28%;
+	}
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+	main .browse .form .search-box {
+		width: 65%;
+	}
+
+	main .features {
+		max-width: 650px;
+	}
+
+	main .browse .result .card {
+		max-width: 45%;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	main .head .desc h1 {
+		font-size: 2rem;
+	}
+
+	main .head .desc p {
+		max-width: 90%;
+	}
+
+	main .browse .form .search-box {
+		width: 80%;
+	}
+
+	main .browse .result {
+		padding: 0 20px;
+	}
+
+	main .browse .result .card {
+		max-width: 46%;
+	}
+
+	main .features {
+		max-width: 100%;
+		margin: var(--padding-g) 20px;
+	}
+
+	main .features .list {
+		flex-direction: column;
+	}
+
+	main .features .item {
+		width: 100%;
+	}
+}
+
+@media (max-width: 767px) {
+	main .head {
+		min-height: calc(50vh - 70px);
+	}
+
+	main .head .desc h1 {
+		font-size: 1.8rem;
+	}
+
+	main .head .desc p {
+		max-width: 90%;
+		font-size: 0.95rem;
+	}
+
+	main .box {
+		padding: 0 16px;
+	}
+
+	main .browse .form {
+		padding: 24px 14px 16px;
+	}
+
+	main .browse .form .search-box {
+		width: 100%;
+	}
+
+	main .browse .result {
+		padding: 0 16px;
+	}
+
+	main .browse .result .card-list {
+		flex-direction: column;
+	}
+
+	main .browse .result .card {
+		max-width: 100%;
+	}
+
+	main .features {
+		margin: 16px;
+		padding: 24px 20px;
+	}
+
+	main .features h1 {
+		font-size: 1.5rem;
+	}
+
+	main .features .list {
+		flex-direction: column;
+	}
+
+	main .features .item {
+		width: 100%;
+	}
+
+	main .features .more button {
+		width: 100%;
+	}
+
+	main .browse .form .search-box button {
+		padding: 8px 12px;
+		font-size: 0.85rem;
+	}
+}

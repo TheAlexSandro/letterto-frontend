@@ -1,0 +1,101 @@
+:root {
+	--font-thin: 100;
+	--font-extralight: 200;
+	--font-light: 300;
+	--font-regular: 400;
+	--font-medium: 500;
+	--font-semibold: 600;
+	--font-bold: 700;
+	--font-extrabold: 800;
+	--font-black: 900;
+	--color-bg: #faf9f6;
+	--color-bg-secondary: #f0eee9;
+	--color-bg-tertiary: #e8e5de;
+	--color-surface: #ffffff;
+	--color-surface-alt: #f4f2ee;
+	--color-primary: #1877f2;
+	--color-primary-hover: #0c63d4;
+	--color-primary-light: #e7f0fd;
+	--color-primary-text: #ffffff;
+	--color-secondary: #42a5f5;
+	--color-secondary-hover: #1e90e8;
+	--color-secondary-light: #e3f4fe;
+	--color-accent: #0866ff;
+	--color-accent-hover: #0052d6;
+	--color-accent-light: #e7efff;
+	--color-text-primary: #050505;
+	--color-text-secondary: #65676b;
+	--color-text-muted: #8a8d91;
+	--color-menu: #333;
+	--color-text-inverse: #ffffff;
+	--color-border: #ced0d4;
+	--color-border-focus: #1877f2;
+	--color-success: #31a24c;
+	--color-warning: #f7b928;
+	--color-danger: #fa3e3e;
+	--color-info: #1877f2;
+	--shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.08);
+	--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+	--shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.14);
+	--padding-g: 40px;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+body,
+html {
+	min-height: 100vh;
+	background-color: var(--color-bg);
+	font-family: 'Poppins', sans-serif;
+	overflow-x: hidden;
+	scroll-behavior: smooth;
+}
+
+.preloader {
+	position: fixed;
+	inset: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background: var(--color-bg);
+	z-index: 9999;
+}
+
+.preloader .spinner {
+	position: relative;
+	width: 70px;
+	height: 70px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.preloader .spinner::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border: 6px solid #ddd;
+	border-top-color: var(--color-primary);
+	border-radius: 50%;
+	animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.button-spinner {
+	margin: auto;
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}

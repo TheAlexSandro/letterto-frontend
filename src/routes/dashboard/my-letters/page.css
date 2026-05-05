@@ -1,0 +1,247 @@
+.dash {
+	min-height: calc(100vh - 100px);
+	display: flex;
+	flex-direction: column;
+	margin-top: 100px;
+	padding: 0 80px;
+}
+
+.dash .result {
+	margin: 40px 0;
+}
+
+.dash .result .error {
+	background: rgba(255, 0, 0, 0.325);
+	padding: 5px;
+	text-align: center;
+	color: var(--color-text-primary);
+	border-radius: 5px;
+	border: 1px solid var(--color-danger);
+	margin-bottom: 20px;
+	font-size: 13px;
+	width: 30%;
+}
+
+.dash .result .spinner-wrap {
+	display: flex;
+	flex-direction: row;
+	gap: 7px;
+	align-items: center;
+}
+
+.dash .result .spinner {
+	display: flex;
+	width: 30px;
+	height: 30px;
+	border: 2px solid transparent;
+	border-top-color: var(--color-accent);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.dash .result .card-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+}
+
+.dash .result .no-result {
+	text-align: center;
+	color: var(--color-text-muted);
+}
+
+.dash .result .card {
+	background: #fff;
+	border: 1.5px solid var(--color-border);
+	border-radius: 5px;
+	padding: 20px;
+	box-shadow: var(--shadow-md);
+	transition:
+		transform 0.2s,
+		box-shadow 0.2s;
+	min-width: 35%;
+	max-width: 35%;
+}
+
+.dash .result .card .profile {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin-bottom: 10px;
+	line-height: 1.1;
+	justify-content: space-between;
+}
+
+.dash .result .card .profile .left {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+}
+
+.dash .result .card .profile .left .info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.dash .result .card .profile .left .info span {
+	font-weight: var(--font-semibold);
+	color: var(--color-menu);
+}
+
+.dash .result .card .profile .left .info #t {
+	font-size: 12px;
+	color: var(--color-text-muted);
+	font-weight: var(--font-medium);
+}
+
+.dash .result .card .profile .left img {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	object-fit: cover;
+}
+
+.dash .result .card .profile .btn {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
+
+.dash .result .card .profile .btn button {
+	padding: 7px;
+	border-radius: 5px;
+	outline: 0;
+	border: 0;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+}
+
+.dash .result .card .profile .btn button i {
+	color: white;
+	font-size: 15px;
+}
+
+.dash .result .card .profile .btn button:hover {
+	opacity: 0.8;
+}
+
+.dash .result .card .profile .btn button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.dash .result .card .profile .btn button:disabled:hover {
+	cursor: default;
+}
+
+.dash .result .card .profile .btn #blue {
+	background: var(--color-accent);
+}
+
+.dash .result .card .profile .btn #red {
+	background: var(--color-danger);
+}
+
+.dash .result .card .profile .btn #trans {
+	background: #4e6689;
+}
+
+.dash .result .card .content {
+	margin-top: 20px;
+	border-radius: 5px;
+	font-family: 'Playwrite NZ Guides', cursive;
+	font-weight: 400;
+	font-style: normal;
+	background: var(--color-bg-secondary);
+	padding: 10px;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	transition: all 0.1s ease-in-out;
+}
+
+.dash .result .card .content:hover {
+	transform: scale(1.02);
+	transition: all 0.1s ease-in-out;
+}
+
+.dash .result .card .content a {
+	text-decoration: none;
+	color: black;
+}
+
+.dash .result .card .bottom {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.dash .result .card .bottom .date,
+.dash .result .card .bottom span {
+	margin-top: 10px;
+	font-size: 12px;
+	color: var(--color-text-muted);
+}
+
+.dash .result .card .bottom span {
+	display: flex;
+	align-items: center;
+	color: var(--color-text-primary);
+	gap: 3px;
+}
+
+.dash .result .card .bottom span i {
+	font-size: 17px;
+}
+
+@media (min-width: 1800px) {
+	.dash {
+		min-height: calc(100vh - 70px);
+		margin-top: 70px;
+		padding: 40px;
+	}
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+	.dash {
+		min-height: calc(100vh - 70px);
+		margin-top: 70px;
+		padding: 40px;
+	}
+
+	.dash .result .card {
+		max-width: 46%;
+	}
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.dash {
+		min-height: calc(100vh - 60px);
+		margin-top: 60px;
+		padding: 40px;
+	}
+
+	.dash .result .card {
+		max-width: 45%;
+	}
+}
+
+@media (max-width: 767px) {
+	.dash {
+		min-height: calc(100vh - 5	0px);
+		margin-top: 50px;
+		padding: 20px;
+	}
+
+	.dash .result .card-list {
+		flex-direction: column;
+	}
+
+	.dash .result .card {
+		max-width: 100%;
+	}
+}

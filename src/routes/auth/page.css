@@ -1,0 +1,184 @@
+.auth {
+	min-height: calc(100vh - 50px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 50px;
+	padding: 40px 20px;
+}
+
+.auth .container {
+	width: 50%;
+	max-width: 600px;
+}
+
+.auth .desc {
+	margin-bottom: 30px;
+}
+
+.auth .error {
+	background: rgba(255, 0, 0, 0.325);
+	padding: 5px;
+	text-align: center;
+	color: var(--color-text-primary);
+	border-radius: 5px;
+	border: 1px solid var(--color-danger);
+	margin-bottom: 20px;
+	font-size: 13px;
+}
+
+.auth form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.auth form label {
+	margin-bottom: -8px;
+}
+
+.auth form span {
+	margin-top: -10px;
+	font-size: 13px;
+	color: var(--color-danger);
+}
+
+.auth form input {
+	padding: 12px;
+	width: 100%;
+	font-family: inherit;
+	border: 1.5px solid var(--color-border);
+	border-radius: 6px;
+	outline: none;
+	box-sizing: border-box;
+	transition: all 0.3s ease-in-out;
+}
+
+.auth form input:focus {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+	transition: all 0.3s ease-in-out;
+}
+
+.auth form .btns {
+	margin-top: 30px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.auth form .btns button {
+	padding: 10px;
+	align-items: center;
+	display: flex;
+	outline: 0;
+	border-radius: 5px;
+	border: 0;
+	color: #fff;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	font-family: inherit;
+	font-weight: var(--font-medium);
+}
+
+.auth form .btns #fill:hover {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+	opacity: 0.8;
+	transition: all 0.3s ease-in-out;
+}
+
+.auth form .btns #out:hover {
+	opacity: 0.8;
+	transition: all 0.3s ease-in-out;
+}
+
+.auth form .btns #fill {
+	background: var(--color-accent);
+	width: 20%;
+}
+
+.auth form .btns #out {
+	background: transparent;
+	color: var(--color-text-primary);
+	border-bottom: 1px solid var(--color-text-primary);
+	border-radius: 0px;
+}
+
+.auth form input:disabled,
+.auth form .btns button:disabled {
+	opacity: 0.8;
+	cursor: default;
+}
+
+.auth form .btns #fill:disabled:hover,
+.auth form .btns #out:disabled:hover {
+	transform: none;
+	box-shadow: none;
+}
+
+.auth form .btns .button-spinner {
+	margin: auto;
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+	.auth .container {
+		width: 100%;
+		max-width: 520px;
+	}
+}
+
+@media (max-width: 767px) {
+	.auth {
+		padding: 24px 20px;
+		margin-top: 60px;
+	}
+
+	.auth .container {
+		width: 100%;
+	}
+
+	.auth .desc {
+		margin-bottom: 20px;
+	}
+
+	.auth .desc h1 {
+		font-size: 1.6rem;
+	}
+
+	.auth form {
+		gap: 10px;
+	}
+
+	.auth form input {
+		padding: 10px;
+		font-size: 0.95rem;
+	}
+
+	.auth form .music-picker .input-wrap input {
+		width: 85%;
+		font-size: 0.9rem;
+	}
+
+	.auth form .btns {
+		flex-direction: column-reverse;
+		gap: 20px;
+	}
+
+	.auth form .btns #out,
+	.auth form .btns #fill {
+		width: 100%;
+	}
+}
+
+@media (min-width: 1280px) {
+	.auth .container {
+		max-width: 650px;
+	}
+}

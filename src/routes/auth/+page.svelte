@@ -1,0 +1,153 @@
+<script lang="ts">
+	import Navbar from '../../components/navbar/navbar.svelte';
+	import Footer from '../../components/footer/footer.svelte';
+	import './page.css';
+	import { onMount } from 'svelte';
+
+	type Auth = 'signUp' | 'signIn';
+
+	let signUp: boolean = $state(false);
+	let windowLoad = $state(true);
+	let name = $state('');
+	let username = $state('');
+	let password = $state('');
+	let globalErr = $state('');
+	let usernameErr = $state('');
+	let passwordErr = $state('');
+	let buttonLoad = $state(false);
+
+	onMount(async () => {
+		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
+		const data = await isLoggedIn.json();
+
+		if (data['status_code'] === 200) {
+			window.location.href = '/dashboard';
+			return;
+		}
+		windowLoad = false;
+	});
+
+	const handleAuthType = () => {
+		globalErr = '';
+		usernameErr = '';
+		passwordErr = '';
+		signUp = !signUp;
+	};
+
+	const handleAuth = async (type: Auth, e: Event) => {
+		e.preventDefault();
+		buttonLoad = true;
+		globalErr = '';
+		usernameErr = '';
+		passwordErr = '';
+		try {
+			const ft = await fetch(
+				`/api/auth?path=${type}&name=${name}&username=${username}&password=${password}`
+			);
+			const data = await ft.json();
+
+			if (data['status_code'] !== 200) {
+				globalErr = ['BAD_REQUEST', 'PARAMETER_EMPTY'].includes(data['error_code'])
+					? 'Something went wrong, please try again later.'
+					: '';
+				usernameErr =
+					data['error_code'] === 'USER_ALREADY_EXIST'
+						? 'Username occupied.'
+						: data['error_code'] === 'USER_NOT_FOUND'
+							? 'User not found.'
+							: '';
+				passwordErr =
+					data['error_code'] === 'INVALID_PASSWORD'
+						? 'Wrong password.'
+						: data['error_code'] === 'LENGTH_TOO_SHORT'
+							? 'Minimum is 8 characaters.'
+							: '';
+				buttonLoad = false;
+			} else {
+				window.location.href = '/dashboard/my-letters';
+			}
+		} catch {
+			globalErr = 'Something went wrong, please try again later.';
+		}
+	};
+</script>
+
+{#if windowLoad}
+	<div class="preloader">
+		<div class="spinner"></div>
+	</div>
+{:else}
+	<Navbar />
+	<section class="auth">
+		<div class="container">
+			<div class="desc">
+				<h1>Authentication</h1>
+				<p>Sign in to create a letter...</p>
+			</div>
+			{#if globalErr}
+				<div class="error">
+					{globalErr}
+				</div>
+			{/if}
+			<form method="post" onsubmit={(e) => handleAuth(signUp ? 'signUp' : 'signIn', e)}>
+				{#if signUp}
+					<label for="name">Your Name</label>
+					<input
+						type="text"
+						id="name"
+						placeholder="Alex Johnson"
+						required
+						bind:value={name}
+						disabled={buttonLoad}
+					/>
+				{/if}
+				<label for="username">Username</label>
+				<input
+					type="text"
+					id="username"
+					placeholder="alexjohnson_"
+					required
+					bind:value={username}
+					disabled={buttonLoad}
+				/>
+				{#if usernameErr}
+					<span>{usernameErr}</span>
+				{/if}
+				<label for="message">Password</label>
+				<input
+					type="password"
+					name="password"
+					id="password"
+					placeholder="••••••••"
+					required
+					bind:value={password}
+					disabled={buttonLoad}
+				/>
+				{#if passwordErr}
+					<span>{passwordErr}</span>
+				{/if}
+
+				<div class="btns">
+					<button
+						disabled={buttonLoad}
+						type="button"
+						onclick={handleAuthType}
+						class="button"
+						id="out"
+					>
+						{signUp ? 'Have an account? Sign In!' : `Don't have an account? Sign Up`}
+					</button>
+					<button disabled={buttonLoad} type="submit" id="fill">
+						{#if buttonLoad}
+							<span class="button-spinner"></span>
+						{:else}
+							{signUp ? 'Sign Up' : 'Sign In'}
+						{/if}
+					</button>
+				</div>
+			</form>
+		</div>
+	</section>
+
+	<Footer />
+{/if}
