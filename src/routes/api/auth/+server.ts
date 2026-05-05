@@ -1,7 +1,7 @@
-import { BACKEND_URL } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
-export async function GET({ url, request }) {
+export async function GET({ url, request, platform }) {
+	const BACKEND_URL = platform?.env?.BACKEND_URL;
 	const path = url.searchParams.get('path');
 
 	let name;

@@ -1,7 +1,7 @@
-import { BACKEND_URL } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
-export async function GET({ url, request }) {
+export async function GET({ url, request, platform }) {
+	const BACKEND_URL = platform?.env?.BACKEND_URL;
 	const path = url.searchParams.get('path');
 
 	let id;
@@ -44,7 +44,8 @@ export async function GET({ url, request }) {
 	return response;
 }
 
-export async function POST({ url, request }) {
+export async function POST({ url, request, platform }) {
+	const BACKEND_URL = platform?.env?.BACKEND_URL;
 	const path = url.searchParams.get('path');
 	const form = await request.formData();
 	const fd = new FormData();
