@@ -187,6 +187,25 @@ main .browse .result .card .profile {
 	justify-content: space-between;
 }
 
+main .browse .result .card .profile .right {
+	margin-top: -10px;
+	display: flex;
+	flex-direction: row;
+	padding: 4px 7px;
+	background: var(--color-primary-light);
+	border-radius: 5px;
+	align-items: center;
+	gap: 5px;
+}
+
+main .browse .result .card .profile .right span {
+	font-size: 12px;
+}
+
+main .browse .result .card .profile .right i {
+	font-size: 17px;
+}
+
 main .browse .result .card .profile .left {
 	display: flex;
 	flex-direction: row;
@@ -221,7 +240,6 @@ main .browse .result .card .profile .left img {
 main .browse .result .card .content {
 	margin-top: 20px;
 	border-radius: 5px;
-	font-family: 'Playwrite NZ Guides', cursive;
 	font-weight: 400;
 	font-style: normal;
 	background: var(--color-bg-secondary);
@@ -231,6 +249,17 @@ main .browse .result .card .content {
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	transition: all 0.1s ease-in-out;
+	align-items: center;
+}
+
+main .browse .result .card .content .lock {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+}
+
+main .browse .result .card .content .lock i {
+	font-size: 20px;
 }
 
 main .browse .result .card .content:hover {
@@ -371,16 +400,12 @@ main .features .more button:hover {
 		box-sizing: border-box;
 	}
 
+	main .browse .form .search-box .btn {
+		margin-left: -15px;
+	}
+
 	main .browse .form .search-box button {
 		padding: 8px 10px;
-	}
-
-	main .browse .form .search-box .btn {
-		margin-left: -10px;
-	}
-
-	main .browse .form .search-box input {
-		max-width: fit-content;
 	}
 }
 

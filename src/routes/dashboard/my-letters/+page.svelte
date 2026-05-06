@@ -85,7 +85,7 @@
 		if (c) {
 			letterLoad = true;
 			const ft = await fetch(`/api/letters?path=remove&id=${letterId}`);
-			const jsons = await ft.json() as App.Platform['resp'];
+			const jsons = (await ft.json()) as App.Platform['resp'];
 
 			if (jsons['status_code'] !== 200) {
 				if (jsons['error_code'] === 'UNAUTHORIZED') {
@@ -137,7 +137,11 @@
 									<img src={card.music_profile} alt="music profile" />
 									<div class="info">
 										<span>From: You</span>
-										<span id="t">To: {card.recipient_name}</span>
+										<span id="t"
+											>To: {card.recipient_name.length > 7
+												? `${card.recipient_name.substring(0, 7)}...`
+												: card.recipient_name}</span
+										>
 									</div>
 								</div>
 								<div class="btn">

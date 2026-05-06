@@ -14,6 +14,7 @@
 		recipient_name: string;
 		sender: string;
 		font: string;
+		is_locked: boolean;
 	};
 
 	let cards: Card[] = $state([]);
@@ -47,7 +48,7 @@
 	const handleSubmit = async () => {
 		buttonLoad = true;
 		const ft = await fetch(`/api/letters?path=search&recipient_name=${searchQuery}`);
-		const js = await ft.json();
+		const js = (await ft.json()) as App.Platform['resp'];
 
 		cards = js['data'] ?? [];
 		buttonLoad = false;
@@ -111,12 +112,33 @@
 									<img src={card.music_profile} alt="music profile" />
 									<div class="info">
 										<span>From: {card.sender}</span>
-										<span id="t">To: {card.recipient_name}</span>
+										<span id="t"
+											>To: {card.recipient_name.length > 7
+												? `${card.recipient_name.substring(0, 7)}...`
+												: card.recipient_name}</span
+										>
 									</div>
 								</div>
+								{#if card.is_locked}
+									<div class="right">
+										<i class="ri-lock-line"></i><span>Locked</span>
+									</div>
+								{/if}
 							</div>
-							<div class="content" style="font-family: '{resolveFont(card.font)}', cursive;">
-								<a href={`/letter/${card.letter_id}`}><p>{card.message}</p></a>
+							<div
+								class="content"
+								style={!card.is_locked ? `font-family: '${resolveFont(card.font)}', cursive;` : ''}
+							>
+								<a href={`/l/${card.letter_id}`}>
+									{#if !card.is_locked}
+										<p>{card.message}</p>
+									{:else}
+										<div class="lock">
+											<i class="ri-lock-line"></i>
+											<span>Content Locked</span>
+										</div>
+									{/if}
+								</a>
 							</div>
 							<div class="bottom">
 								<div class="date">{card.created_at}</div>
