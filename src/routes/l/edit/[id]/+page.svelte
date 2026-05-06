@@ -61,6 +61,9 @@
 	let isBurned = $state(false);
 	let restore = $state('');
 
+	let videoDel = $state(false);
+	let imageDel = $state(false);
+
 	async function scrollToError() {
 		await tick();
 
@@ -247,9 +250,11 @@
 	const clearFile = (type: 'image' | 'video') => {
 		if (type === 'image') {
 			imageFile = null;
+			if (imagePreview) { imageDel = true };
 			imagePreview = null;
 		} else {
 			videoFile = null;
+			if (videoPreview) { videoDel = true };
 			videoPreview = null;
 		}
 	};
@@ -348,8 +353,8 @@
 		fd.append('show_recipient', showRecipient ? 'yes' : 'no');
 		fd.append('view_once', viewOnce ? 'yes' : 'no');
 		fd.append('artist', String(selected.artist.name));
-		fd.append('image', imageFile ? (imageFile as Blob) : '-');
-		fd.append('video', videoFile ? (videoFile as Blob) : '-');
+		fd.append('image', imageFile ? (imageFile as Blob) : imageDel ? '-' : '');
+		fd.append('video', videoFile ? (videoFile as Blob) : videoDel ? '-' : '');
 		fd.append('new_letterid', letterId);
 		fd.append('is_burned', restore)
 

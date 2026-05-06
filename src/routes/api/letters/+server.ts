@@ -64,11 +64,11 @@ export async function POST({ url, request }) {
 	fd.append('artist', (form.get('artist') as string) || '');
 	fd.append('is_burned', (form.get('is_burned') as string) || '')
 
-	const image = form.get('image') || '-';
-	const video = form.get('video') || '-';
+	const image = form.get('image');
+	const video = form.get('video');
 
-	fd.append('image', image);
-	fd.append('video', video);
+	if (image) { fd.append('image', image); }
+	if (video) { fd.append('video', video); }
 
 	if (path === 'edit') {
 		fd.append('new_letterid', (form.get('new_letterid') as string) || '');
