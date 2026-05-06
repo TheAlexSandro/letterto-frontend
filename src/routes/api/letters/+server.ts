@@ -20,7 +20,7 @@ export async function GET({ url, request }) {
 			? `?id=${id}${edit ? `&edit=${edit}` : ``}`
 			: path === 'verifyPassword'
 				? `?id=${id}&password=${password}`
-				: path === 'remove'
+				: ['remove', 'burn'].includes(path as string)
 					? `?id=${id}`
 					: path === 'search'
 						? `?recipient_name=${name}`
@@ -60,7 +60,9 @@ export async function POST({ url, request }) {
 	fd.append('font', (form.get('font') as string) || '');
 	fd.append('show_sender', (form.get('show_sender') as string) || '');
 	fd.append('show_recipient', (form.get('show_recipient') as string) || '');
+	fd.append('view_once', (form.get('view_once') as string) || '');
 	fd.append('artist', (form.get('artist') as string) || '');
+	fd.append('is_burned', (form.get('is_burned') as string) || '')
 
 	const image = form.get('image') || '-';
 	const video = form.get('video') || '-';

@@ -34,7 +34,7 @@
 
 		(async () => {
 			const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-			const data = await isLoggedIn.json();
+			const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 			if (data['status_code'] !== 200) {
 				window.location.href = '/auth';
@@ -44,16 +44,17 @@
 			windowLoad = false;
 
 			const ftLetter = await fetch('/api/letters?path=myLetters');
-			const dataLetter = await ftLetter.json();
+			const dataLetter = (await ftLetter.json()) as App.Platform['resp'];
 
 			if (dataLetter['status_code'] !== 200) {
 				if (dataLetter['error_code'] === 'UNAUTHORIZED') {
 					window.location.href = '/auth';
 					return;
 				}
-				globalErr = dataLetter['BAD_REQUEST']
-					? `Something went wrong, please reload this page.`
-					: ``;
+				globalErr =
+					dataLetter['error_code'] === 'BAD_REQUEST'
+						? `Something went wrong, please reload this page.`
+						: ``;
 				letterLoad = false;
 			} else {
 				cards = dataLetter['data'];
@@ -67,14 +68,14 @@
 	});
 
 	const copyLink = (letterId: string) => {
-		const url = `${window.location.hostname}/letter/${letterId}`;
+		const url = `${window.location.hostname}/l/${letterId}`;
 		navigator.clipboard.writeText(url).catch(() => {});
 		copied = true;
 		setTimeout(() => (copied = false), 1800);
 	};
 
 	const editOpen = (letterId: string) => {
-		window.location.href = `/letter/edit/${letterId}`;
+		window.location.href = `/l/edit/${letterId}`;
 	};
 
 	const delLetter = async (letterId: string) => {
@@ -84,7 +85,7 @@
 		if (c) {
 			letterLoad = true;
 			const ft = await fetch(`/api/letters?path=remove&id=${letterId}`);
-			const jsons = await ft.json();
+			const jsons = await ft.json() as App.Platform['resp'];
 
 			if (jsons['status_code'] !== 200) {
 				if (jsons['error_code'] === 'UNAUTHORIZED') {
@@ -97,6 +98,13 @@
 		}
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - MyLetters</title>
+	<meta property="og:url" content="/dashboard/my-letters" />
+	<meta property="og:title" content="LetterTo - MyLetters" />
+	<meta name="twitter:title" content="LetterTo - MyLetters" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">
@@ -128,7 +136,7 @@
 								<div class="left">
 									<img src={card.music_profile} alt="music profile" />
 									<div class="info">
-										<span>From: {card.sender}</span>
+										<span>From: You</span>
 										<span id="t">To: {card.recipient_name}</span>
 									</div>
 								</div>
@@ -160,7 +168,7 @@
 								</div>
 							</div>
 							<div class="content" style="font-family: '{resolveFont(card.font)}', cursive;">
-								<a href={`/letter/${card.id}`}><p>{card.message}</p></a>
+								<a href={`/l/${card.id}`}><p>{card.message}</p></a>
 							</div>
 							<div class="bottom">
 								<div class="date">{card.created_at}</div>

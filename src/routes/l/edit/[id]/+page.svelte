@@ -4,7 +4,7 @@
 	import Footer from '../../../../components/footer/footer.svelte';
 	import '../../../new/page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 
 	type Track = {
@@ -58,6 +58,8 @@
 	let dropdownClosed = $state(false);
 	let uploadRef: HTMLElement | null = $state(null);
 	let copied = $state(false);
+	let isBurned = $state(false);
+	let restore = $state('');
 
 	async function scrollToError() {
 		await tick();
@@ -83,7 +85,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth';
@@ -91,7 +93,7 @@
 		}
 
 		const ft = await fetch(`/api/letters?path=getInfo&id=${ids}&edit=yes`);
-		const ftJson = await ft.json();
+		const ftJson = (await ft.json()) as App.Platform['resp'];
 		if (ftJson['status_code'] !== 200) {
 			window.location.href = '/dashboard/my-letters';
 			return;
@@ -101,13 +103,13 @@
 		recipientName = letData['recipient_name'];
 		letterMessage = letData['message'];
 		selected = {
-			id: 1,
+			id: letData['music'],
 			title: letData['music_title'],
 			artist: { name: letData['artist'] },
-			preview: letData['music'],
+			preview: '',
 			album: { cover_medium: letData['music_profile'] }
 		};
-        query = `${selected.title} — ${selected.artist.name}`;
+		query = `${selected.title} — ${selected.artist.name}`;
 		if (letData['image'] !== '-') {
 			imagePreview = letData['image'];
 		}
@@ -124,6 +126,8 @@
 		letterId = letData['id'];
 		showSender = letData['show_sender'] === 'yes' ? true : false;
 		showRecipient = letData['show_recipient'] === 'yes' ? true : false;
+		viewOnce = letData['view_once'] === 'yes' ? true : false;
+		isBurned = letData['is_burned'] === 'yes' ? true : false;
 
 		windowLoad = false;
 	});
@@ -137,8 +141,8 @@
 		loading = true;
 		clearTimeout(debounce);
 		debounce = setTimeout(async () => {
-			const res = await fetch(`/api/music?q=${encodeURIComponent(query)}`);
-			const data = await res.json();
+			const res = await fetch(`/api/music?path=search&q=${encodeURIComponent(query)}`);
+			const data = (await res.json()) as App.Platform['resp'];
 			results = data.data ?? [];
 			loading = false;
 		}, 400);
@@ -161,24 +165,40 @@
 		results = [];
 	};
 
-	const togglePlay = (track: Track) => {
+	const togglePlay = async (track: Track) => {
 		if (currentPlayingId === track.id) {
 			audio?.pause();
 			audio = null;
 			currentPlayingId = null;
 			return;
 		}
-		musicLoad = track.id;
 
+		musicLoad = track.id;
 		audio?.pause();
-		const aud = new Audio(track.preview);
+
+		const previewUrl = await getFreshPreview(track.id);
+		if (!previewUrl) {
+			alert('Preview not available for this track.');
+			musicLoad = 0;
+			return;
+		}
+		const aud = new Audio(previewUrl);
 		aud.addEventListener(
 			'loadedmetadata',
 			() => {
-				aud!.play();
-				musicLoad = 0;
 				audio = aud;
 				currentPlayingId = track.id;
+				aud
+					.play()
+					.then(() => {
+						musicLoad = 0;
+					})
+					.catch((err) => {
+						alert(err);
+						musicLoad = 0;
+						audio = null;
+						currentPlayingId = null;
+					});
 			},
 			{ once: true }
 		);
@@ -190,6 +210,13 @@
 		aud.addEventListener('ended', () => {
 			currentPlayingId = null;
 			audio = null;
+		});
+
+		aud.addEventListener('error', () => {
+			alert('Failed to load audio');
+			musicLoad = 0;
+			audio = null;
+			currentPlayingId = null;
 		});
 	};
 
@@ -259,8 +286,10 @@
 	};
 
 	const handleInputPass = () => {
-		if (password.length > 8) {
-			passError = 'Max password length is 8 characters.';
+		if (password.length < 8) {
+			passError = 'Min password length is 8 characters.';
+		} else if (password.length > 20) {
+			passError = 'Max password length is 20 characters.';
 		} else {
 			passError = '';
 		}
@@ -275,7 +304,7 @@
 	};
 
 	const copyLink = () => {
-		const url = `${window.location.hostname}/letter/${letterId}`;
+		const url = `${window.location.hostname}/l/${letterId}`;
 		navigator.clipboard.writeText(url).catch(() => {});
 		copied = true;
 		setTimeout(() => (copied = false), 1800);
@@ -286,22 +315,14 @@
 		buttonLoad = true;
 		dropdownClosed = true;
 		adv = false;
-        audio?.pause();
+		audio?.pause();
 		uploadRef!.style.opacity = '0.8 !important';
-		if (
-			!selected ||
-			(usePassword && !password) ||
-			(usePassword && password && password.length > 8) ||
-			!letterId
-		) {
+		if (!selected || (usePassword && !password) || !letterId) {
 			if (!selected) {
 				musicError = true;
 			}
 			if (usePassword && !password) {
 				passError = 'Password is required when enabled.';
-			}
-			if (usePassword && password && password.length > 8) {
-				passError = 'Max password length is 8 characters.';
 			}
 			if (!letterId) {
 				idError = 'Reference ID cannot be empty.';
@@ -317,41 +338,45 @@
 		fd.append('letter_id', ids);
 		fd.append('recipient_name', recipientName);
 		fd.append('message', letterMessage);
-		fd.append('music', String(selected?.preview));
+		fd.append('music', String(selected?.id));
 		fd.append('music_profile', String(selected?.album.cover_medium));
 		fd.append('music_title', String(selected?.title));
 		fd.append('privacy', privacy);
-		fd.append('password', password ?? "-");
+		fd.append('password', password ?? '-');
 		fd.append('font', font);
 		fd.append('show_sender', showSender ? 'yes' : 'no');
 		fd.append('show_recipient', showRecipient ? 'yes' : 'no');
+		fd.append('view_once', viewOnce ? 'yes' : 'no');
 		fd.append('artist', String(selected.artist.name));
-        fd.append('image', imageFile ? imageFile as Blob : "-");
-		fd.append('video', videoFile ? videoFile as Blob : "-");
-        fd.append('new_letterid', letterId);
+		fd.append('image', imageFile ? (imageFile as Blob) : '-');
+		fd.append('video', videoFile ? (videoFile as Blob) : '-');
+		fd.append('new_letterid', letterId);
+		fd.append('is_burned', restore)
 
 		const ft = await fetch('/api/letters?path=edit', {
 			method: 'POST',
 			body: fd
 		});
-		const submitJson = await ft.json();
+		const submitJson = (await ft.json()) as App.Platform['resp'];
 
 		if (submitJson['status_code'] !== 200) {
-            if (submitJson['status_code'] === 'UNAUTHORIZED') {
-                window.location.href = '/auth';
-                return;
-            }
+			if (submitJson['error_code'] === 'UNAUTHORIZED') {
+				window.location.href = '/auth';
+				return;
+			}
 			globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST'].includes(submitJson['error_code'])
 				? 'Something went wrong, please try again later...'
 				: '';
 			idError =
-				(submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
-					submitJson['message'].includes('letter_id')) ||
-				submitJson['error_code'] === 'ID_OCCUPIED'
-					? submitJson['message']
-					: '';
+				submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
+				submitJson['message'].includes('letter_id')
+					? 'Max is 20 characters.'
+					: submitJson['error_code'] === 'ID_OCCUPIED'
+						? submitJson['message']
+						: '';
 			passError =
-				submitJson['error_code'] === 'LENGTH_TOO_LONG' && submitJson['message'].includes('password')
+				['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
+				submitJson['message'].includes('password')
 					? submitJson['message']
 					: '';
 			fileError = submitJson['error_code'] === 'FILE_TOO_LARGE' ? submitJson['message'] : '';
@@ -367,10 +392,17 @@
 		}
 	};
 
-    const viewLetter = (letterId: string) => {
-        window.location.href = `/letter/${letterId}`;
-    }
+	const viewLetter = (letterId: string) => {
+		window.location.href = `/l/${letterId}`;
+	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - Edit {letterId}</title>
+	<meta property="og:url" content="/l/edit/{letterId}" />
+	<meta property="og:title" content="LetterTo - Edit {letterId}" />
+	<meta name="twitter:title" content="LetterTo - Edit {letterId}" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">
@@ -490,7 +522,7 @@
 									class="play"
 									onclick={() => togglePlay(selected!)}
 								>
-									{#if !musicLoad || musicLoad !== selected.id}
+									{#if musicLoad !== selected.id}
 										<i class={currentPlayingId === selected.id ? 'ri-stop-line' : 'ri-play-line'}
 										></i>
 									{:else if musicLoad === selected.id}
@@ -624,26 +656,38 @@
 
 							<div class="space"></div>
 
-							<div class="menu-row">
-								<div class="menu-info">
-									<div class="item">View-Once</div>
-									<span class="desc"
-										>Enable this to burn the letter once viewed except the sender, the burned letter
-										can still be accessed by the sender.</span
-									>
+							<div class="wrapper">
+								<div class="menu-row">
+									<div class="menu-info">
+										<div class="item">View-Once</div>
+										<span class="desc"
+											>Enable this to burn the letter once viewed except the sender, the burned
+											letter can still be accessed by the sender.</span
+										>
+									</div>
+									<div class="checkbox-container">
+										<input
+											type="checkbox"
+											id="view"
+											onchange={() => {
+												handleCheckbox('viewOnce');
+											}}
+											checked={viewOnce}
+										/>
+										<div class="custom-checkmark"></div>
+										<span class="status-text">{viewOnce ? 'enabled' : 'disabled'}</span>
+									</div>
 								</div>
-								<div class="checkbox-container">
-									<input
-										type="checkbox"
-										id="view"
-										onchange={() => {
-											handleCheckbox('viewOnce');
-										}}
-										checked={viewOnce}
-									/>
-									<div class="custom-checkmark"></div>
-									<span class="status-text">{viewOnce ? 'enabled' : 'disabled'}</span>
-								</div>
+								{#if isBurned}
+									<div class="burned">
+										<p>Your letter has been burned, click below to restore.</p>
+										{#if !restore}
+											<button onclick={() => { restore = 'no'; }}>Restore</button>
+										{:else}
+											<span><i class="ri-check-line"></i> Click on Save Changes to apply.</span>
+										{/if}
+									</div>
+								{/if}
 							</div>
 
 							<div class="space"></div>
@@ -759,7 +803,7 @@
 									<div class="error-input">{idError}</div>
 								{/if}
 								<p class="helper-text" style="color: black;">
-									https://{window.location.hostname}/letter/{letterId}
+									https://{window.location.hostname}/l/{letterId}
 								</p>
 							</div>
 
@@ -842,7 +886,7 @@
 
 						<div class="url-box">
 							<i class="ri-links-line url-icon"></i>
-							<span class="url-text">{window.location.hostname}/letter/{letterId}</span>
+							<span class="url-text">{window.location.hostname}/l/{letterId}</span>
 							<button
 								class="copy-btn"
 								class:done={copied}
@@ -857,7 +901,7 @@
 						<div class="divider"></div>
 
 						<div class="actions">
-							<button class="btn-pri" onclick={(() => viewLetter(letterId))}>
+							<button class="btn-pri" onclick={() => viewLetter(letterId)}>
 								<i class="ri-eye-line"></i> View letter
 							</button>
 						</div>

@@ -4,7 +4,9 @@
 	import Footer from '../../../components/footer/footer.svelte';
 	import { onMount } from 'svelte';
 	import '../page.css';
-	import { resolveFont } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
+	import { DotLottieSvelte } from '@lottiefiles/dotlottie-svelte';
+	import Fire from '$lib/assets/Fire.lottie';
 
 	type Card = {
 		user_id: string;
@@ -19,6 +21,7 @@
 		video?: string;
 		sender?: string;
 		recipient_name?: string;
+		is_burned: string;
 	};
 
 	const { data }: { data: PageData } = $props();
@@ -35,6 +38,7 @@
 	let password = $state('');
 	let buttonLoad = $state(false);
 	let passErr = $state('');
+	let isBurned = $state(false);
 
 	const formatTime = (s: number) => {
 		const m = Math.floor(s / 60);
@@ -52,10 +56,12 @@
 
 	onMount(async () => {
 		const ft = await fetch(`/api/letters?path=getInfo&id=${letterId}`);
-		const ftJson = await ft.json();
+		const ftJson = (await ft.json()) as App.Platform['resp'];
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'LETTER_LOCKED') {
 				showPassword = true;
+			} else if (ftJson['error_code'] === 'BURNED') {
+				isBurned = true;
 			} else {
 				window.location.href = '/';
 				return;
@@ -63,13 +69,23 @@
 		}
 		card = ftJson['data'];
 
+		if (ftJson['error_code'] !== 'BURNED') {
+			await fetch(`/api/letters?path=burn&id=${letterId}`);
+		}
 		windowLoad = false;
 	});
 
-	const togglePlay = () => {
+	const togglePlay = async () => {
 		audioLoad = true;
+
+		const previewUrl = await getFreshPreview(Number(card?.music));
+		if (!previewUrl) {
+			alert('Preview not available for this track.');
+			audioLoad = false;
+			return;
+		}
 		if (!audio) {
-			audio = new Audio(card?.music);
+			audio = new Audio(previewUrl);
 
 			audio.addEventListener(
 				'loadedmetadata',
@@ -118,15 +134,11 @@
 
 	const unlock = async (e: Event) => {
 		e.preventDefault();
-		if (password.length < 8) {
-			passErr = 'Minimum length is 8 characters.';
-			return;
-		}
 		passErr = '';
 		buttonLoad = true;
 
 		const ft = await fetch(`/api/letters?path=verifyPassword&id=${letterId}&password=${password}`);
-		const js = await ft.json();
+		const js = (await ft.json()) as App.Platform['resp'];
 
 		if (js['status_code'] !== 200) {
 			passErr =
@@ -144,6 +156,13 @@
 	};
 </script>
 
+<svelte:head>
+	<title>LetterTo - Letter {letterId}</title>
+	<meta property="og:url" content="/l/{letterId}" />
+	<meta property="og:title" content="LetterTo - Letter {letterId}" />
+	<meta name="twitter:title" content="LetterTo - Letter {letterId}" />
+</svelte:head>
+
 {#if windowLoad}
 	<div class="preloader">
 		<div class="spinner"></div>
@@ -153,7 +172,18 @@
 
 	<section class="letter">
 		<div class="letter-wrap">
-			{#if !showPassword}
+			{#if isBurned}
+				<div class="burned">
+					<div class="fire">
+						<DotLottieSvelte src={Fire} loop autoplay />
+					</div>
+					<h1>Burned!</h1>
+					<p>
+						This letter has been burned, you can ask the sender to restore it so you can view once
+						again.
+					</p>
+				</div>
+			{:else if !showPassword}
 				<div class="music-pill">
 					<div class="music-left">
 						<img src={card?.music_profile} alt={card?.music_title} />

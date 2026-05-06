@@ -18,7 +18,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] === 200) {
 			window.location.href = '/dashboard';
@@ -44,7 +44,7 @@
 			const ft = await fetch(
 				`/api/auth?path=${type}&name=${name}&username=${username}&password=${password}`
 			);
-			const data = await ft.json();
+			const data = await ft.json() as App.Platform['resp'];
 
 			if (data['status_code'] !== 200) {
 				globalErr = ['BAD_REQUEST', 'PARAMETER_EMPTY'].includes(data['error_code'])
@@ -71,6 +71,13 @@
 		}
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - Authentication</title>
+	<meta property="og:url" content="/auth" />
+	<meta property="og:title" content="LetterTo - Authentication" />
+	<meta name="twitter:title" content="LetterTo - Authentication" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">

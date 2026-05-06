@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-		allowedHosts: ["notified-canvas-rate-captain.trycloudflare.com"]
-	}
+		allowedHosts: ['dust-couple-may-adjustment.trycloudflare.com']
+	},
+	assetsInclude: ['**/*.lottie']
 });

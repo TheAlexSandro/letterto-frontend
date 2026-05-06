@@ -3,7 +3,7 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 
 	type Track = {
@@ -79,7 +79,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth';
@@ -99,8 +99,8 @@
 		loading = true;
 		clearTimeout(debounce);
 		debounce = setTimeout(async () => {
-			const res = await fetch(`/api/music?q=${encodeURIComponent(query)}`);
-			const data = await res.json();
+			const res = await fetch(`/api/music?path=search&q=${query}`);
+			const data = (await res.json()) as App.Platform['resp'];
 			results = data.data ?? [];
 			loading = false;
 		}, 400);
@@ -123,7 +123,7 @@
 		results = [];
 	};
 
-	const togglePlay = (track: Track) => {
+	const togglePlay = async (track: Track) => {
 		if (currentPlayingId === track.id) {
 			audio?.pause();
 			audio = null;
@@ -132,8 +132,13 @@
 		}
 		musicLoad = track.id;
 
-		audio?.pause();
-		const aud = new Audio(track.preview);
+		const previewUrl = await getFreshPreview(track.id);
+		if (!previewUrl) {
+			alert('Preview not available for this track.');
+			musicLoad = 0;
+			return;
+		}
+		const aud = new Audio(previewUrl);
 		aud.addEventListener(
 			'loadedmetadata',
 			() => {
@@ -223,8 +228,10 @@
 	};
 
 	const handleInputPass = () => {
-		if (password.length > 8) {
-			passError = 'Max password length is 8 characters.';
+		if (password.length < 8) {
+			passError = 'Min password length is 8 characters.';
+		} else if (password.length > 20) {
+			passError = 'Max password length is 20 characters.';
 		} else {
 			passError = '';
 		}
@@ -239,7 +246,7 @@
 	};
 
 	const copyLink = () => {
-		const url = `${window.location.hostname}/letter/${letterId}`;
+		const url = `${window.location.hostname}/l/${letterId}`;
 		navigator.clipboard.writeText(url).catch(() => {});
 		copied = true;
 		setTimeout(() => (copied = false), 1800);
@@ -251,20 +258,12 @@
 		dropdownClosed = true;
 		adv = false;
 		uploadRef!.style.opacity = '0.8 !important';
-		if (
-			!selected ||
-			(usePassword && !password) ||
-			(usePassword && password && password.length > 8) ||
-			!letterId
-		) {
+		if (!selected || (usePassword && !password) || !letterId) {
 			if (!selected) {
 				musicError = true;
 			}
 			if (usePassword && !password) {
 				passError = 'Password is required when enabled.';
-			}
-			if (usePassword && password && password.length > 8) {
-				passError = 'Max password length is 8 characters.';
 			}
 			if (!letterId) {
 				idError = 'Reference ID cannot be empty.';
@@ -280,7 +279,7 @@
 		fd.append('letter_id', letterId);
 		fd.append('recipient_name', recipientName);
 		fd.append('message', letterMessage);
-		fd.append('music', String(selected?.preview));
+		fd.append('music', String(selected?.id));
 		fd.append('music_profile', String(selected?.album.cover_small));
 		fd.append('music_title', String(selected?.title));
 		fd.append('privacy', privacy);
@@ -288,6 +287,7 @@
 		fd.append('font', font);
 		fd.append('show_sender', showSender ? 'yes' : 'no');
 		fd.append('show_recipient', showRecipient ? 'yes' : 'no');
+		fd.append('view_once', viewOnce ? 'yes' : 'no');
 		fd.append('artist', String(selected.artist.name));
 		fd.append('image', imageFile as Blob);
 		fd.append('video', videoFile as Blob);
@@ -296,10 +296,10 @@
 			method: 'POST',
 			body: fd
 		});
-		const submitJson = await ft.json();
+		const submitJson = (await ft.json()) as App.Platform['resp'];
 
 		if (submitJson['status_code'] !== 200) {
-			if (submitJson['status_code'] === 'UNAUTHORIZED') {
+			if (submitJson['error_code'] === 'UNAUTHORIZED') {
 				window.location.href = '/auth';
 				return;
 			}
@@ -307,13 +307,15 @@
 				? 'Something went wrong, please try again later...'
 				: '';
 			idError =
-				(submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
-					submitJson['message'].includes('letter_id')) ||
-				submitJson['error_code'] === 'ID_OCCUPIED'
-					? submitJson['message']
-					: '';
+				submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
+				submitJson['message'].includes('letter_id')
+					? 'Max is 20 characters.'
+					: submitJson['error_code'] === 'ID_OCCUPIED'
+						? submitJson['message']
+						: '';
 			passError =
-				submitJson['error_code'] === 'LENGTH_TOO_LONG' && submitJson['message'].includes('password')
+				['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
+				submitJson['message'].includes('password')
 					? submitJson['message']
 					: '';
 			fileError = submitJson['error_code'] === 'FILE_TOO_LARGE' ? submitJson['message'] : '';
@@ -330,9 +332,16 @@
 	};
 
 	const viewLetter = (letterId: string) => {
-		window.location.href = `/letter/${letterId}`;
+		window.location.href = `/l/${letterId}`;
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - New Letter</title>
+	<meta property="og:url" content="/new" />
+	<meta property="og:title" content="LetterTo - New Letter" />
+	<meta name="twitter:title" content="LetterTo - New Letter" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">
@@ -721,7 +730,7 @@
 									<div class="error-input">{idError}</div>
 								{/if}
 								<p class="helper-text" style="color: black;">
-									https://{window.location.hostname}/letter/{letterId}
+									https://{window.location.hostname}/l/{letterId}
 								</p>
 							</div>
 
@@ -804,7 +813,7 @@
 
 						<div class="url-box">
 							<i class="ri-links-line url-icon"></i>
-							<span class="url-text">{window.location.hostname}/letter/{letterId}</span>
+							<span class="url-text">{window.location.hostname}/l/{letterId}</span>
 							<button
 								class="copy-btn"
 								class:done={copied}

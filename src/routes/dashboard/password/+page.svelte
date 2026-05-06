@@ -15,7 +15,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth';
@@ -29,7 +29,7 @@
 		e.preventDefault();
 		buttonLoad = true;
 		const ft = await fetch(`/api/user?path=edit&password=${password}&old_password=${old_password}`);
-		const ftJson = await ft.json();
+		const ftJson = await ft.json() as App.Platform['resp'];
 
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'UNAUTHORIZED') {
@@ -49,6 +49,13 @@
 		window.location.href = '/dashboard/settings';
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - Change Password</title>
+	<meta property="og:url" content="/dashboard/password" />
+	<meta property="og:title" content="LetterTo - Change Password" />
+	<meta name="twitter:title" content="LetterTo - Change Password" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">

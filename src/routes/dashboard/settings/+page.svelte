@@ -10,7 +10,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth';
@@ -30,6 +30,13 @@
 		}
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - Settings</title>
+	<meta property="og:url" content="/dashboard/settings" />
+	<meta property="og:title" content="LetterTo - Settings" />
+	<meta name="twitter:title" content="LetterTo - Settings" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">

@@ -14,6 +14,29 @@
 	margin: 0 auto;
 }
 
+.letter-wrap .burned {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+}
+
+.letter-wrap .burned .fire {
+	width: 60%;
+	height: auto;
+	margin-bottom: 20px;
+}
+
+.letter-wrap .burned h1 {
+	font-weight: var(--font-semibold);
+}
+
+.letter-wrap .burned p {
+	max-width: 90%;
+	font-size: 15px;
+}
+
 .letter-wrap .music-pill {
 	display: flex;
 	align-items: center;
@@ -140,10 +163,11 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 11px;
+	font-size: 14px;
 	font-weight: 700;
 	color: var(--color-text-secondary);
 	flex-shrink: 0;
+	padding-left: 2px;
 }
 
 .letter-wrap .avatar-to {

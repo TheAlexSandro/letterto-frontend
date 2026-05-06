@@ -479,6 +479,46 @@
 	gap: 10px;
 }
 
+.new form .adv-menu .wrapper .burned p {
+	margin-top: 6px;
+	font-size: 13px;
+}
+
+.new form .adv-menu .wrapper .burned button {
+	margin-top: 7px;
+	padding: 6px 15px;
+	outline: none;
+	border: none;
+	background: var(--color-accent);
+	border-radius: 5px;
+	color: var(--color-primary-light);
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	font-family: inherit;
+	font-weight: var(--font-medium);
+	font-size: 13px;
+}
+
+.new form .adv-menu .wrapper .burned button:hover {
+	border-color: var(--color-primary);
+	opacity: 0.8;
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+	transition: all 0.3s ease-in-out;
+}
+
+.new form .adv-menu .wrapper .burned span {
+	margin-top: 5px;
+	display: flex;
+	flex-direction: row;
+	gap: 5px;
+	align-items: center;
+}
+
+.new form .adv-menu .wrapper .burned span i {
+	color: var(--color-success);
+	font-size: 20px;
+}
+
 .new form .adv-menu .input-wrap {
 	width: 50%;
 }

@@ -7,12 +7,22 @@ declare global {
 			ctx: ExecutionContext;
 			caches: CacheStorage;
 			cf?: IncomingRequestCfProperties;
+			resp: {
+				status_code: number;
+				message: string;
+				data: any;
+				error_code: string;
+			};
 		}
 
 		// interface Error {}
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
+	}
+	module '*.lottie' {
+		const src: string;
+		export default src;
 	}
 }
 

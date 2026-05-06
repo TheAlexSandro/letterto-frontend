@@ -12,13 +12,13 @@
 	let nameD = $state('');
 
 	let buttonLoad = $state(false);
-	let usernameErr = $state(false);
+	let usernameErr = $state('');
 	let noChange = $state(true);
 	let globalErr = $state('');
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth';
@@ -47,7 +47,7 @@
 		buttonLoad = true;
 		noChange = false;
 		const ft = await fetch(`/api/user?path=edit&name=${name}&username=${username}`);
-		const ftJson = await ft.json();
+		const ftJson = await ft.json() as App.Platform['resp'];
 
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'UNAUTHORIZED') {
@@ -66,6 +66,13 @@
 		window.location.href = '/dashboard/settings';
 	};
 </script>
+
+<svelte:head>
+	<title>LetterTo - My Profile</title>
+	<meta property="og:url" content="/dashboard/profile" />
+	<meta property="og:title" content="LetterTo - My Profile" />
+	<meta name="twitter:title" content="LetterTo - My Profile" />
+</svelte:head>
 
 {#if windowLoad}
 	<div class="preloader">
