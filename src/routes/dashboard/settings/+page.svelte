@@ -49,7 +49,7 @@
 		<div class="container">
 			<div class="desc">
 				<h1>My Settings</h1>
-				<p>Choose want you to manage here...</p>
+				<p>Choose what you want to manage here...</p>
 			</div>
 
 			<div class="menu">
