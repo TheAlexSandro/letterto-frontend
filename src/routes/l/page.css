@@ -471,6 +471,11 @@
 		margin-top: 80px;
 	}
 
+	.letter .meta-row {
+		align-items: center;
+		gap: 15px;
+	}
+
 	.letter-wrap .progress-bar {
 		height: 6px;
 	}
@@ -479,13 +484,21 @@
 		min-width: 30%;
 	}
 
+	.letter-wrap .music-info .title {
+		font-size: 13px;
+	}
+
+	.letter-wrap .music-info .artist {
+		font-size: 12px;
+	}
+
 	.letter-wrap .music-left img {
 		width: 80px;
 		height: 80px;
 	}
 
 	.letter-wrap .right img {
-		width: 70px;
+		width: 80px;
 	}
 
 	.letter-wrap .music-play {
