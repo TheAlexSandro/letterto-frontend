@@ -66,7 +66,7 @@
 	};
 </script>
 
-<section class="letter">
+<section class="l">
 	<div class="top">
 		<div class="info">
 			<div class="s">
@@ -147,7 +147,7 @@
 </section>
 
 <style>
-	.letter {
+	.l {
 		background: #fff;
 		border-radius: 16px;
 		min-width: 35%;
@@ -160,12 +160,12 @@
 		transition: all 0.2s ease-in-out;
 	}
 
-	.letter:hover {
+	.l:hover {
 		box-shadow: 0 4px 24px rgba(109, 40, 217, 0.3);
 		transition: all 0.2s ease-in-out;
 	}
 
-	.letter .top {
+	.l .top {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
@@ -174,7 +174,7 @@
 		border-bottom: 1px solid var(--color-border);
 	}
 
-	.letter .info {
+	.l .info {
 		display: flex;
 		flex-direction: row;
 		border-radius: 10px;
@@ -183,7 +183,7 @@
 		margin-bottom: 0;
 	}
 
-	.letter .info i {
+	.l .info i {
 		font-size: 18px;
 		background: #ede9fe;
 		color: var(--color-primary);
@@ -191,38 +191,38 @@
 		border-radius: 8px;
 	}
 
-	.letter .info .s {
+	.l .info .s {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: 10px;
 	}
 
-	.letter .info .c {
+	.l .info .c {
 		display: flex;
 		flex-direction: column;
 		font-size: 13px;
 		gap: 2px;
 	}
 
-	.letter .info .c strong {
+	.l .info .c strong {
 		font-weight: var(--font-semibold);
 		margin-right: 10px;
 	}
 
-	.letter .info .c em {
+	.l .info .c em {
 		font-style: normal;
 		font-weight: var(--font-semibold);
 		color: var(--color-primary);
 	}
 
-	.letter .info .c b {
+	.l .info .c b {
 		font-style: normal;
 		font-weight: var(--font-medium);
 		color: var(--color-text-muted) !important;
 	}
 
-	.letter .top .date {
+	.l .top .date {
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -236,17 +236,17 @@
 		border-left: 1px solid var(--color-border);
 	}
 
-	.letter .top .date span {
+	.l .top .date span {
 		font-size: 13px;
 		font-weight: var(--font-medium);
 	}
 
-	.letter .top .date i {
+	.l .top .date i {
 		font-size: 18px;
 		color: var(--color-primary);
 	}
 
-	.letter .content {
+	.l .content {
 		font-size: 14px;
 		font-weight: var(--font-regular);
 		color: var(--color-text-primary);
@@ -260,12 +260,12 @@
 		cursor: pointer;
 	}
 
-	.letter a {
+	.l a {
 		text-decoration: none;
 		color: var(--color-text-primary);
 	}
 
-	.letter .content .locked {
+	.l .content .locked {
 		display: flex;
 		flex-direction: row;
 		gap: 5px;
@@ -276,11 +276,11 @@
 		justify-content: center;
 	}
 
-	.letter .content .locked i {
+	.l .content .locked i {
 		font-size: 17px;
 	}
 
-	.letter .footer {
+	.l .footer {
 		border-radius: 12px;
 		display: flex;
 		flex-direction: row;
@@ -290,14 +290,14 @@
 		padding-right: 16px;
 	}
 
-	.letter .footer .music {
+	.l .footer .music {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		gap: 12px;
 	}
 
-	.letter .footer .music img {
+	.l .footer .music img {
 		width: 80px;
 		height: 80px;
 		object-fit: cover;
@@ -305,7 +305,7 @@
 		flex-shrink: 0;
 	}
 
-	.letter .footer .music .desc {
+	.l .footer .music .desc {
 		display: flex;
 		flex-direction: column;
 		gap: 3px;
@@ -313,18 +313,18 @@
 		padding: 5px 0;
 	}
 
-	.letter .footer .music .desc .title {
+	.l .footer .music .desc .title {
 		font-size: 15px;
 		font-weight: var(--font-semibold);
 	}
 
-	.letter .footer .music .desc .artist {
+	.l .footer .music .desc .artist {
 		font-size: 13px;
 		color: var(--color-text-secondary);
 		margin: 0;
 	}
 
-	.letter .footer .music .desc .song {
+	.l .footer .music .desc .song {
 		display: inline-flex;
 		align-items: center;
 		gap: 4px;
@@ -338,24 +338,24 @@
 		margin-top: 2px;
 	}
 
-	.letter .footer .music .desc .song i {
+	.l .footer .music .desc .song i {
 		font-size: 13px;
 	}
 
-	.letter .footer .deezer-side {
+	.l .footer .deezer-side {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		gap: 10px;
 	}
 
-	.letter .footer .deezer-side img {
+	.l .footer .deezer-side img {
 		width: 40px;
 		object-fit: contain;
 		margin: 0;
 	}
 
-	/* .letter .footer .deezer-side button {
+	/* .l .footer .deezer-side button {
 		display: flex;
 		align-items: center;
 		gap: 6px;
@@ -372,23 +372,23 @@
 		cursor: pointer;
 	}
 
-	.letter .footer .deezer-side button:hover {
+	.l .footer .deezer-side button:hover {
 		background: #f3eeff;
 		color: var(--color-primary);
 		border-color: var(--color-primary);
 	}
 
-	.letter .footer .deezer-side button i {
+	.l .footer .deezer-side button i {
 		font-size: 14px;
 	} */
 
-	.letter .btn {
+	.l .btn {
 		display: flex;
 		flex-direction: row;
 		gap: 10px;
 	}
 
-	.letter .btn button {
+	.l .btn button {
 		padding: 7px;
 		border-radius: 5px;
 		outline: 0;
@@ -398,59 +398,59 @@
 		align-items: center;
 	}
 
-	.letter .btn button i {
+	.l .btn button i {
 		color: white;
 		font-size: 15px;
 	}
 
-	.letter .btn button:hover {
+	.l .btn button:hover {
 		opacity: 0.8;
 	}
 
-	.letter .btn button:disabled {
+	.l .btn button:disabled {
 		opacity: 0.6;
 		cursor: default;
 	}
 
-	.letter .btn button:disabled:hover {
+	.l .btn button:disabled:hover {
 		cursor: default;
 	}
 
-	.letter .btn #blue {
+	.l .btn #blue {
 		background: var(--color-accent);
 	}
 
-	.letter .btn #red {
+	.l .btn #red {
 		background: var(--color-danger);
 	}
 
-	.letter .btn #trans {
+	.l .btn #trans {
 		background: #4e6689;
 	}
 
 	@media screen and (max-width: 600px) {
-		.letter {
+		.l {
 			min-width: 100%;
 			max-width: 100%;
 		}
 
-		.letter .footer .deezer-side img {
+		.l .footer .deezer-side img {
 			width: 40px;
 			margin: 0;
 		}
 
-		.letter .footer .music img {
+		.l .footer .music img {
 			width: 70px;
 			height: 70px;
 		}
 
-		.letter .footer .music {
+		.l .footer .music {
 			height: 80px;
 		}
 	}
 
 	@media screen and (min-width: 768px) and (max-width: 1024px) {
-		.letter {
+		.l {
 			min-width: 55%;
 			max-width: 55%;
 		}

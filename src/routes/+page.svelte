@@ -4,20 +4,6 @@
 	import './page.css';
 	import { resolveFont } from '$lib/utils/utils';
 	import deezer from '$lib/assets/deezer2.svg';
-
-	type Card = {
-		letter_id: string;
-		message: string;
-		music_profile: string;
-		music_title: string;
-		created_at: string;
-		recipient_name: string;
-		sender: string;
-		font: string;
-		is_locked: boolean;
-	};
-
-	let cards: Card[] = $state([]);
 </script>
 
 <Navbar />
@@ -32,13 +18,10 @@
 				anyway — no name, no fear, just honesty.
 			</p>
 
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 			<button onclick={() => { window.location.href = '/find' }}>Find a letter</button>
 		</div>
 
-		<div class="letter">
+		<div class="lla">
 			<div class="top">
 				<div class="info">
 					<i class="ri-mail-line"></i>
