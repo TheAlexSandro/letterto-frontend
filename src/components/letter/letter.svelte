@@ -13,7 +13,6 @@
 		edit = null
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
-	import './page.css';
 	import { resolveFont } from '$lib/utils/utils';
 	import { stripHTML } from '$lib/utils/utils';
 	import { onMount } from 'svelte';
@@ -146,3 +145,314 @@
 		</div>
 	</div>
 </section>
+
+<style>
+	.letter {
+		background: #fff;
+		border-radius: 16px;
+		min-width: 35%;
+		max-width: 35%;
+		padding: 16px;
+		border: 1px solid var(--color-border);
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		transition: all 0.2s ease-in-out;
+	}
+
+	.letter:hover {
+		box-shadow: 0 4px 24px rgba(109, 40, 217, 0.3);
+		transition: all 0.2s ease-in-out;
+	}
+
+	.letter .top {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 10px;
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.letter .info {
+		display: flex;
+		flex-direction: row;
+		border-radius: 10px;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 0;
+	}
+
+	.letter .info i {
+		font-size: 18px;
+		background: #ede9fe;
+		color: var(--color-primary);
+		padding: 8px;
+		border-radius: 8px;
+	}
+
+	.letter .info .s {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.letter .info .c {
+		display: flex;
+		flex-direction: column;
+		font-size: 13px;
+		gap: 2px;
+	}
+
+	.letter .info .c strong {
+		font-weight: var(--font-semibold);
+		margin-right: 10px;
+	}
+
+	.letter .info .c em {
+		font-style: normal;
+		font-weight: var(--font-semibold);
+		color: var(--color-primary);
+	}
+
+	.letter .info .c b {
+		font-style: normal;
+		font-weight: var(--font-medium);
+		color: var(--color-text-muted) !important;
+	}
+
+	.letter .top .date {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		padding: 0;
+		padding-left: 10px;
+		border-left: none;
+		margin: 0;
+		height: 40px;
+		line-height: 1;
+		color: var(--color-text-secondary);
+		border-left: 1px solid var(--color-border);
+	}
+
+	.letter .top .date span {
+		font-size: 13px;
+		font-weight: var(--font-medium);
+	}
+
+	.letter .top .date i {
+		font-size: 18px;
+		color: var(--color-primary);
+	}
+
+	.letter .content {
+		font-size: 14px;
+		font-weight: var(--font-regular);
+		color: var(--color-text-primary);
+		line-height: 1.6;
+		padding: 4px 2px;
+		min-height: 15vh;
+		user-select: none;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		border-bottom: 1px solid var(--color-border);
+		cursor: pointer;
+	}
+
+	.letter a {
+		text-decoration: none;
+		color: var(--color-text-primary);
+	}
+
+	.letter .content .locked {
+		display: flex;
+		flex-direction: row;
+		gap: 5px;
+		align-items: center;
+		background: #ede9fe;
+		padding: 10px;
+		border-radius: 5px;
+		justify-content: center;
+	}
+
+	.letter .content .locked i {
+		font-size: 17px;
+	}
+
+	.letter .footer {
+		border-radius: 12px;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		overflow: hidden;
+		padding-right: 16px;
+	}
+
+	.letter .footer .music {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.letter .footer .music img {
+		width: 80px;
+		height: 80px;
+		object-fit: cover;
+		border-radius: 10px;
+		flex-shrink: 0;
+	}
+
+	.letter .footer .music .desc {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		margin: 0;
+		padding: 5px 0;
+	}
+
+	.letter .footer .music .desc .title {
+		font-size: 15px;
+		font-weight: var(--font-semibold);
+	}
+
+	.letter .footer .music .desc .artist {
+		font-size: 13px;
+		color: var(--color-text-secondary);
+		margin: 0;
+	}
+
+	.letter .footer .music .desc .song {
+		display: inline-flex;
+		align-items: center;
+		gap: 4px;
+		padding: 3px 8px;
+		background: #6e42d32b;
+		color: var(--color-primary);
+		font-size: 12px;
+		font-weight: var(--font-medium);
+		border-radius: 20px;
+		width: fit-content;
+		margin-top: 2px;
+	}
+
+	.letter .footer .music .desc .song i {
+		font-size: 13px;
+	}
+
+	.letter .footer .deezer-side {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.letter .footer .deezer-side img {
+		width: 40px;
+		object-fit: contain;
+		margin: 0;
+	}
+
+	/* .letter .footer .deezer-side button {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		border: 1px solid var(--color-border);
+		border-radius: 20px;
+		padding: 4px 12px;
+		font-size: 13px;
+		font-weight: var(--font-medium);
+		color: var(--color-text-primary);
+		text-decoration: none;
+		white-space: nowrap;
+		transition: background 0.2s;
+		background: #fff;
+		cursor: pointer;
+	}
+
+	.letter .footer .deezer-side button:hover {
+		background: #f3eeff;
+		color: var(--color-primary);
+		border-color: var(--color-primary);
+	}
+
+	.letter .footer .deezer-side button i {
+		font-size: 14px;
+	} */
+
+	.letter .btn {
+		display: flex;
+		flex-direction: row;
+		gap: 10px;
+	}
+
+	.letter .btn button {
+		padding: 7px;
+		border-radius: 5px;
+		outline: 0;
+		border: 0;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+	}
+
+	.letter .btn button i {
+		color: white;
+		font-size: 15px;
+	}
+
+	.letter .btn button:hover {
+		opacity: 0.8;
+	}
+
+	.letter .btn button:disabled {
+		opacity: 0.6;
+		cursor: default;
+	}
+
+	.letter .btn button:disabled:hover {
+		cursor: default;
+	}
+
+	.letter .btn #blue {
+		background: var(--color-accent);
+	}
+
+	.letter .btn #red {
+		background: var(--color-danger);
+	}
+
+	.letter .btn #trans {
+		background: #4e6689;
+	}
+
+	@media screen and (max-width: 600px) {
+		.letter {
+			min-width: 100%;
+			max-width: 100%;
+		}
+
+		.letter .footer .deezer-side img {
+			width: 40px;
+			margin: 0;
+		}
+
+		.letter .footer .music img {
+			width: 70px;
+			height: 70px;
+		}
+
+		.letter .footer .music {
+			height: 80px;
+		}
+	}
+
+	@media screen and (min-width: 768px) and (max-width: 1024px) {
+		.letter {
+			min-width: 55%;
+			max-width: 55%;
+		}
+	}
+</style>
