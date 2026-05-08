@@ -9,7 +9,7 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json();
+		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		isLog = data['status_code'] !== 200 ? false : true;
 	});

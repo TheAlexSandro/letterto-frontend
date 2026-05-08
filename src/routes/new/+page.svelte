@@ -3,15 +3,16 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty } from '$lib/utils/utils';
 	import { tick } from 'svelte';
+	import type Quill from 'quill';
 
 	type Track = {
 		id: number;
 		title: string;
 		artist: { name: string };
 		preview: string;
-		album: { cover_small: string; cover_medium: string };
+		album: { cover_small: string; cover_medium: string, cover_big: string };
 	};
 
 	type Checkbox = 'viewOnce' | 'pass' | 'showPass' | 'adv' | 'showSend' | 'showRecp';
@@ -54,6 +55,8 @@
 	let dropdownClosed = $state(false);
 	let uploadRef: HTMLElement | null = $state(null);
 	let copied = $state(false);
+	let editor: HTMLDivElement | null = $state(null);
+	let quill: Quill | null = $state(null);
 
 	async function scrollToError() {
 		await tick();
@@ -87,6 +90,50 @@
 		}
 
 		windowLoad = false;
+		const { default: Quill } = await import('quill');
+		const icns = Quill.import('ui/icons') as any;
+		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
+		icns['redo'] = '<i class="ri-arrow-go-forward-line"></i>';
+
+		quill = new Quill(editor as HTMLDivElement, {
+			theme: 'snow',
+			placeholder: 'Write something...',
+			modules: {
+				toolbar: {
+					container: [
+						['bold', 'italic', 'underline', 'strike'],
+						[{ list: 'ordered' }, { list: 'bullet' }],
+						[{ align: [] }],
+						['undo', 'redo'],
+						['clean']
+					],
+					handlers: {
+						undo: function () {
+							quill!.history.undo();
+						},
+						redo: function () {
+							quill!.history.redo();
+						}
+					}
+				}
+			}
+		});
+
+		quill.on('text-change', () => {
+			letterMessage = quill?.root.innerHTML ?? '';
+		});
+
+		const toolbar = quill.getModule('toolbar') as any;
+		if (toolbar) {
+			toolbar.addHandler('clean', () => {
+				quill!.root.innerHTML = '';
+				letterMessage = '';
+			});
+		}
+
+		if (quill) {
+			quill.root.innerHTML = letterMessage;
+		}
 		letterId = generateID(8);
 	});
 
@@ -160,6 +207,13 @@
 			currentPlayingId = null;
 			audio = null;
 		});
+	};
+
+	const renderPreview = () => {
+		const plainText = stripHTML(letterMessage);
+		if (!plainText.trim()) return 'Lorem ipsum, dolor sit amet consectetur adipisicing.';
+
+		return plainText.length > 52 ? plainText.substring(0, 52) + '...' : plainText;
 	};
 
 	const clearSelected = () => {
@@ -280,7 +334,7 @@
 		fd.append('recipient_name', recipientName);
 		fd.append('message', letterMessage);
 		fd.append('music', String(selected?.id));
-		fd.append('music_profile', String(selected?.album.cover_small));
+		fd.append('music_profile', String(selected?.album.cover_big));
 		fd.append('music_title', String(selected?.title));
 		fd.append('privacy', privacy);
 		fd.append('password', password);
@@ -368,13 +422,15 @@
 						disabled={buttonLoad}
 					/>
 					<label for="message">Your Message</label>
-					<textarea
-						name="message"
-						id="message"
-						required
-						bind:value={letterMessage}
-						disabled={buttonLoad}
-					></textarea>
+					<div class="editor" bind:this={editor}></div>
+					<div class="output">
+						<span>Output:</span>
+						{#if isEmpty(letterMessage)}
+							Nothing to show...
+						{:else}
+							{@html letterMessage}
+						{/if}
+					</div>
 					<div class="music-picker">
 						<label for="music">Music</label>
 						<div class="input-wrap">
@@ -690,17 +746,20 @@
 											<option value="dancing-sc">Dancing Script</option>
 											<option value="cv">Caveat</option>
 											<option value="ind-fl">Indie Flower</option>
+											<option value="playwrite-de">Playwrite DE SAS</option>
+											<option value="alike">Alike</option>
 										</select>
 										<i class="ri-arrow-down-s-line"></i>
 									</div>
 								</div>
 
-								<div class="preview" style="font-family: '{resolveFont(font)}', cursive;">
-									{!letterMessage
-										? 'Lorem ipsum, dolor sit amet consectetur adipisicing.'
-										: letterMessage.length > 52
-											? letterMessage.substring(0, 52)
-											: letterMessage}
+								<div class="helper-text" style="margin-top: 0;">
+									For some reason, we removed the text effects from your message, but your effects
+									will still be saved.
+								</div>
+
+								<div class="preview" style="font-family: {resolveFont(font)};">
+									{@html renderPreview()}
 								</div>
 							</div>
 
@@ -840,3 +899,17 @@
 
 	<Footer />
 {/if}
+
+<style>
+	section.new :global(.ql-toolbar.ql-snow) {
+		background-color: #fff !important;
+		margin-bottom: 0 !important;
+		border-bottom: -10px !important;
+		border-radius: 5px;
+	}
+
+	section.new :global(.ql-container.ql-snow) {
+		margin-top: 0 !important;
+		border-top: 1px solid #ccc !important;
+	}
+</style>

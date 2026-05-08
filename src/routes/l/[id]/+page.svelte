@@ -7,6 +7,7 @@
 	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
 	import { DotLottieSvelte } from '@lottiefiles/dotlottie-svelte';
 	import Fire from '$lib/assets/Fire.lottie';
+	import deezer from '$lib/assets/deezer.svg';
 
 	type Card = {
 		user_id: string;
@@ -210,15 +211,18 @@
 							</div>
 						</div>
 					</div>
-					<button type="button" class="music-play" onclick={togglePlay} aria-label="audio">
-						{#if audioLoad}
-							<div class="spinner"></div>
-						{:else if audioPlayed}
-							<i class="ri-pause-fill"></i>
-						{:else}
-							<i class="ri-play-fill"></i>
-						{/if}
-					</button>
+					<div class="right">
+						<img src={deezer} alt="deezer" />
+						<button type="button" class="music-play" onclick={togglePlay} aria-label="audio">
+							{#if audioLoad}
+								<div class="spinner"></div>
+							{:else if audioPlayed}
+								<i class="ri-pause-fill"></i>
+							{:else}
+								<i class="ri-play-fill"></i>
+							{/if}
+						</button>
+					</div>
 				</div>
 
 				<div class="meta-row">
@@ -270,8 +274,8 @@
 					{/if}
 
 					<div class="body">
-						<p class="message" style="font-family: '{resolveFont(String(card?.font))}', cursive;">
-							{card?.message}
+						<p class="message" style="font-family: {resolveFont(String(card?.font))};">
+							{@html card?.message}
 						</p>
 					</div>
 

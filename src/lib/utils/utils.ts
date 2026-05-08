@@ -3,13 +3,16 @@ const CACHE_TTL = 1000 * 60 * 3;
 
 export const resolveFont = (font: string) => {
 	const dt = {
-		'playwrite-nz': 'Playwrite NZ Guides',
+		'playwrite-nz': `"Playwrite NZ Guides"; cursive`,
 		cause: 'Cause',
-		'comic-neue': 'Comic Neue',
-		'playwrite-br': 'Playwrite BR',
-		'dancing-sc': 'Dancing Script',
+		'comic-neue': `"Comic Neue"; cursive`,
+		'playwrite-br': `"Playwrite BR"; cursive`,
+		'dancing-sc': `"Dancing Script"; cursive`,
 		cv: 'Caveat',
-		'ind-fl': 'Indie Flower'
+		'ind-fl': `"Indie Flower"; cursive`,
+		'playwrite-de': `"Playwrite DE SAS"; cursive`,
+		'playwrite-no': `"Playwrite NO; cursive"`,
+		alike: `"Alike"; serif`
 	} as const;
 	return dt[font as keyof typeof dt];
 };
@@ -30,4 +33,15 @@ export const getFreshPreview = async (trackId: number): Promise<string | null> =
 
 	previewCache.set(trackId, { url, fetchedAt: now });
 	return url;
+};
+
+export const stripHTML = (html: string) => {
+	const doc = new DOMParser().parseFromString(html, 'text/html');
+	return doc.body.textContent || '';
+};
+
+export const isEmpty = (html: string) => {
+	if (!html) return true;
+	const cleanText = html.replace(/<[^>]*>/g, '').trim();
+	return cleanText === '';
 };

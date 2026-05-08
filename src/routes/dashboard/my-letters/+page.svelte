@@ -3,7 +3,7 @@
 	import Footer from '../../../components/footer/footer.svelte';
 	import './page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont } from '$lib/utils/utils';
+	import Letter from '../../../components/letter/letter.svelte';
 
 	type Card = {
 		id: string;
@@ -22,8 +22,37 @@
 	let globalErr = $state('');
 	let cards: Card[] = $state([]);
 	let windowWidth = $state(0);
-	let copied = $state(false);
-	let buttonLoad = $state(false);
+	let total = $state(0);
+	let offset = $state(1);
+	let isFetching = $state(false);
+	let sentinel: HTMLElement | null = $state(null);
+
+	const fetchLetters = async () => {
+		if (isFetching) return;
+		if (cards.length >= total && total !== 0) return;
+
+		isFetching = true;
+
+		const ftLetter = await fetch(`/api/letters?path=myLetters&offset=${offset}`);
+		const dataLetter = (await ftLetter.json()) as App.Platform['resp'];
+
+		if (dataLetter['status_code'] !== 200) {
+			if (dataLetter['error_code'] === 'UNAUTHORIZED') {
+				window.location.href = '/auth';
+				return;
+			}
+			globalErr =
+				dataLetter['error_code'] === 'BAD_REQUEST'
+					? `Something went wrong, please reload this page.`
+					: ``;
+		} else {
+			cards = [...cards, ...dataLetter['data']];
+			offset++;
+		}
+
+		isFetching = false;
+		letterLoad = false;
+	};
 
 	onMount(() => {
 		windowWidth = window.innerWidth;
@@ -43,60 +72,33 @@
 
 			windowLoad = false;
 
-			const ftLetter = await fetch('/api/letters?path=myLetters');
-			const dataLetter = (await ftLetter.json()) as App.Platform['resp'];
+			// Fetch total dulu
+			const ftT = await fetch('/api/letters?path=total');
+			const dT = (await ftT.json()) as App.Platform['resp'];
+			total = dT['data']['total'];
 
-			if (dataLetter['status_code'] !== 200) {
-				if (dataLetter['error_code'] === 'UNAUTHORIZED') {
-					window.location.href = '/auth';
-					return;
-				}
-				globalErr =
-					dataLetter['error_code'] === 'BAD_REQUEST'
-						? `Something went wrong, please reload this page.`
-						: ``;
-				letterLoad = false;
-			} else {
-				cards = dataLetter['data'];
-				letterLoad = false;
-			}
+			// Fetch pertama
+			await fetchLetters();
+
+			// Setup IntersectionObserver setelah data pertama dimuat
+			const observer = new IntersectionObserver(
+				(entries) => {
+					if (entries[0].isIntersecting) {
+						fetchLetters();
+					}
+				},
+				{ threshold: 1.0 }
+			);
+
+			if (sentinel) observer.observe(sentinel);
+
+			return () => observer.disconnect();
 		})();
 
 		return () => {
 			window.removeEventListener('resize', handleResize);
 		};
 	});
-
-	const copyLink = (letterId: string) => {
-		const url = `${window.location.hostname}/l/${letterId}`;
-		navigator.clipboard.writeText(url).catch(() => {});
-		copied = true;
-		setTimeout(() => (copied = false), 1800);
-	};
-
-	const editOpen = (letterId: string) => {
-		window.location.href = `/l/edit/${letterId}`;
-	};
-
-	const delLetter = async (letterId: string) => {
-		const c = window.confirm(
-			'Are you sure you want to delete this letter? The message, the image/video in this letter will also be deleted.'
-		);
-		if (c) {
-			letterLoad = true;
-			const ft = await fetch(`/api/letters?path=remove&id=${letterId}`);
-			const jsons = (await ft.json()) as App.Platform['resp'];
-
-			if (jsons['status_code'] !== 200) {
-				if (jsons['error_code'] === 'UNAUTHORIZED') {
-					window.location.href = '/auth';
-					return;
-				}
-			}
-
-			window.location.reload();
-		}
-	};
 </script>
 
 <svelte:head>
@@ -131,62 +133,30 @@
 			{:else if cards.length > 0}
 				<div class="card-list">
 					{#each cards as card}
-						<div class="card">
-							<div class="profile">
-								<div class="left">
-									<img src={card.music_profile} alt="music profile" />
-									<div class="info">
-										<span>From: You</span>
-										<span id="t"
-											>To: {card.recipient_name.length > 7
-												? `${card.recipient_name.substring(0, 7)}...`
-												: card.recipient_name}</span
-										>
-									</div>
-								</div>
-								<div class="btn">
-									<button
-										id="trans"
-										aria-labelledby="copy"
-										onclick={() => copyLink(card.id)}
-										disabled={copied || buttonLoad}
-									>
-										{#if !copied}
-											<i class="ri-file-copy-line"></i>
-										{:else}
-											<i class="ri-check-line"></i>
-										{/if}
-									</button>
-									<button
-										disabled={buttonLoad}
-										id="blue"
-										aria-labelledby="edit"
-										onclick={() => editOpen(card.id)}><i class="ri-pencil-line"></i></button
-									>
-									<button
-										disabled={buttonLoad}
-										id="red"
-										aria-labelledby="remove"
-										onclick={() => delLetter(card.id)}><i class="ri-delete-bin-line"></i></button
-									>
-								</div>
-							</div>
-							<div class="content" style="font-family: '{resolveFont(card.font)}', cursive;">
-								<a href={`/l/${card.id}`}><p>{card.message}</p></a>
-							</div>
-							<div class="bottom">
-								<div class="date">{card.created_at}</div>
-								<span
-									><i class="ri-disc-line"></i>
-									{windowWidth <= 400
-										? `${card.music_title.substring(0, 12)}...`
-										: card.music_title.length > 30
-											? card.music_title.substring(0, 30)
-											: card.music_title}
-								</span>
-							</div>
-						</div>
+						<Letter
+							letter_id={card.id}
+							message={card.message}
+							music_profile={card.music_profile}
+							music_title={card.music_title}
+							created_at={card.created_at}
+							recipient_name={card.recipient_name}
+							sender={card.sender}
+							font={card.font}
+							artis="Adele"
+							edit="true"
+						/>
 					{/each}
+				</div>
+
+				<div bind:this={sentinel} class="sentinel">
+					{#if isFetching}
+						<div class="spinner-wrap">
+							<span class="spinner"></span>
+							<p>Loading...</p>
+						</div>
+					{:else if cards.length >= total}
+						<p class="no-result">All letters has been loaded.</p>
+					{/if}
 				</div>
 			{/if}
 		</div>

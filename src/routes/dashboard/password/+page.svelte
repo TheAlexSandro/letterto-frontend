@@ -28,6 +28,8 @@
 	const handleSubmit = async (e: Event) => {
 		e.preventDefault();
 		buttonLoad = true;
+		oldPassErr = '';
+		passErr = '';
 		const ft = await fetch(`/api/user?path=edit&password=${password}&old_password=${old_password}`);
 		const ftJson = await ft.json() as App.Platform['resp'];
 

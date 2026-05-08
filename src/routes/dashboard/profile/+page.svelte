@@ -46,6 +46,7 @@
 		e.preventDefault();
 		buttonLoad = true;
 		noChange = false;
+		usernameErr = '';
 		const ft = await fetch(`/api/user?path=edit&name=${name}&username=${username}`);
 		const ftJson = await ft.json() as App.Platform['resp'];
 

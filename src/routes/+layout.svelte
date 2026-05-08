@@ -48,3 +48,15 @@
 {/if}
 
 {@render children()}
+
+<style>
+	:global(.ql-align-center) {
+		text-align: center;
+	}
+	:global(.ql-align-right) {
+		text-align: right;
+	}
+	:global(.ql-align-justify) {
+		text-align: justify;
+	}
+</style>

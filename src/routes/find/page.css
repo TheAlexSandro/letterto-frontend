@@ -1,0 +1,168 @@
+.find {
+	min-height: calc(100vh - 50px);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 80px;
+	padding: 40px 20px;
+}
+
+.find .cont {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 1100px; /* diperlebar supaya kartu bisa jejer */
+}
+
+.find .cont h1 {
+	font-weight: var(--font-medium);
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.find form {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+	background: #fff;
+	border-radius: 6px;
+	outline: none;
+	box-sizing: border-box;
+	transition: all 0.3s ease-in-out;
+	box-shadow: 0 4px 24px rgba(109, 40, 217, 0.3);
+	justify-content: space-between;
+	padding: 8px;
+	align-items: center;
+	max-width: 600px; /* search bar tetap sempit */
+	width: 100%;
+	align-self: center;
+}
+
+.find form i {
+	padding-left: 5px;
+	font-size: 17px;
+	color: var(--color-text-muted);
+}
+
+.find form input {
+	padding: 10px 0;
+	width: 100%;
+	border: 0;
+	outline: 0;
+	font-family: inherit;
+}
+
+.find form button {
+	display: flex;
+	align-items: center;
+	outline: 0;
+	border-radius: 8px;
+	border: 0;
+	color: #fff;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.3s ease-in-out;
+	font-family: inherit;
+	background: var(--color-accent);
+	padding: 10px 20px;
+}
+
+.find form button:hover {
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+	opacity: 0.8;
+}
+
+.find form .button-spinner {
+	width: 16px;
+	height: 16px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.find form button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.find form button:disabled:hover {
+	box-shadow: none;
+}
+
+.find .spinner-wrap {
+	display: flex;
+	flex-direction: row;
+	gap: 7px;
+	align-items: center;
+}
+
+.find .spinner {
+	width: 30px;
+	height: 30px;
+	border: 2px solid transparent;
+	border-top-color: var(--color-accent);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+/* ── Results: kartu jejer ── */
+.find .results {
+	margin-top: 30px;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 16px;
+	width: 100%;
+	justify-content: flex-start;
+}
+
+/* Override min/max-width dari letter/page.css
+   supaya kartu responsive di grid ini */
+.find .results .letter {
+	box-sizing: border-box;
+	flex: 1 1 300px;
+	min-width: unset !important;
+	max-width: calc(33.333% - 11px) !important; /* 3 kolom di desktop */
+}
+
+.find .results .no-result {
+	color: var(--color-text-muted);
+	font-size: 15px;
+	width: 100%;
+	text-align: center;
+}
+
+.find .sentinel {
+	display: flex;
+	justify-content: center;
+	padding: 8px 0 4px;
+	width: 100%;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media screen and (max-width: 900px) {
+	.find .results .letter {
+		max-width: calc(50% - 8px) !important;
+	}
+}
+
+@media screen and (max-width: 600px) {
+	.find {
+		margin-top: 50px;
+	}
+
+	.find .cont {
+		width: 100%;
+	}
+
+	.find .results .letter {
+		max-width: 100% !important; /* 1 kolom di HP */
+		flex: 1 1 100%;
+	}
+}

@@ -4,15 +4,16 @@
 	import Footer from '../../../../components/footer/footer.svelte';
 	import '../../../new/page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont, getFreshPreview } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty } from '$lib/utils/utils';
 	import { tick } from 'svelte';
+	import type Quill from 'quill';
 
 	type Track = {
 		id: number;
 		title: string;
 		artist: { name: string };
 		preview: string;
-		album: { cover_medium: string };
+		album: { cover_big: string };
 	};
 
 	type Checkbox = 'viewOnce' | 'pass' | 'showPass' | 'adv' | 'showSend' | 'showRecp';
@@ -63,6 +64,8 @@
 
 	let videoDel = $state(false);
 	let imageDel = $state(false);
+	let editor: HTMLDivElement | null = $state(null);
+	let quill: Quill | null = $state(null);
 
 	async function scrollToError() {
 		await tick();
@@ -110,7 +113,7 @@
 			title: letData['music_title'],
 			artist: { name: letData['artist'] },
 			preview: '',
-			album: { cover_medium: letData['music_profile'] }
+			album: { cover_big: letData['music_profile'] }
 		};
 		query = `${selected.title} — ${selected.artist.name}`;
 		if (letData['image'] !== '-') {
@@ -133,7 +136,58 @@
 		isBurned = letData['is_burned'] === 'yes' ? true : false;
 
 		windowLoad = false;
+		const { default: Quill } = await import('quill');
+		const icns = Quill.import('ui/icons') as any;
+		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
+		icns['redo'] = '<i class="ri-arrow-go-forward-line"></i>';
+
+		quill = new Quill(editor as HTMLDivElement, {
+			theme: 'snow',
+			placeholder: 'Write something...',
+			modules: {
+				toolbar: {
+					container: [
+						['bold', 'italic', 'underline', 'strike'],
+						[{ list: 'ordered' }, { list: 'bullet' }],
+						[{ align: [] }],
+						['undo', 'redo'],
+						['clean']
+					],
+					handlers: {
+						undo: function () {
+							quill!.history.undo();
+						},
+						redo: function () {
+							quill!.history.redo();
+						}
+					}
+				}
+			}
+		});
+
+		quill.on('text-change', () => {
+			letterMessage = quill?.root.innerHTML ?? '';
+		});
+
+		const toolbar = quill.getModule('toolbar') as any;
+		if (toolbar) {
+			toolbar.addHandler('clean', () => {
+				quill!.root.innerHTML = '';
+				letterMessage = '';
+			});
+		}
+
+		if (quill) {
+			quill.root.innerHTML = letterMessage;
+		}
 	});
+
+	const renderPreview = () => {
+		const plainText = stripHTML(letterMessage);
+		if (!plainText.trim()) return 'Lorem ipsum, dolor sit amet consectetur adipisicing.';
+
+		return plainText.length > 52 ? plainText.substring(0, 52) + '...' : plainText;
+	};
 
 	const search = () => {
 		if (!query.trim()) {
@@ -250,11 +304,15 @@
 	const clearFile = (type: 'image' | 'video') => {
 		if (type === 'image') {
 			imageFile = null;
-			if (imagePreview) { imageDel = true };
+			if (imagePreview) {
+				imageDel = true;
+			}
 			imagePreview = null;
 		} else {
 			videoFile = null;
-			if (videoPreview) { videoDel = true };
+			if (videoPreview) {
+				videoDel = true;
+			}
 			videoPreview = null;
 		}
 	};
@@ -344,7 +402,7 @@
 		fd.append('recipient_name', recipientName);
 		fd.append('message', letterMessage);
 		fd.append('music', String(selected?.id));
-		fd.append('music_profile', String(selected?.album.cover_medium));
+		fd.append('music_profile', String(selected?.album.cover_big));
 		fd.append('music_title', String(selected?.title));
 		fd.append('privacy', privacy);
 		fd.append('password', password ?? '-');
@@ -356,7 +414,7 @@
 		fd.append('image', imageFile ? (imageFile as Blob) : imageDel ? '-' : '');
 		fd.append('video', videoFile ? (videoFile as Blob) : videoDel ? '-' : '');
 		fd.append('new_letterid', letterId);
-		fd.append('is_burned', restore)
+		fd.append('is_burned', restore);
 
 		const ft = await fetch('/api/letters?path=edit', {
 			method: 'POST',
@@ -434,13 +492,15 @@
 						disabled={buttonLoad}
 					/>
 					<label for="message">Your Message</label>
-					<textarea
-						name="message"
-						id="message"
-						required
-						bind:value={letterMessage}
-						disabled={buttonLoad}
-					></textarea>
+					<div class="editor" bind:this={editor}></div>
+					<div class="output">
+						<span>Output:</span>
+						{#if isEmpty(letterMessage)}
+							Nothing to show...
+						{:else}
+							{@html letterMessage}
+						{/if}
+					</div>
 					<div class="music-picker">
 						<label for="music">Music</label>
 						<div class="input-wrap">
@@ -474,7 +534,7 @@
 												onclick={() => select(track)}
 												onkeydown={(e) => e.key === 'Enter' && select(track)}
 											>
-												<img src={track.album.cover_medium} alt={track.title} />
+												<img src={track.album.cover_big} alt={track.title} />
 												<div class="info">
 													<span class="title"
 														>{track.title.length > 40
@@ -511,7 +571,7 @@
 
 						{#if selected}
 							<div class="selected-info">
-								<img src={selected.album.cover_medium} alt={selected.title} />
+								<img src={selected.album.cover_big} alt={selected.title} />
 								<div class="info">
 									<span class="title"
 										>{selected.title.length > 40
@@ -687,7 +747,11 @@
 									<div class="burned">
 										<p>Your letter has been burned, click below to restore.</p>
 										{#if !restore}
-											<button onclick={() => { restore = 'no'; }}>Restore</button>
+											<button
+												onclick={() => {
+													restore = 'no';
+												}}>Restore</button
+											>
 										{:else}
 											<span><i class="ri-check-line"></i> Click on Save Changes to apply.</span>
 										{/if}
@@ -768,17 +832,19 @@
 											<option value="dancing-sc">Dancing Script</option>
 											<option value="cv">Caveat</option>
 											<option value="ind-fl">Indie Flower</option>
+											<option value="playwrite-de">Playwrite DE SAS</option>
+											<option value="alike">Alike</option>
 										</select>
 										<i class="ri-arrow-down-s-line"></i>
 									</div>
 								</div>
 
-								<div class="preview" style="font-family: '{resolveFont(font)}', cursive;">
-									{!letterMessage
-										? 'Lorem ipsum, dolor sit amet consectetur adipisicing.'
-										: letterMessage.length > 52
-											? letterMessage.substring(0, 52)
-											: letterMessage}
+								<div class="helper-text" style="margin-top: 0;">
+									For some reason, we removed the text effects from your message, but your effects will still be saved.
+								</div>
+
+								<div class="preview" style="font-family: {resolveFont(font)};">
+									{@html renderPreview()}
 								</div>
 							</div>
 
@@ -918,3 +984,17 @@
 
 	<Footer />
 {/if}
+
+<style>
+	section.new :global(.ql-toolbar.ql-snow) {
+		background-color: #fff !important;
+		margin-bottom: 0 !important;
+		border-bottom: -10px !important;
+		border-radius: 5px;
+	}
+
+	section.new :global(.ql-container.ql-snow) {
+		margin-top: 0 !important;
+		border-top: 1px solid #ccc !important;
+	}
+</style>

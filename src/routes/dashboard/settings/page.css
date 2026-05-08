@@ -14,9 +14,6 @@
 
 .settings .container .menu {
 	margin-top: 25px;
-	background: #fff;
-	padding: 15px 20px;
-	border: 1px solid var(--color-border);
 	border-radius: 10px;
 	width: 100%;
 	display: flex;
@@ -25,9 +22,10 @@
 }
 
 .settings .container .menu h1 {
-	font-size: 18px;
-	font-weight: var(--font-semibold);
+	font-size: 14px;
+	font-weight: var(--font-regular);
 	margin-bottom: -5px;
+	color: var(--color-text-muted);
 }
 
 .settings .container .menu .item {
@@ -36,14 +34,15 @@
 	padding: 10px 12px;
 	width: 100%;
 	border: 1px solid var(--color-border);
+	background: #fff;
 	border-radius: 5px;
 	outline: 0;
 	cursor: pointer;
 	font-family: inherit;
-	background: transparent;
 }
 
 .settings .container .menu .item .left i {
+	font-family: inherit;
 	margin-right: 5px;
 }
 
@@ -59,7 +58,7 @@
 
 @media (max-width: 768px) {
 	.settings {
-		padding: 0 20px;
+		padding: 0 25px;
 	}
 }
 
@@ -67,10 +66,6 @@
 	.settings {
 		padding: 0 12px;
 		margin-top: 80px;
-	}
-
-	.settings .container .menu {
-		padding: 12px 14px;
 	}
 }
 

@@ -8,11 +8,13 @@ export async function GET({ url, request }) {
 	let password;
 	let edit;
 	let name;
+	let offset;
 	if (path !== 'new') {
 		id = url.searchParams.get('id');
 		password = url.searchParams.get('password');
 		edit = url.searchParams.get('edit');
 		name = url.searchParams.get('recipient_name');
+		offset = url.searchParams.get('offset');
 	}
 
 	const bind =
@@ -23,11 +25,13 @@ export async function GET({ url, request }) {
 				: ['remove', 'burn'].includes(path as string)
 					? `?id=${id}`
 					: path === 'search'
-						? `?recipient_name=${name}`
-						: '';
+						? `?recipient_name=${name}&offset=${offset}`
+						: path === 'myLetters'
+							? `?offset=${offset}`
+							: '';
 
 	const ft = await fetch(`${BACKEND_URL}/letter/${path}${bind}`, {
-		method: ['getInfo', 'myLetters', 'search'].includes(path as string) ? 'GET' : 'POST',
+		method: ['getInfo', 'myLetters', 'search', 'total'].includes(path as string) ? 'GET' : 'POST',
 		credentials: 'include',
 		headers: {
 			Accept: 'application/json',
@@ -62,13 +66,17 @@ export async function POST({ url, request }) {
 	fd.append('show_recipient', (form.get('show_recipient') as string) || '');
 	fd.append('view_once', (form.get('view_once') as string) || '');
 	fd.append('artist', (form.get('artist') as string) || '');
-	fd.append('is_burned', (form.get('is_burned') as string) || '')
+	fd.append('is_burned', (form.get('is_burned') as string) || '');
 
 	const image = form.get('image');
 	const video = form.get('video');
 
-	if (image) { fd.append('image', image); }
-	if (video) { fd.append('video', video); }
+	if (image) {
+		fd.append('image', image);
+	}
+	if (video) {
+		fd.append('video', video);
+	}
 
 	if (path === 'edit') {
 		fd.append('new_letterid', (form.get('new_letterid') as string) || '');
