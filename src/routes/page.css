@@ -265,21 +265,6 @@ main .any .features .card-list .card p {
 	color: var(--color-text-primary);
 }
 
-.lla .content .locked {
-	display: flex;
-	flex-direction: row;
-	gap: 5px;
-	align-items: center;
-	background: #ede9fe;
-	padding: 10px;
-	border-radius: 5px;
-	justify-content: center;
-}
-
-.lla .content .locked i {
-	font-size: 17px;
-}
-
 .lla .footer {
 	border-radius: 12px;
 	display: flex;

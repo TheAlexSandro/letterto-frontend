@@ -117,7 +117,7 @@
 
 	<a href="/l/{letter_id}" data-sveltekit-preload-data="off">
 		<div class="content">
-			{#if is_locked === 'true'}
+			{#if is_locked}
 				<div class="locked"><i class="ri-lock-line" id="a"></i> Content Locked</div>
 			{:else}
 				<p style="font-family: {resolveFont(font)};">
@@ -270,10 +270,10 @@
 		flex-direction: row;
 		gap: 5px;
 		align-items: center;
-		background: #ede9fe;
 		padding: 10px;
 		border-radius: 5px;
 		justify-content: center;
+		background: var(--color-accent-light);
 	}
 
 	.l .content .locked i {
