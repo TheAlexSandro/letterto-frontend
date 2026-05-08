@@ -4,7 +4,6 @@
 	import './page.css';
 	import { resolveFont } from '$lib/utils/utils';
 	import deezer from '$lib/assets/deezer2.svg';
-	import '../components/letter/page.css';
 
 	type Card = {
 		letter_id: string;
