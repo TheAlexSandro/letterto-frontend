@@ -15,6 +15,7 @@
 		recipient_name: string;
 		music_profile: string;
 		music_title: string;
+		artist: string;
 	};
 
 	let windowLoad = $state(true);
@@ -71,16 +72,10 @@
 			}
 
 			windowLoad = false;
-
-			// Fetch total dulu
 			const ftT = await fetch('/api/letters?path=total');
 			const dT = (await ftT.json()) as App.Platform['resp'];
 			total = dT['data']['total'];
-
-			// Fetch pertama
 			await fetchLetters();
-
-			// Setup IntersectionObserver setelah data pertama dimuat
 			const observer = new IntersectionObserver(
 				(entries) => {
 					if (entries[0].isIntersecting) {
@@ -142,7 +137,7 @@
 							recipient_name={card.recipient_name}
 							sender={card.sender}
 							font={card.font}
-							artis="Adele"
+							artis={card.artist}
 							edit="true"
 						/>
 					{/each}
