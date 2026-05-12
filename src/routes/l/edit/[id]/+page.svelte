@@ -476,8 +476,8 @@
 	<section class="new">
 		<div class="container">
 			<div class="desc">
-				<h1>New Letter</h1>
-				<p>Write a letter to someone...</p>
+				<h1>Edit Letter</h1>
+				<p>What will you change here?</p>
 			</div>
 			{#if !editSuccess}
 				<form method="post" onsubmit={handeSubmit}>
