@@ -18,7 +18,7 @@
 		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
-			window.location.href = '/auth';
+			window.location.href = '/auth?redirect=dashboard/password';
 			return;
 		}
 
@@ -35,7 +35,7 @@
 
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth';
+				window.location.href = '/auth?redirect=dashboard/password';
 				return;
 			}
 			oldPassErr = ftJson['error_code'] === 'INVALID_PASSWORD' ? 'Wrong old password.' : '';

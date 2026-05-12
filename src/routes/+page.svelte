@@ -18,7 +18,18 @@
 				anyway — no name, no fear, just honesty.
 			</p>
 
-			<button onclick={() => { window.location.href = '/find' }}>Find a letter</button>
+			<div class="btn">
+				<button
+					onclick={() => {
+						window.location.href = '/find';
+					}}><i class="ri-search-2-line"></i> Find a letter</button
+				>
+				<button
+					onclick={() => {
+						window.location.href = '/new';
+					}}><i class="ri-mail-line"></i> Create new letter</button
+				>
+			</div>
 		</div>
 
 		<div class="lla">

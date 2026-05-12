@@ -21,7 +21,7 @@
 		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
-			window.location.href = '/auth';
+			window.location.href = '/auth?redirect=dashboard/profile';
 			return;
 		}
 
@@ -52,7 +52,7 @@
 
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth';
+				window.location.href = '/auth?redirect=dashboard/profile';
 				return;
 			}
 			usernameErr = ftJson['error_code'] === 'ID_OCCUPIED' ? ftJson['message'] : '';

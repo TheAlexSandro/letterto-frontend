@@ -4,7 +4,8 @@
 	import Footer from '../../../../components/footer/footer.svelte';
 	import '../../../new/page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont, getFreshPreview, stripHTML, isEmpty } from '$lib/utils/utils';
+	import { beforeNavigate } from '$app/navigation';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 
@@ -77,24 +78,12 @@
 		});
 	}
 
-	const generateID = (length: number) => {
-		const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		const panjangKarakter = characters.length;
-		let result = '';
-
-		for (let i = 0; i < length; i++) {
-			result += characters.charAt(Math.floor(Math.random() * panjangKarakter));
-		}
-
-		return result;
-	};
-
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
-			window.location.href = '/auth';
+			window.location.href = `/auth?redirect=l/edit/${ids}`;
 			return;
 		}
 
@@ -148,7 +137,7 @@
 				toolbar: {
 					container: [
 						['bold', 'italic', 'underline', 'strike'],
-						[{ list: 'ordered' }, { list: 'bullet' }],
+						[{ list: 'ordered' }],
 						[{ align: [] }],
 						['undo', 'redo'],
 						['clean']
@@ -179,6 +168,16 @@
 
 		if (quill) {
 			quill.root.innerHTML = letterMessage;
+		}
+	});
+
+	beforeNavigate(({ cancel }) => {
+		if (editSuccess) return;
+		const confirm = window.confirm(
+			'Are you sure you want to leave this page? Changes will not be saved.'
+		);
+		if (!confirm) {
+			cancel();
 		}
 	});
 
@@ -840,7 +839,8 @@
 								</div>
 
 								<div class="helper-text" style="margin-top: 0;">
-									For some reason, we removed the text effects from your message, but your effects will still be saved.
+									For some reason, we removed the text effects from your message, but your effects
+									will still be saved.
 								</div>
 
 								<div class="preview" style="font-family: {resolveFont(font)};">

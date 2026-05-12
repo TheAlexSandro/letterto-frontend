@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageData } from './$types';
 	import Navbar from '../../components/navbar/navbar.svelte';
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
@@ -6,6 +7,7 @@
 
 	type Auth = 'signUp' | 'signIn';
 
+	let { data }: { data: PageData } = $props();
 	let signUp: boolean = $state(false);
 	let windowLoad = $state(true);
 	let name = $state('');
@@ -21,7 +23,7 @@
 		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] === 200) {
-			window.location.href = '/dashboard';
+			window.location.href = '/dashboard/my-letters';
 			return;
 		}
 		windowLoad = false;
@@ -44,27 +46,27 @@
 			const ft = await fetch(
 				`/api/auth?path=${type}&name=${name}&username=${username}&password=${password}`
 			);
-			const data = await ft.json() as App.Platform['resp'];
+			const datas = await ft.json() as App.Platform['resp'];
 
-			if (data['status_code'] !== 200) {
-				globalErr = ['BAD_REQUEST', 'PARAMETER_EMPTY'].includes(data['error_code'])
+			if (datas['status_code'] !== 200) {
+				globalErr = ['BAD_REQUEST', 'PARAMETER_EMPTY'].includes(datas['error_code'])
 					? 'Something went wrong, please try again later.'
 					: '';
 				usernameErr =
-					data['error_code'] === 'USER_ALREADY_EXIST'
+					datas['error_code'] === 'USER_ALREADY_EXIST'
 						? 'Username occupied.'
-						: data['error_code'] === 'USER_NOT_FOUND'
+						: datas['error_code'] === 'USER_NOT_FOUND'
 							? 'User not found.'
 							: '';
 				passwordErr =
-					data['error_code'] === 'INVALID_PASSWORD'
+					datas['error_code'] === 'INVALID_PASSWORD'
 						? 'Wrong password.'
-						: data['error_code'] === 'LENGTH_TOO_SHORT'
+						: datas['error_code'] === 'LENGTH_TOO_SHORT'
 							? 'Minimum is 8 characaters.'
 							: '';
 				buttonLoad = false;
 			} else {
-				window.location.href = '/dashboard/my-letters';
+				window.location.href = `/${data.redirect}`
 			}
 		} catch {
 			globalErr = 'Something went wrong, please try again later.';

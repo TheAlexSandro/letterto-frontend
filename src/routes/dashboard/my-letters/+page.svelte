@@ -39,7 +39,7 @@
 
 		if (dataLetter['status_code'] !== 200) {
 			if (dataLetter['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth';
+				window.location.href = '/auth?redirect=dashboard/my-letters';
 				return;
 			}
 			globalErr =

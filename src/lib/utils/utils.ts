@@ -45,3 +45,15 @@ export const isEmpty = (html: string) => {
 	const cleanText = html.replace(/<[^>]*>/g, '').trim();
 	return cleanText === '';
 };
+
+export const generateID = (length: number) => {
+	const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+	const panjangKarakter = characters.length;
+	let result = '';
+
+	for (let i = 0; i < length; i++) {
+		result += characters.charAt(Math.floor(Math.random() * panjangKarakter));
+	}
+
+	return result;
+};

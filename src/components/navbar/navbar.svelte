@@ -62,7 +62,7 @@
 			{#if dropdownOpen}
 				<div class="dropdown-menu">
 					{#if !isLog}
-						<a href="/auth" onclick={closeDropdown}>
+						<a href="/auth?redirect=dashboard/my-letters" onclick={closeDropdown}>
 							<i class="ri-user-3-line"></i> Login
 						</a>
 					{:else}
@@ -97,7 +97,7 @@
 		<div class="mobile-dropdown-section">
 			<span class="mobile-dropdown-label">Dashboard</span>
 			{#if !isLog}
-				<a href="/auth" onclick={closeAll}>
+				<a href="/auth?redirect=dashboard/my-letters" onclick={closeAll}>
 					<i class="ri-user-3-line"></i> Login
 				</a>
 			{:else}

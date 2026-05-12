@@ -3,7 +3,8 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import { onMount } from 'svelte';
-	import { resolveFont, getFreshPreview, stripHTML, isEmpty } from '$lib/utils/utils';
+	import { beforeNavigate } from '$app/navigation';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 
@@ -12,7 +13,7 @@
 		title: string;
 		artist: { name: string };
 		preview: string;
-		album: { cover_small: string; cover_medium: string, cover_big: string };
+		album: { cover_small: string; cover_medium: string; cover_big: string };
 	};
 
 	type Checkbox = 'viewOnce' | 'pass' | 'showPass' | 'adv' | 'showSend' | 'showRecp';
@@ -68,24 +69,12 @@
 		});
 	}
 
-	const generateID = (length: number) => {
-		const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		const panjangKarakter = characters.length;
-		let result = '';
-
-		for (let i = 0; i < length; i++) {
-			result += characters.charAt(Math.floor(Math.random() * panjangKarakter));
-		}
-
-		return result;
-	};
-
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
-			window.location.href = '/auth';
+			window.location.href = '/auth?redirect=new';
 			return;
 		}
 
@@ -102,7 +91,7 @@
 				toolbar: {
 					container: [
 						['bold', 'italic', 'underline', 'strike'],
-						[{ list: 'ordered' }, { list: 'bullet' }],
+						[{ list: 'ordered' }],
 						[{ align: [] }],
 						['undo', 'redo'],
 						['clean']
@@ -135,6 +124,16 @@
 			quill.root.innerHTML = letterMessage;
 		}
 		letterId = generateID(8);
+	});
+
+	beforeNavigate(({ cancel }) => {
+		if (createSuccess) return;
+		const confirm = window.confirm(
+			'Are you sure you want to leave this page? Changes will not be saved.'
+		);
+		if (!confirm) {
+			cancel();
+		}
 	});
 
 	const search = () => {
@@ -425,11 +424,13 @@
 					<div class="editor" bind:this={editor}></div>
 					<div class="output">
 						<span>Output:</span>
-						{#if isEmpty(letterMessage)}
-							Nothing to show...
-						{:else}
-							{@html letterMessage}
-						{/if}
+						<div class="ql-editor">
+							{#if isEmpty(letterMessage)}
+								Nothing to show...
+							{:else}
+								{@html letterMessage}
+							{/if}
+						</div>
 					</div>
 					<div class="music-picker">
 						<label for="music">Music</label>
@@ -882,13 +883,30 @@
 								<i class={copied ? 'ri-check-line' : 'ri-file-copy-line'}></i>
 								{#if copied}<span class="tip">Copied!</span>{/if}
 							</button>
+							<button
+								class="copy-btn"
+								class:done={copied}
+								onclick={copyLink}
+								aria-label="Copy link"
+							>
+								<i class={copied ? 'ri-check-line' : 'ri-file-copy-line'}></i>
+								{#if copied}<span class="tip">Copied!</span>{/if}
+							</button>
 						</div>
 
 						<div class="divider"></div>
 
 						<div class="actions">
+							<button
+								class="btn-out"
+								onclick={() => {
+									window.location.href = `/l/edit/${letterId}`;
+								}}
+							>
+								<i class="ri-pencil-line"></i> Edit
+							</button>
 							<button class="btn-pri" onclick={() => viewLetter(letterId)}>
-								<i class="ri-eye-line"></i> View letter
+								<i class="ri-eye-line"></i> View Letter
 							</button>
 						</div>
 					</div>

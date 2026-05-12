@@ -72,8 +72,8 @@
 			<div class="s">
 				<i class="ri-mail-line"></i>
 				<div class="c">
-					<span><strong>From:</strong><em>{sender}</em></span>
-					<span><strong>To:</strong><em>{recipient_name}</em></span>
+					<span><strong>From:</strong><em>{sender ?? "anonymous"}</em></span>
+					<span><strong>To:</strong><em>{recipient_name ?? "anonymous"}</em></span>
 					{#if edit === 'true'}
 						<span><strong>Created:</strong><b>{created_at}</b></span>
 					{/if}

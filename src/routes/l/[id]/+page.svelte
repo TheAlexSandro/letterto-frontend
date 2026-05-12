@@ -18,10 +18,10 @@
 		music_title: string;
 		artist: string;
 		music: string;
-		image?: string;
-		video?: string;
-		sender?: string;
-		recipient_name?: string;
+		image?: string | null;
+		video?: string | null;
+		sender?: string | null;
+		recipient_name?: string | null;
 		is_burned: string;
 	};
 
@@ -70,7 +70,7 @@
 		}
 		card = ftJson['data'];
 
-		if (ftJson['error_code'] !== 'BURNED') {
+		if (!showPassword && ftJson['error_code'] !== 'BURNED') {
 			await fetch(`/api/letters?path=burn&id=${letterId}`);
 		}
 		windowLoad = false;
@@ -190,8 +190,8 @@
 						<img src={card?.music_profile} alt={card?.music_title} />
 						<div class="music-info">
 							<span class="title"
-								>{card!.music_title.length >= 40
-									? card?.music_title.substring(0, 40)
+								>{card!.music_title.length >= 36
+									? card?.music_title.substring(0, 36) + "..."
 									: card?.music_title}</span
 							>
 							<span class="artist">{card?.artist}</span>
@@ -228,15 +228,15 @@
 				<div class="meta-row">
 					<div class="from-to-inline">
 						<div class="avatar">
-							{getInitial(card?.sender === '-' ? 'Anonymous' : card?.sender)}
+							{getInitial(!card?.sender ? 'Anonymous' : card?.sender)}
 						</div>
-						<span class="name-text">{card?.sender === '-' ? 'Anonymous' : card?.sender}</span>
+						<span class="name-text">{!card?.sender ? 'Anonymous' : card?.sender}</span>
 						<i class="ri-arrow-right-line arrow-icon"></i>
 						<div class="avatar avatar-to">
-							{getInitial(card?.recipient_name === '-' ? 'Anonymous' : card?.recipient_name)}
+							{getInitial(!card?.recipient_name ? 'Anonymous' : card?.recipient_name)}
 						</div>
 						<span class="name-text"
-							>{card?.recipient_name === '-' ? 'Anonymous' : card?.recipient_name}</span
+							>{!card?.recipient_name ? 'Anonymous' : card?.recipient_name}</span
 						>
 					</div>
 					<div class="date-chip">
@@ -246,9 +246,9 @@
 				</div>
 
 				<div class="card">
-					{#if card?.image !== '-' || card?.video !== '-'}
+					{#if card?.image || card?.video}
 						<div class="media-wrap">
-							{#if card?.image !== '-' && card?.video !== '-'}
+							{#if card?.image && card?.video}
 								<div class="media-dual">
 									<div class="media-item">
 										<img src={card?.image} aria-hidden="true" alt="Letter image" />
@@ -259,11 +259,11 @@
 										</video>
 									</div>
 								</div>
-							{:else if card?.image !== '-'}
+							{:else if card?.image}
 								<div class="media-single">
 									<img src={card?.image} aria-hidden="true" alt="Letter image" />
 								</div>
-							{:else if card?.video !== '-'}
+							{:else if card?.video}
 								<div class="media-single">
 									<video src={card?.video} controls>
 										<track kind="captions" />
@@ -274,9 +274,11 @@
 					{/if}
 
 					<div class="body">
-						<p class="message" style="font-family: {resolveFont(String(card?.font))};">
-							{@html card?.message}
-						</p>
+						<div class="ql-editor">
+							<p class="message" style="font-family: {resolveFont(String(card?.font))};">
+								{@html card?.message}
+							</p>
+						</div>
 					</div>
 
 					<div class="card-footer">

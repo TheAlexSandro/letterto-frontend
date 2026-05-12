@@ -14,6 +14,7 @@
 		message: string;
 		font: string;
 		is_locked: boolean;
+		artist: string;
 	};
 
 	let buttonLoad = $state(false);
@@ -25,7 +26,8 @@
 	let noResult = $state(false);
 	let sentinel: HTMLElement | null = $state(null);
 	let observer: IntersectionObserver | null = null;
-    let name = $state('');
+	let name = $state('');
+	let fetchDone = $state(false);
 
 	const setupObserver = () => {
 		if (observer) observer.disconnect();
@@ -41,7 +43,7 @@
 	};
 
 	const fetchMore = async () => {
-		if (isFetching) return;
+		if (isFetching || fetchDone) return;
 		if (letters.length >= total && total !== 0) return;
 
 		isFetching = true;
@@ -50,11 +52,14 @@
 		);
 		const json = (await res.json()) as App.Platform['resp'];
 
-		if (json['status_code'] === 200) {
+		if (json['status_code'] === 200 && json['data']['letters']) {
 			letters = [...letters, ...json['data']['letters']];
 			total = json['data']['total'];
 			offset++;
+		} else {
+			fetchDone = true;
 		}
+
 
 		isFetching = false;
 	};
@@ -69,8 +74,11 @@
 		searched = false;
 		noResult = false;
 		buttonLoad = true;
+		fetchDone = false;
 
-		const res = await fetch(`/api/letters?path=search&recipient_name=${encodeURIComponent(name)}&offset=1`);
+		const res = await fetch(
+			`/api/letters?path=search&recipient_name=${encodeURIComponent(name)}&offset=1`
+		);
 		const json = (await res.json()) as App.Platform['resp'];
 
 		buttonLoad = false;
@@ -121,6 +129,7 @@
 							sender={letter.sender}
 							font={letter.font}
 							is_locked={letter.is_locked}
+							artis={letter.artist}
 						/>
 					{/each}
 
@@ -129,8 +138,6 @@
 							<div class="spinner-wrap">
 								<span class="spinner"></span>
 							</div>
-						{:else if letters.length >= total}
-							<p class="no-result">All letters loaded.</p>
 						{/if}
 					</div>
 				{/if}
