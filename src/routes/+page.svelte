@@ -15,7 +15,7 @@
 			<h1>Send a letter to <em>your</em> beloved</h1>
 			<p>
 				Sometimes the truest words are the ones we're afraid to say. LetterTo lets you send them
-				anyway — no name, no fear, just honesty.
+				anyway — no fear, just honesty.
 			</p>
 
 			<div class="btn">
