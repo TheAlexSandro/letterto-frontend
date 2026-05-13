@@ -4,7 +4,7 @@
 	import './page.css';
 	import { onMount } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID, randomFont } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 
@@ -33,7 +33,7 @@
 	let usePassword: boolean = $state(false);
 	let showPassword: boolean = $state(false);
 	let password = $state('');
-	let font: string = $state('playwrite-nz');
+	let font: string = $state('');
 	let letterId = $state('');
 	let imageFile: File | null = $state(null);
 	let videoFile: File | null = $state(null);
@@ -86,6 +86,7 @@
 		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
 		icns['redo'] = '<i class="ri-arrow-go-forward-line"></i>';
 
+		font = randomFont();
 		quill = new Quill(editor as HTMLDivElement, {
 			theme: 'snow',
 			placeholder: 'Write something...',
@@ -846,6 +847,9 @@
 						</div>
 					{/if}
 
+					<p class="helper-text" style="margin-top: 30px;text-align: center;margin-bottom: -10px;">
+						You can always edit your letter.
+					</p>
 					<div class="btns">
 						<button disabled={buttonLoad} class="submit" type="submit">
 							{#if buttonLoad}
