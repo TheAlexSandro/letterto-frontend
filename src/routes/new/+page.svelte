@@ -4,7 +4,7 @@
 	import './page.css';
 	import { onMount } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID, randomFont } from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 
