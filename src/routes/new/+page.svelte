@@ -33,7 +33,7 @@
 	let usePassword: boolean = $state(false);
 	let showPassword: boolean = $state(false);
 	let password = $state('');
-	let font: string = $state('');
+	let font: string = $state('playwrite-nz');
 	let letterId = $state('');
 	let imageFile: File | null = $state(null);
 	let videoFile: File | null = $state(null);
@@ -86,7 +86,7 @@
 		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
 		icns['redo'] = '<i class="ri-arrow-go-forward-line"></i>';
 
-		font = randomFont();
+		//font = randomFont();
 		quill = new Quill(editor as HTMLDivElement, {
 			theme: 'snow',
 			placeholder: 'Write something...',
