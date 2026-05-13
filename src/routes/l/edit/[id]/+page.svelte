@@ -67,6 +67,7 @@
 	let imageDel = $state(false);
 	let editor: HTMLDivElement | null = $state(null);
 	let quill: Quill | null = $state(null);
+	let loggedIn = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -94,6 +95,7 @@
 			return;
 		}
 
+		loggedIn = true;
 		const letData = ftJson['data'];
 		recipientName = letData['recipient_name'];
 		letterMessage = letData['message'];
@@ -172,7 +174,7 @@
 	});
 
 	beforeNavigate(({ cancel }) => {
-		if (editSuccess) return;
+		if (editSuccess || !loggedIn) return;
 		const confirm = window.confirm(
 			'Are you sure you want to leave this page? Changes will not be saved.'
 		);

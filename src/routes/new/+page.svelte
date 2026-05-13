@@ -58,6 +58,7 @@
 	let copied = $state(false);
 	let editor: HTMLDivElement | null = $state(null);
 	let quill: Quill | null = $state(null);
+	let loggedIn = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -78,6 +79,7 @@
 			return;
 		}
 
+		loggedIn = true;
 		windowLoad = false;
 		const { default: Quill } = await import('quill');
 		const icns = Quill.import('ui/icons') as any;
@@ -127,7 +129,7 @@
 	});
 
 	beforeNavigate(({ cancel }) => {
-		if (createSuccess) return;
+		if (createSuccess || !loggedIn) return;
 		const confirm = window.confirm(
 			'Are you sure you want to leave this page? Changes will not be saved.'
 		);
