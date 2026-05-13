@@ -72,8 +72,8 @@
 			<div class="s">
 				<i class="ri-mail-line"></i>
 				<div class="c">
-					<span><strong>From:</strong><em>{sender ?? "anonymous"}</em></span>
-					<span><strong>To:</strong><em>{recipient_name ?? "anonymous"}</em></span>
+					<span><strong>From:</strong><em>{sender ?? 'anonymous'}</em></span>
+					<span><strong>To:</strong><em>{recipient_name ?? 'anonymous'}</em></span>
 					{#if edit === 'true'}
 						<span><strong>Created:</strong><b>{created_at}</b></span>
 					{/if}
@@ -121,8 +121,8 @@
 				<div class="locked"><i class="ri-lock-line" id="a"></i> Content Locked</div>
 			{:else}
 				<p style="font-family: {resolveFont(font)};">
-					{stripHTML(message).length > 40
-						? stripHTML(message).substring(0, 40) + '...'
+					{stripHTML(message).length > 70
+						? stripHTML(message).substring(0, 70) + '...'
 						: stripHTML(message)}
 				</p>
 			{/if}
@@ -311,6 +311,22 @@
 		gap: 3px;
 		margin: 0;
 		padding: 5px 0;
+		overflow-y: auto;
+		max-height: 90px;
+	}
+
+	.l .footer .music .desc::-webkit-scrollbar {
+		width: 4px;
+		height: 7px;
+	}
+
+	.l .footer .music .desc::-webkit-scrollbar-thumb {
+		background: rgba(63, 55, 55, 0.2);
+		border-radius: 20px;
+	}
+
+	.l .footer .music .desc::-webkit-scrollbar-thumb:hover {
+		background: #6c5d5d82;
 	}
 
 	.l .footer .music .desc .title {
@@ -353,6 +369,7 @@
 		width: 40px;
 		object-fit: contain;
 		margin: 0;
+		padding-left: 3px;
 	}
 
 	/* .l .footer .deezer-side button {
@@ -447,12 +464,24 @@
 		.l .footer .music {
 			height: 80px;
 		}
+
+		.l .footer .music .desc .title {
+			font-size: 14px;
+		}
+
+		.l .footer .music .desc .artist {
+			font-size: 12px;
+		}
 	}
 
 	@media screen and (min-width: 768px) and (max-width: 1024px) {
 		.l {
 			min-width: 55%;
 			max-width: 55%;
+		}
+
+		.l .content {
+			min-height: 10vh;
 		}
 	}
 </style>

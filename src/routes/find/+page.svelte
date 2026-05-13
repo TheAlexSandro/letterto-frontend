@@ -60,7 +60,6 @@
 			fetchDone = true;
 		}
 
-
 		isFetching = false;
 	};
 

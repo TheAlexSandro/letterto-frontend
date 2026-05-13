@@ -53,12 +53,10 @@ main .header .left button {
 	outline: 0;
 	border-radius: 8px;
 	border: 0;
-	color: #fff;
 	justify-content: center;
 	cursor: pointer;
 	transition: all 0.3s ease-in-out;
 	font-family: inherit;
-	background: var(--color-accent);
 	padding: 10px 20px;
 	font-size: 0.875rem;
 	gap: 6px;
@@ -70,10 +68,20 @@ main .header .left .btn button i {
 }
 
 main .header .left button:hover {
-	border-color: var(--color-primary);
-	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
-	opacity: 0.8;
+	opacity: 0.7;
 	transition: all 0.3s ease-in-out;
+}
+
+main .header .left .fill {
+	background: var(--color-accent);
+	border: 1px solid var(--color-accent);
+	color: #fff;
+}
+
+main .header .left .out {
+	background: transparent;
+	border: 1px solid var(--color-accent);
+	color: var(--color-accent);
 }
 
 main .header .lla {
@@ -351,79 +359,6 @@ main .any .features .card-list .card p {
 	width: 40px;
 	object-fit: contain;
 	margin: 0;
-}
-
-/* .lla .footer .deezer-side button {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		border: 1px solid var(--color-border);
-		border-radius: 20px;
-		padding: 4px 12px;
-		font-size: 13px;
-		font-weight: var(--font-medium);
-		color: var(--color-text-primary);
-		text-decoration: none;
-		white-space: nowrap;
-		transition: background 0.2s;
-		background: #fff;
-		cursor: pointer;
-	}
-
-	.lla .footer .deezer-side button:hover {
-		background: #f3eeff;
-		color: var(--color-primary);
-		border-color: var(--color-primary);
-	}
-
-	.lla .footer .deezer-side button i {
-		font-size: 14px;
-	} */
-
-.lla .btn {
-	display: flex;
-	flex-direction: row;
-	gap: 10px;
-}
-
-.lla .btn button {
-	padding: 7px;
-	border-radius: 5px;
-	outline: 0;
-	border: 0;
-	cursor: pointer;
-	display: flex;
-	align-items: center;
-}
-
-.lla .btn button i {
-	color: white;
-	font-size: 15px;
-}
-
-.lla .btn button:hover {
-	opacity: 0.8;
-}
-
-.lla .btn button:disabled {
-	opacity: 0.6;
-	cursor: default;
-}
-
-.lla .btn button:disabled:hover {
-	cursor: default;
-}
-
-.lla .btn #blue {
-	background: var(--color-accent);
-}
-
-.lla .btn #red {
-	background: var(--color-danger);
-}
-
-.lla .btn #trans {
-	background: #4e6689;
 }
 
 @media screen and (max-width: 600px) {

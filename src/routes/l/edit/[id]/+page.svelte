@@ -409,7 +409,7 @@
 		fd.append('show_sender', showSender ? 'yes' : 'no');
 		fd.append('show_recipient', showRecipient ? 'yes' : 'no');
 		fd.append('view_once', viewOnce ? 'yes' : 'no');
-		fd.append('artist', String(selected.artist.name));
+		fd.append('artist', String(selected!.artist.name));
 		fd.append('image', imageFile ? (imageFile as Blob) : imageDel ? '-' : '');
 		fd.append('video', videoFile ? (videoFile as Blob) : videoDel ? '-' : '');
 		fd.append('new_letterid', letterId);
@@ -433,7 +433,7 @@
 				submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
 				submitJson['message'].includes('letter_id')
 					? 'Max is 20 characters.'
-					: submitJson['error_code'] === 'ID_OCCUPIED'
+					: ['ID_OCCUPIED', 'INVALID_ID_FORMAT'].includes(submitJson['error_code'])
 						? submitJson['message']
 						: '';
 			passError =

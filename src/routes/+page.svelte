@@ -19,12 +19,12 @@
 			</p>
 
 			<div class="btn">
-				<button
+				<button class="fill"
 					onclick={() => {
 						window.location.href = '/find';
 					}}><i class="ri-search-2-line"></i> Find a letter</button
 				>
-				<button
+				<button class="out"
 					onclick={() => {
 						window.location.href = '/new';
 					}}><i class="ri-mail-line"></i> Create new letter</button

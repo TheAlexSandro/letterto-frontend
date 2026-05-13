@@ -297,7 +297,7 @@
 			{:else}
 				<div class="pwd">
 					<h1>Upss...!</h1>
-					<p>This letter is password protected, enter the password to proceed.</p>
+					<p>This letter is password protected, please enter the password to proceed.</p>
 
 					<form method="post" onsubmit={unlock}>
 						<input
