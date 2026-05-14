@@ -10,7 +10,7 @@ const config = {
 		adapter: adapter({
 			routes: {
 				include: ['/*'],
-				exclude: ['/_app/immutable/*', '/favicon.ico']
+				exclude: ['/_app/immutable/**', '/favicon.ico']
 			}
 		})
 	}
