@@ -8,6 +8,7 @@
 	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
+	import deezer from '$lib/assets/deezer2.svg';
 
 	type Track = {
 		id: number;
@@ -602,6 +603,14 @@
 								</div>
 							{/if}
 						{/if}
+
+						<div class="pwr">
+							<div class="box">
+								<p>Powered by</p>
+								<img src={deezer} alt="Deezer">
+								<span>Deezer</span>
+							</div>
+						</div>
 					</div>
 					{#if musicError}
 						<div class="error-input">Please select a music.</div>

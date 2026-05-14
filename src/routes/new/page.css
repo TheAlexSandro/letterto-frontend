@@ -31,7 +31,7 @@
 .new form span {
 	margin-top: -1px;
 	font-size: 13px;
-	color: var(--color-text-muted);
+	color: rgba(86, 86, 86, 0.832);
 }
 
 .new form #name{
@@ -329,6 +329,33 @@
 	color: var(--color-text-muted);
 }
 
+.new form .music-picker .pwr {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.new form .music-picker .pwr .box {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 7px;
+	font-size: 12px;
+}
+
+.new form .music-picker .pwr .box img {
+	width: 20px;
+	height: auto;
+}
+
+.new form .music-picker .pwr .box p {
+	font-weight: var(--font-medium);
+}
+
+.new form .music-picker .pwr .box span {
+	color: var(--color-primary);
+	font-weight: var(--font-medium);
+}
+
 .new form .file-upload {
 	display: flex;
 	flex-direction: column;
@@ -593,7 +620,7 @@
 
 .new form .adv-menu .desc {
 	font-size: 13px;
-	color: var(--color-text-muted);
+	color: rgba(86, 86, 86, 0.832);
 	margin: 2px 0 0 0;
 }
 

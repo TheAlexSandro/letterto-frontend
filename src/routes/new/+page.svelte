@@ -4,9 +4,17 @@
 	import './page.css';
 	import { onMount } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
+	import {
+		resolveFont,
+		getFreshPreview,
+		stripHTML,
+		isEmpty,
+		generateID,
+		randomFont
+	} from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
+	import deezer from '$lib/assets/deezer2.svg';
 
 	type Track = {
 		id: number;
@@ -81,12 +89,12 @@
 
 		loggedIn = true;
 		windowLoad = false;
+		font = randomFont();
 		const { default: Quill } = await import('quill');
 		const icns = Quill.import('ui/icons') as any;
 		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
 		icns['redo'] = '<i class="ri-arrow-go-forward-line"></i>';
 
-		//font = randomFont();
 		quill = new Quill(editor as HTMLDivElement, {
 			theme: 'snow',
 			placeholder: 'Write something...',
@@ -271,6 +279,7 @@
 			usePassword = !usePassword;
 			showPassword = false;
 			password = '';
+			passError = '';
 		}
 		if (type === 'showPass') {
 			showPassword = !showPassword;
@@ -535,6 +544,14 @@
 								</div>
 							{/if}
 						{/if}
+
+						<div class="pwr">
+							<div class="box">
+								<p>Powered by</p>
+								<img src={deezer} alt="Deezer">
+								<span>Deezer</span>
+							</div>
+						</div>
 					</div>
 					{#if musicError}
 						<div class="error-input">Please select a music.</div>
@@ -619,7 +636,7 @@
 							handleCheckbox('adv');
 						}}
 						disabled={buttonLoad}
-						>Advanced
+						>More
 						{#if !adv}
 							<i class="ri-arrow-down-s-line"></i>
 						{:else}
