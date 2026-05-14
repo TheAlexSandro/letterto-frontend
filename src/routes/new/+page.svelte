@@ -9,8 +9,7 @@
 		getFreshPreview,
 		stripHTML,
 		isEmpty,
-		generateID,
-		randomFont
+		generateID
 	} from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
@@ -89,7 +88,7 @@
 
 		loggedIn = true;
 		windowLoad = false;
-		font = randomFont();
+		//font = randomFont();
 		const { default: Quill } = await import('quill');
 		const icns = Quill.import('ui/icons') as any;
 		icns['undo'] = '<i class="ri-arrow-go-back-line"></i>';
