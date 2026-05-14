@@ -3,6 +3,7 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import Letter from '../../components/letter/letter.svelte';
+	import { onMount } from 'svelte';
 
 	type Letter = {
 		letter_id: string;
@@ -65,7 +66,6 @@
 
 	const find = async (e: Event) => {
 		e.preventDefault();
-		if (!name) return;
 
 		letters = [];
 		total = 0;
@@ -102,7 +102,14 @@
 		<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 		<form method="post" onsubmit={find}>
 			<i class="ri-search-2-line"></i>
-			<input type="text" name="name" id="name" placeholder="Recipient name..." bind:value={name} />
+			<input
+				type="text"
+				name="name"
+				id="name"
+				placeholder="Recipient name..."
+				bind:value={name}
+				required
+			/>
 			<button disabled={buttonLoad} type="submit">
 				{#if buttonLoad}
 					<span class="button-spinner"></span>
@@ -113,10 +120,12 @@
 		</form>
 
 		{#if searched}
-			<div class="results">
-				{#if noResult}
-					<p class="no-result">No letters found.</p>
-				{:else}
+			{#if noResult}
+				<div class="no-result">
+					<p>No letters found.</p>
+				</div>
+			{:else}
+				<div class="results">
 					{#each letters as letter}
 						<Letter
 							letter_id={letter.letter_id}
@@ -131,13 +140,13 @@
 							artis={letter.artist}
 						/>
 					{/each}
+				</div>
+			{/if}
 
-					<div bind:this={sentinel} class="sentinel">
-						{#if isFetching}
-							<div class="spinner-wrap">
-								<span class="spinner"></span>
-							</div>
-						{/if}
+			<div bind:this={sentinel} class="sentinel">
+				{#if isFetching}
+					<div class="spinner-wrap">
+						<span class="spinner"></span>
 					</div>
 				{/if}
 			</div>
