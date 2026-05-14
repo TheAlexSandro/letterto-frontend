@@ -7,12 +7,7 @@ const config = {
 		runes: ({ filename }) => (filename.split(/[/\\]/).includes('node_modules') ? undefined : true)
 	},
 	kit: {
-		adapter: adapter({
-			routes: {
-				include: ['/*'],
-				exclude: ['/_app/immutable/**', '/favicon.ico']
-			}
-		})
+		adapter: adapter()
 	}
 };
 

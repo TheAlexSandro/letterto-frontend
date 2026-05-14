@@ -17,12 +17,6 @@ export const resolveFont = (font: string) => {
 	return dt[font as keyof typeof dt];
 };
 
-export const randomFont = () => {
-	const dt = ['playwrite-nz', 'cause', 'comic-neue', 'playwrite-br', 'dancing-sc', 'cv', 'ind-fl', 'playwrite-de', 'playwrite-no', 'alike'];
-	const a = Math.floor(Math.random() * dt.length);
-	return dt[a];
-};
-
 export const getFreshPreview = async (trackId: number): Promise<string | null> => {
 	const cached = previewCache.get(trackId);
 	const now = Date.now();

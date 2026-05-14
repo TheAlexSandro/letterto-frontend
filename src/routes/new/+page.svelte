@@ -4,14 +4,7 @@
 	import './page.css';
 	import { onMount } from 'svelte';
 	import { beforeNavigate } from '$app/navigation';
-	import {
-		resolveFont,
-		getFreshPreview,
-		stripHTML,
-		isEmpty,
-		generateID,
-		randomFont
-	} from '$lib/utils/utils';
+	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 	import deezer from '$lib/assets/deezer2.svg';
@@ -77,6 +70,23 @@
 			block: 'center'
 		});
 	}
+
+	const randomFont = () => {
+		const dt = [
+			'playwrite-nz',
+			'cause',
+			'comic-neue',
+			'playwrite-br',
+			'dancing-sc',
+			'cv',
+			'ind-fl',
+			'playwrite-de',
+			'playwrite-no',
+			'alike'
+		];
+		const a = Math.floor(Math.random() * dt.length);
+		return dt[a];
+	};
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
@@ -548,7 +558,7 @@
 						<div class="pwr">
 							<div class="box">
 								<p>Powered by</p>
-								<img src={deezer} alt="Deezer">
+								<img src={deezer} alt="Deezer" />
 								<span>Deezer</span>
 							</div>
 						</div>
