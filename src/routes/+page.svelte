@@ -4,6 +4,32 @@
 	import './page.css';
 	import { resolveFont } from '$lib/utils/utils';
 	import deezer from '$lib/assets/deezer2.svg';
+	import { onMount } from 'svelte';
+	import Letter from '../components/letter/letter.svelte';
+
+	type Letter = {
+		letter_id: string;
+		music_profile: string;
+		music_title: string;
+		created_at: string;
+		recipient_name: string;
+		sender: string;
+		message: string;
+		font: string;
+		is_locked: boolean;
+		artist: string;
+	};
+
+	let letters: Letter[] = $state([]);
+
+	onMount(async () => {
+		const ft = await fetch(`/api/req?path=letter&ep=random`);
+		const ftJson = (await ft.json()) as App.Platform['resp'];
+
+		if (ftJson['status_code'] === 200 && ftJson['data']['letters']) {
+			letters = ftJson['data']['letters'];
+		}
+	});
 </script>
 
 <Navbar />
@@ -19,12 +45,14 @@
 			</p>
 
 			<div class="btn">
-				<button class="fill"
+				<button
+					class="fill"
 					onclick={() => {
 						window.location.href = '/find';
 					}}><i class="ri-search-2-line"></i> Find a letter</button
 				>
-				<button class="out"
+				<button
+					class="out"
 					onclick={() => {
 						window.location.href = '/new';
 					}}><i class="ri-mail-line"></i> Create new letter</button
@@ -72,6 +100,44 @@
 			</div>
 		</div>
 	</section>
+
+	{#if letters.length >= 10}
+		<div class="list">
+			<div class="track">
+				{#each letters as letter}
+					<Letter
+						letter_id={letter.letter_id}
+						message={letter.message}
+						music_profile={letter.music_profile}
+						music_title={letter.music_title}
+						created_at={letter.created_at}
+						recipient_name={letter.recipient_name}
+						sender={letter.sender}
+						font={letter.font}
+						is_locked={letter.is_locked}
+						artis={letter.artist}
+						hide_sender={true}
+					/>
+				{/each}
+
+				{#each letters as letter}
+					<Letter
+						letter_id={letter.letter_id}
+						message={letter.message}
+						music_profile={letter.music_profile}
+						music_title={letter.music_title}
+						created_at={letter.created_at}
+						recipient_name={letter.recipient_name}
+						sender={letter.sender}
+						font={letter.font}
+						is_locked={letter.is_locked}
+						artis={letter.artist}
+						hide_sender={true}
+					/>
+				{/each}
+			</div>
+		</div>
+	{/if}
 
 	<div class="any">
 		<section class="features" id="features">

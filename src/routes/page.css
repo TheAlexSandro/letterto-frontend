@@ -361,6 +361,40 @@ main .any .features .card-list .card p {
 	margin: 0;
 }
 
+main .list {
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+	padding: 20px;
+	overflow: hidden;
+	width: 100%;
+}
+
+main .list .track {
+	display: flex;
+	gap: 12px;
+	animation: marquee 20s linear infinite;
+	width: max-content;
+}
+
+main .list:hover .track {
+	animation-play-state: paused;
+}
+
+main .list .track .l {
+    min-width: 350px;
+    max-width: 350px;
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
 @media screen and (max-width: 600px) {
 	main .header {
 		padding: 25% 25px 20px;
@@ -458,5 +492,9 @@ main .any .features .card-list .card p {
 	.lla {
 		min-width: 55%;
 		max-width: 55%;
+	}
+
+	.lla .content {
+		min-height: 10vh;
 	}
 }

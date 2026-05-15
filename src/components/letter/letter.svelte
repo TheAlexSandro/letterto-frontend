@@ -10,7 +10,8 @@
 		font = null,
 		is_locked = null,
 		artis = null,
-		edit = null
+		edit = null,
+		hide_sender = null
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
@@ -72,7 +73,9 @@
 			<div class="s">
 				<i class="ri-mail-line"></i>
 				<div class="c">
-					<span><strong>From:</strong><em>{sender ?? 'anonymous'}</em></span>
+					{#if !hide_sender}
+						<span><strong>From:</strong><em>{sender ?? 'anonymous'}</em></span>
+					{/if}
 					<span><strong>To:</strong><em>{recipient_name ?? 'anonymous'}</em></span>
 					{#if edit === 'true'}
 						<span><strong>Created:</strong><b>{created_at}</b></span>
@@ -115,19 +118,29 @@
 		{/if}
 	</div>
 
-	<a href="/l/{letter_id}" data-sveltekit-preload-data="off">
+	{#if letter_id}
+		<a href="/l/{letter_id}" data-sveltekit-preload-data="off">
+			<div class="content">
+				{#if is_locked}
+					<div class="locked"><i class="ri-lock-line" id="a"></i> Content Locked</div>
+				{:else}
+					<p style="font-family: {resolveFont(font)};">
+						{stripHTML(message).length > 70
+							? stripHTML(message).substring(0, 70) + '...'
+							: stripHTML(message)}
+					</p>
+				{/if}
+			</div>
+		</a>
+	{:else}
 		<div class="content">
-			{#if is_locked}
-				<div class="locked"><i class="ri-lock-line" id="a"></i> Content Locked</div>
-			{:else}
-				<p style="font-family: {resolveFont(font)};">
-					{stripHTML(message).length > 70
-						? stripHTML(message).substring(0, 70) + '...'
-						: stripHTML(message)}
-				</p>
-			{/if}
+			<p style="font-family: {resolveFont(font)};">
+				{stripHTML(message).length > 70
+					? stripHTML(message).substring(0, 70) + '...'
+					: stripHTML(message)}
+			</p>
 		</div>
-	</a>
+	{/if}
 
 	<div class="footer">
 		<div class="music">

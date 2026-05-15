@@ -138,7 +138,13 @@
 		passErr = '';
 		buttonLoad = true;
 
-		const ft = await fetch(`/api/letters?path=verifyPassword&id=${letterId}&password=${password}`);
+		const ft = await fetch(`/api/req?path=letter&ep=verifyPassword`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ id: letterId, password })
+		});
 		const js = (await ft.json()) as App.Platform['resp'];
 
 		if (js['status_code'] !== 200) {
@@ -191,7 +197,7 @@
 						<div class="music-info">
 							<span class="title"
 								>{card!.music_title.length >= 36
-									? card?.music_title.substring(0, 36) + "..."
+									? card?.music_title.substring(0, 36) + '...'
 									: card?.music_title}</span
 							>
 							<span class="artist">{card?.artist}</span>

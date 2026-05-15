@@ -5,13 +5,11 @@ export async function GET({ url, request }) {
 	const path = url.searchParams.get('path');
 
 	let id;
-	let password;
 	let edit;
 	let name;
 	let offset;
 	if (path !== 'new') {
 		id = encodeURIComponent(url.searchParams.get('id') ?? '');
-		password = encodeURIComponent(url.searchParams.get('password') ?? '');
 		edit = encodeURIComponent(url.searchParams.get('edit') ?? '');
 		name = encodeURIComponent(url.searchParams.get('recipient_name') ?? '');
 		offset = encodeURIComponent(url.searchParams.get('offset') ?? '');
@@ -20,18 +18,18 @@ export async function GET({ url, request }) {
 	const bind =
 		path === 'getInfo'
 			? `?id=${id}${edit ? `&edit=${edit}` : ``}`
-			: path === 'verifyPassword'
-				? `?id=${id}&password=${password}`
-				: ['remove', 'burn'].includes(path as string)
-					? `?id=${id}`
-					: path === 'search'
-						? `?recipient_name=${name}&offset=${offset}`
-						: path === 'myLetters'
-							? `?offset=${offset}`
-							: '';
+			: ['remove', 'burn'].includes(path as string)
+				? `?id=${id}`
+				: path === 'search'
+					? `?recipient_name=${name}&offset=${offset}`
+					: path === 'myLetters'
+						? `?offset=${offset}`
+						: '';
 
 	const ft = await fetch(`${BACKEND_URL}/letter/${path}${bind}`, {
-		method: ['getInfo', 'myLetters', 'search', 'total'].includes(path as string) ? 'GET' : 'POST',
+		method: ['getInfo', 'myLetters', 'search', 'total'].includes(path as string)
+			? 'GET'
+			: 'POST',
 		credentials: 'include',
 		headers: {
 			Accept: 'application/json',

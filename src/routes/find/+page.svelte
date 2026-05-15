@@ -3,7 +3,6 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import Letter from '../../components/letter/letter.svelte';
-	import { onMount } from 'svelte';
 
 	type Letter = {
 		letter_id: string;
