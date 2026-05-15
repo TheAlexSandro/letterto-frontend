@@ -1,5 +1,6 @@
 <script lang="ts">
     import './page.css';
+    import { PUBLIC_TGUSN } from '$env/static/public';
 
     const getYear = () => {
         const dt = new Date();
@@ -11,6 +12,6 @@
 <footer>
     <p>Copyright © {getYear()} LetterTo. All rights reserved.</p>
     <div class="nav">
-        <a href="https://t.me/kcpix" target="_blank">Report error</a>
+        <a href="https://t.me/{PUBLIC_TGUSN}" target="_blank">Report error</a>
     </div>
 </footer>
