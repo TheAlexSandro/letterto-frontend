@@ -6,3 +6,16 @@ footer {
     text-align: center;
     font-size: 0.8rem;
 }
+
+footer .nav {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+footer .nav a {
+    color: var(--color-secondary);
+}

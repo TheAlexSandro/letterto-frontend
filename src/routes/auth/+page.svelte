@@ -16,11 +16,12 @@
 	let globalErr = $state('');
 	let usernameErr = $state('');
 	let passwordErr = $state('');
+	let nameErr = $state('');
 	let buttonLoad = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json() as App.Platform['resp'];
+		const isLoggedIn = await fetch('/api/req?path=accountInfo&ep=auth');
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] === 200) {
 			window.location.href = '/dashboard/my-letters';
@@ -43,30 +44,45 @@
 		usernameErr = '';
 		passwordErr = '';
 		try {
-			const ft = await fetch(
-				`/api/auth?path=${type}&name=${name}&username=${username}&password=${password}`
-			);
-			const datas = await ft.json() as App.Platform['resp'];
+			const ft = await fetch(`/api/req?path=auth&ep=${type}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ name, username, password })
+			});
+			const datas = (await ft.json()) as App.Platform['resp'];
 
 			if (datas['status_code'] !== 200) {
 				globalErr = ['BAD_REQUEST', 'PARAMETER_EMPTY'].includes(datas['error_code'])
 					? 'Something went wrong, please try again later.'
 					: '';
+				nameErr =
+					datas['error_code'] === 'LENGTH_TOO_LONG' && datas['message'].includes('Name')
+						? datas['message']
+						: '';
 				usernameErr =
 					datas['error_code'] === 'USER_ALREADY_EXIST'
 						? 'Username occupied.'
 						: datas['error_code'] === 'USER_NOT_FOUND'
 							? 'User not found.'
-							: '';
+							: datas['error_code'] === 'LENGTH_TOO_LONG' && datas['message'].includes('Username')
+								? datas['message']
+								: datas['error_code'] === 'INVALID_FORMAT' && datas['message'].includes('Username')
+									? datas['message']
+									: '';
 				passwordErr =
 					datas['error_code'] === 'INVALID_PASSWORD'
 						? 'Wrong password.'
-						: datas['error_code'] === 'LENGTH_TOO_SHORT'
-							? 'Minimum is 8 characaters.'
-							: '';
+						: ['LENGTH_TOO_SHORT', 'LENGTH_TOO_LONG'].includes(datas['error_code']) &&
+							  datas['message'].includes('Password')
+							? datas['message']
+							: datas['error_code'] === 'INVALID_FORMAT' && datas['message'].includes('Password')
+								? datas['message']
+								: '';
 				buttonLoad = false;
 			} else {
-				window.location.href = `/${data.redirect}`
+				window.location.href = `/${data.redirect}`;
 			}
 		} catch {
 			globalErr = 'Something went wrong, please try again later.';
@@ -109,6 +125,9 @@
 						bind:value={name}
 						disabled={buttonLoad}
 					/>
+					{#if nameErr}
+						<span>{nameErr}</span>
+					{/if}
 				{/if}
 				<label for="username">Username</label>
 				<input

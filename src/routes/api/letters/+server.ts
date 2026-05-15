@@ -10,11 +10,11 @@ export async function GET({ url, request }) {
 	let name;
 	let offset;
 	if (path !== 'new') {
-		id = url.searchParams.get('id');
-		password = url.searchParams.get('password');
-		edit = url.searchParams.get('edit');
-		name = url.searchParams.get('recipient_name');
-		offset = url.searchParams.get('offset');
+		id = encodeURIComponent(url.searchParams.get('id') ?? '');
+		password = encodeURIComponent(url.searchParams.get('password') ?? '');
+		edit = encodeURIComponent(url.searchParams.get('edit') ?? '');
+		name = encodeURIComponent(url.searchParams.get('recipient_name') ?? '');
+		offset = encodeURIComponent(url.searchParams.get('offset') ?? '');
 	}
 
 	const bind =

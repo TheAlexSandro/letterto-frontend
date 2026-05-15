@@ -81,7 +81,7 @@
 	}
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
+		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
@@ -440,8 +440,9 @@
 						? submitJson['message']
 						: '';
 			passError =
-				['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
-				submitJson['message'].includes('password')
+				(['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
+					submitJson['message'].includes('password')) ||
+				submitJson['error_code'] === 'INVALID_PASS_FORMAT'
 					? submitJson['message']
 					: '';
 			fileError = submitJson['error_code'] === 'FILE_TOO_LARGE' ? submitJson['message'] : '';
@@ -607,7 +608,7 @@
 						<div class="pwr">
 							<div class="box">
 								<p>Powered by</p>
-								<img src={deezer} alt="Deezer">
+								<img src={deezer} alt="Deezer" />
 								<span>Deezer</span>
 							</div>
 						</div>

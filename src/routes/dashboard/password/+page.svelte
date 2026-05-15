@@ -5,17 +5,18 @@
 	import '../page.css';
 
 	let windowLoad = $state(true);
-	let password = $state('');
+	let new_password = $state('');
 	let old_password = $state('');
 
 	let buttonLoad = $state(false);
 	let globalErr = $state('');
 	let passErr = $state('');
 	let oldPassErr = $state('');
+	let showPass = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
-		const data = await isLoggedIn.json() as App.Platform['resp'];
+		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth?redirect=dashboard/password';
@@ -30,8 +31,14 @@
 		buttonLoad = true;
 		oldPassErr = '';
 		passErr = '';
-		const ft = await fetch(`/api/user?path=edit&password=${password}&old_password=${old_password}`);
-		const ftJson = await ft.json() as App.Platform['resp'];
+		const ft = await fetch(`/api/req?path=user&ep=edit`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ old_password, new_password })
+		});
+		const ftJson = (await ft.json()) as App.Platform['resp'];
 
 		if (ftJson['status_code'] !== 200) {
 			if (ftJson['error_code'] === 'UNAUTHORIZED') {
@@ -75,9 +82,9 @@
 
 			<div class="box">
 				<form method="post" onsubmit={handleSubmit}>
-					<label for="message">Old Password</label>
+					<label for="message">Current Password</label>
 					<input
-						type="password"
+						type={showPass ? 'text' : 'password'}
 						name="password"
 						id="password"
 						placeholder="••••••••"
@@ -88,19 +95,31 @@
 					{#if oldPassErr}
 						<span>{oldPassErr}</span>
 					{/if}
-					<label for="message">Password</label>
+					<label for="message">New Password</label>
 					<input
-						type="password"
+						type={showPass ? 'text' : 'password'}
 						name="password"
 						id="password"
 						placeholder="••••••••"
 						required
-						bind:value={password}
+						bind:value={new_password}
 						disabled={buttonLoad}
 					/>
 					{#if passErr}
 						<span>{passErr}</span>
 					{/if}
+					<div class="checkbox-container">
+						<input
+							type="checkbox"
+							id="view"
+							onchange={() => {
+								showPass = !showPass;
+							}}
+							checked={showPass}
+						/>
+						<div class="custom-checkmark"></div>
+						<p class="status-text">{showPass ? 'Hide password' : 'Show password'}</p>
+					</div>
 
 					{#if globalErr}
 						<div class="error">

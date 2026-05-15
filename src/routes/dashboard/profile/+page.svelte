@@ -17,7 +17,7 @@
 	let globalErr = $state('');
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/auth?path=accountInfo');
+		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
 		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
@@ -47,7 +47,13 @@
 		buttonLoad = true;
 		noChange = false;
 		usernameErr = '';
-		const ft = await fetch(`/api/user?path=edit&name=${name}&username=${username}`);
+		const ft = await fetch(`/api/req?path=user&ep=edit`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({ name, username })
+		});
 		const ftJson = await ft.json() as App.Platform['resp'];
 
 		if (ftJson['status_code'] !== 200) {

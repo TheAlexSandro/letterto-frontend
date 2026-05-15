@@ -63,7 +63,7 @@
 		window.addEventListener('resize', handleResize);
 
 		(async () => {
-			const isLoggedIn = await fetch('/api/auth?path=accountInfo');
+			const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
 			const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 			if (data['status_code'] !== 200) {
