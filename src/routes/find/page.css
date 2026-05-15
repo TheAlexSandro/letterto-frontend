@@ -145,12 +145,13 @@
 
 @media screen and (max-width: 600px) {
 	.find {
-		margin-top: 60px;
+		margin-top: 70px;
+		padding: 40px 20px;
 	}
 
 	.find .cont {
 		width: 100%;
-		padding: 0 15px;
+		padding: 0;
 	}
 
 	.find .cont h1 {
