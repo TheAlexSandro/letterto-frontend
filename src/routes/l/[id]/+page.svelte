@@ -40,6 +40,10 @@
 	let buttonLoad = $state(false);
 	let passErr = $state('');
 	let isBurned = $state(false);
+	let lightboxSrc = $state<string | null>(null);
+
+	const openLightbox = (src: string) => (lightboxSrc = src);
+	const closeLightbox = () => (lightboxSrc = null);
 
 	const formatTime = (s: number) => {
 		const m = Math.floor(s / 60);
@@ -163,6 +167,12 @@
 	};
 </script>
 
+<svelte:window
+	onkeydown={(e) => {
+		if (e.key === 'Escape') closeLightbox();
+	}}
+/>
+
 <svelte:head>
 	<title>LetterTo - Letter {letterId}</title>
 	<meta property="og:url" content="/l/{letterId}" />
@@ -257,7 +267,15 @@
 							{#if card?.image && card?.video}
 								<div class="media-dual">
 									<div class="media-item">
-										<img src={card?.image} aria-hidden="true" alt="Letter image" />
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+										<img
+											src={card?.image}
+											aria-hidden="true"
+											alt="Letter image"
+											onclick={() => openLightbox(card!.image!)}
+											style="cursor:zoom-in"
+										/>
 									</div>
 									<div class="media-item">
 										<video src={card?.video} controls>
@@ -267,7 +285,15 @@
 								</div>
 							{:else if card?.image}
 								<div class="media-single">
-									<img src={card?.image} aria-hidden="true" alt="Letter image" />
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<img
+										src={card?.image}
+										aria-hidden="true"
+										alt="Letter image"
+										onclick={() => openLightbox(card!.image!)}
+										style="cursor:zoom-in"
+									/>
 								</div>
 							{:else if card?.video}
 								<div class="media-single">
@@ -334,4 +360,24 @@
 	</section>
 
 	<Footer />
+
+	{#if lightboxSrc}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="lightbox-overlay"
+			onclick={closeLightbox}
+			role="dialog"
+			aria-modal="true"
+			aria-label="Image preview"
+			tabindex="-1"
+		>
+			<button class="lightbox-close" onclick={closeLightbox} aria-label="Close">
+				<i class="ri-close-line"></i>
+			</button>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<img src={lightboxSrc} alt="Full size" onclick={(e) => e.stopPropagation()} />
+		</div>
+	{/if}
 {/if}
