@@ -263,14 +263,15 @@
 		font-size: 14px;
 		font-weight: var(--font-regular);
 		color: var(--color-text-primary);
-		line-height: 1.6;
-		padding: 4px 2px;
-		min-height: 15vh;
 		user-select: none;
 		-webkit-user-select: none;
 		-moz-user-select: none;
-		border-bottom: 1px solid var(--color-border);
 		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		min-height: 15vh;
+		text-align: unset;
+		justify-content: center;
 	}
 
 	.l a {
@@ -294,12 +295,13 @@
 	}
 
 	.l .footer {
-		border-radius: 12px;
+		border-top: 1px solid var(--color-border);
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
 		overflow: hidden;
+		padding-top: 10px;
 		padding-right: 16px;
 	}
 
