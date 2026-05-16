@@ -203,7 +203,13 @@
 			{:else if !showPassword}
 				<div class="music-pill">
 					<div class="music-left">
-						<img src={card?.music_profile} alt={card?.music_title} />
+						<!-- svelte-ignore a11y_click_events_have_key_events -->
+						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+						<img
+							onclick={() => openLightbox(card!.music_profile!)}
+							src={card?.music_profile}
+							alt={card?.music_title}
+						/>
 						<div class="music-info">
 							<span class="title"
 								>{card!.music_title.length >= 36
