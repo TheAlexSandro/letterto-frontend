@@ -69,6 +69,7 @@
 	let editor: HTMLDivElement | null = $state(null);
 	let quill: Quill | null = $state(null);
 	let loggedIn = $state(false);
+	let lightboxSrc = $state<string | null>(null);
 
 	async function scrollToError() {
 		await tick();
@@ -183,6 +184,9 @@
 			cancel();
 		}
 	});
+
+	const openLightbox = (src: string) => (lightboxSrc = src);
+	const closeLightbox = () => (lightboxSrc = null);
 
 	const renderPreview = () => {
 		const plainText = stripHTML(letterMessage);
@@ -530,15 +534,21 @@
 								{:else if results.length > 0}
 									{#each results as track}
 										<div class="item-wrap">
-											<div
-												class="item"
-												role="button"
-												tabindex="0"
-												onclick={() => select(track)}
-												onkeydown={(e) => e.key === 'Enter' && select(track)}
-											>
-												<img src={track.album.cover_big} alt={track.title} />
-												<div class="info">
+											<div class="item">
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<img
+													onclick={() => openLightbox(track.album.cover_big)}
+													src={track.album.cover_big}
+													alt={track.title}
+												/>
+												<div
+													role="button"
+													tabindex="0"
+													onclick={() => select(track)}
+													onkeydown={(e) => e.key === 'Enter' && select(track)}
+													class="info"
+												>
 													<span class="title"
 														>{track.title.length > 40
 															? `${track.title.substring(0, 40)}...`
@@ -574,7 +584,13 @@
 
 						{#if selected}
 							<div class="selected-info">
-								<img src={selected.album.cover_big} alt={selected.title} />
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+								<img
+									onclick={() => openLightbox(selected!.album.cover_big)}
+									src={selected.album.cover_big}
+									alt={selected.title}
+								/>
 								<div class="info">
 									<span class="title"
 										>{selected.title.length > 40
@@ -620,68 +636,81 @@
 						<label for="attach">Attachment</label>
 						<span>Optional, add images or videos to your letter to make it more romantic...</span>
 						<div class="upload-grid">
-							<div class="upload-box" class:has-file={imageFile}>
-								<input
-									type="file"
-									id="image-upload"
-									accept="image/*"
-									onchange={(e) => handleFile(e, 'image')}
-									disabled={buttonLoad}
-								/>
+							<div class="images-up">
+								<div class="upload-box" class:has-file={imageFile}>
+									<input
+										type="file"
+										id="image-upload"
+										accept="image/*"
+										onchange={(e) => handleFile(e, 'image')}
+										disabled={buttonLoad}
+									/>
+									{#if imagePreview}
+										<div class="preview">
+											<!-- svelte-ignore a11y_click_events_have_key_events -->
+											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+											<img
+												onclick={() => openLightbox(imagePreview as string)}
+												src={imagePreview}
+												alt="Preview"
+											/>
+											<button
+												type="button"
+												aria-label="Remove image"
+												class="remove"
+												onclick={() => clearFile('image')}
+												disabled={buttonLoad}
+											>
+												<i class="ri-close-line"></i>
+											</button>
+										</div>
+									{:else}
+										<label for="image-upload" class="upload-label">
+											<i class="ri-image-line"></i>
+											<span>Upload Image</span>
+											<p>PNG, JPG, WEBP</p>
+											<p>Max 5 MB</p>
+										</label>
+									{/if}
+								</div>
 								{#if imagePreview}
-									<div class="preview">
-										<img src={imagePreview} alt="Preview" />
-										<button
-											type="button"
-											aria-label="Remove image"
-											class="remove"
-											onclick={() => clearFile('image')}
-											disabled={buttonLoad}
-										>
-											<i class="ri-close-line"></i>
-										</button>
-									</div>
-								{:else}
-									<label for="image-upload" class="upload-label">
-										<i class="ri-image-line"></i>
-										<span>Upload Image</span>
-										<p>PNG, JPG, WEBP</p>
-										<p>Max 5 MB</p>
-									</label>
+									<p>Click the image to examine.</p>
 								{/if}
 							</div>
 
-							<div class="upload-box" class:has-file={videoFile}>
-								<input
-									type="file"
-									id="video-upload"
-									accept="video/*"
-									onchange={(e) => handleFile(e, 'video')}
-									disabled={buttonLoad}
-								/>
-								{#if videoPreview}
-									<div class="preview">
-										<video src={videoPreview} controls>
-											<track kind="captions" />
-										</video>
-										<button
-											type="button"
-											aria-label="Remove video"
-											class="remove"
-											onclick={() => clearFile('video')}
-											disabled={buttonLoad}
-										>
-											<i class="ri-close-line"></i>
-										</button>
-									</div>
-								{:else}
-									<label for="video-upload" class="upload-label">
-										<i class="ri-video-line"></i>
-										<span>Upload Video</span>
-										<p>MP4, MOV, WEBM</p>
-										<p>Max 20 MB</p>
-									</label>
-								{/if}
+							<div class="videos-up">
+								<div class="upload-box" class:has-file={videoFile}>
+									<input
+										type="file"
+										id="video-upload"
+										accept="video/*"
+										onchange={(e) => handleFile(e, 'video')}
+										disabled={buttonLoad}
+									/>
+									{#if videoPreview}
+										<div class="preview">
+											<video src={videoPreview} controls>
+												<track kind="captions" />
+											</video>
+											<button
+												type="button"
+												aria-label="Remove video"
+												class="remove"
+												onclick={() => clearFile('video')}
+												disabled={buttonLoad}
+											>
+												<i class="ri-close-line"></i>
+											</button>
+										</div>
+									{:else}
+										<label for="video-upload" class="upload-label">
+											<i class="ri-video-line"></i>
+											<span>Upload Video</span>
+											<p>MP4, MOV, WEBM</p>
+											<p>Max 20 MB</p>
+										</label>
+									{/if}
+								</div>
 							</div>
 							{#if fileError}
 								<div class="error-input">{fileError}</div>
@@ -995,6 +1024,26 @@
 	</section>
 
 	<Footer />
+
+	{#if lightboxSrc}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div
+			class="lightbox-overlay"
+			onclick={closeLightbox}
+			role="dialog"
+			aria-modal="true"
+			aria-label="Image preview"
+			tabindex="-1"
+		>
+			<button class="lightbox-close" onclick={closeLightbox} aria-label="Close">
+				<i class="ri-close-line"></i>
+			</button>
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+			<img src={lightboxSrc} alt="Full size" onclick={(e) => e.stopPropagation()} />
+		</div>
+	{/if}
 {/if}
 
 <style>
