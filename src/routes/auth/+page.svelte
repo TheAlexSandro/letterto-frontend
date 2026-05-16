@@ -20,7 +20,7 @@
 	let buttonLoad = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=accountInfo&ep=auth');
+		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] === 200) {
