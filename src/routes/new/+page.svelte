@@ -83,7 +83,6 @@
 			'ind-fl',
 			'playwrite-de',
 			'playwrite-no',
-			'alike'
 		];
 		const a = Math.floor(Math.random() * dt.length);
 		return dt[a];
