@@ -50,7 +50,13 @@
 <svelte:window
 	onclick={(e) => {
 		const target = e.target as HTMLElement;
-		if (!target.closest('.dropdown')) dropdownOpen = false;
+		if (!target.closest('.dropdown') && !target.closest('.hamburger')) {
+			dropdownOpen = false;
+			dropdownOther = false;
+		}
+		if (!target.closest('.mobile-menu') && !target.closest('.hamburger')) {
+			menuOpen = false;
+		}
 	}}
 />
 
