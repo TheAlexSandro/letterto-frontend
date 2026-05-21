@@ -62,6 +62,7 @@
 	let loggedIn = $state(false);
 	let lightboxSrc = $state<string | null>(null);
 	let showPreview = $state(false);
+	let videoEl = $state<HTMLVideoElement | null>(null);
 
 	async function scrollToError() {
 		await tick();
@@ -222,6 +223,9 @@
 		aud.addEventListener(
 			'loadedmetadata',
 			() => {
+				if (videoEl && !videoEl.paused) {
+					videoEl.pause();
+				}
 				aud!.play().catch((err) => {
 					alert(err);
 				});
@@ -588,19 +592,19 @@
 									{/if}
 								</button>
 							</div>
-							{#if audio}
-								<div class="pwr">
-									<div class="box">
-										<img src={deezer} alt="Deezer" />
-										<span>Deezer</span>
-									</div>
-
-									<div class="duration">{duration}</div>
+							<div class="pwr">
+								<div class="box">
+									<img src={deezer} alt="Deezer" />
+									<span>Deezer</span>
 								</div>
-							{/if}
+
+								{#if audio}
+									<div class="duration">{duration}</div>
+								{/if}
+							</div>
 						{/if}
 
-						{#if !audio}
+						{#if !selected}
 							<div class="pwr">
 								<div class="box">
 									<img src={deezer} alt="Deezer" />
@@ -669,7 +673,18 @@
 									/>
 									{#if videoPreview}
 										<div class="preview">
-											<video src={videoPreview} controls>
+											<video
+												src={videoPreview}
+												controls
+												bind:this={videoEl}
+												onplay={() => {
+													if (audio) {
+														audio.pause();
+														audio = null;
+														currentPlayingId = null;
+													}
+												}}
+											>
 												<track kind="captions" />
 											</video>
 											<button

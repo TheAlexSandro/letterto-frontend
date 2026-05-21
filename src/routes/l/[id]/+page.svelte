@@ -41,6 +41,7 @@
 	let passErr = $state('');
 	let isBurned = $state(false);
 	let lightboxSrc = $state<string | null>(null);
+	let videoEl = $state<HTMLVideoElement | null>(null);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -116,6 +117,10 @@
 			audio.pause();
 			audioPlayed = false;
 		} else {
+			if (videoEl && !videoEl.paused) {
+				videoEl.pause();
+			}
+
 			audio
 				.play()
 				.then(() => {
@@ -235,7 +240,13 @@
 					</div>
 					<div class="right">
 						<img src={deezer} alt="deezer" />
-						<button disabled={audioLoad} type="button" class="music-play" onclick={togglePlay} aria-label="audio">
+						<button
+							disabled={audioLoad}
+							type="button"
+							class="music-play"
+							onclick={togglePlay}
+							aria-label="audio"
+						>
 							{#if audioLoad}
 								<div class="spinner"></div>
 							{:else if audioPlayed}
@@ -284,7 +295,17 @@
 										/>
 									</div>
 									<div class="media-item">
-										<video src={card?.video} controls>
+										<video
+											src={card?.video}
+											controls
+											bind:this={videoEl}
+											onplay={() => {
+												if (audio && audioPlayed) {
+													audio.pause();
+													audioPlayed = false;
+												}
+											}}
+										>
 											<track kind="captions" />
 										</video>
 									</div>
@@ -303,7 +324,17 @@
 								</div>
 							{:else if card?.video}
 								<div class="media-single">
-									<video src={card?.video} controls>
+									<video
+										src={card?.video}
+										controls
+										bind:this={videoEl}
+										onplay={() => {
+											if (audio && audioPlayed) {
+												audio.pause();
+												audioPlayed = false;
+											}
+										}}
+									>
 										<track kind="captions" />
 									</video>
 								</div>
