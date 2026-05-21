@@ -76,12 +76,16 @@
 .new form .editor {
 	background: #fff;
 	border: 1px solid var(--color-border);
-	height: 25vh;
+	min-height: 25vh;
+	max-height: 50vh;
 	border-radius: 5px;
 	font-family: inherit;
+	margin-bottom: -5px;
+	overflow-y: auto;
 }
 
 .new form .output {
+	margin-top: -5px;
 	border-radius: 5px;
 	font-style: normal;
 	background: #fff;
@@ -309,7 +313,7 @@
 	border: none;
 	cursor: pointer;
 	color: var(--color-primary);
-	font-size: 1.1rem;
+	font-size: 1.3rem;
 }
 
 .new form .music-picker .selected-info .play .spinner {
@@ -659,14 +663,14 @@
 	border-bottom: 1px solid var(--color-border);
 }
 
-.new form .adv-menu .checkbox-container .status-text {
+.new form .checkbox-container .status-text {
 	font-size: 13px;
 	font-weight: 500;
 	min-width: 60px;
 	text-transform: capitalize;
 }
 
-.new form .adv-menu .checkbox-container {
+.new form .checkbox-container {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -675,7 +679,7 @@
 	position: relative;
 }
 
-.new form .adv-menu .checkbox-container input[type='checkbox'] {
+.new form .checkbox-container input[type='checkbox'] {
 	position: absolute;
 	opacity: 0;
 	cursor: pointer;
@@ -685,12 +689,12 @@
 	z-index: 2;
 }
 
-.new form .adv-menu .checkbox-container span {
+.new form .checkbox-container span {
 	margin: 0;
 	color: var(--color-text-primary);
 }
 
-.new form .adv-menu .checkbox-container .custom-checkmark {
+.new form .checkbox-container .custom-checkmark {
 	height: 20px;
 	width: 20px;
 	background-color: #fff;
@@ -701,17 +705,17 @@
 	z-index: 1;
 }
 
-.new form .adv-menu .checkbox-container:hover .custom-checkmark {
+.new form .checkbox-container:hover .custom-checkmark {
 	border-color: var(--color-primary);
 }
 
-.new form .adv-menu .checkbox-container input:checked ~ .custom-checkmark {
+.new form .checkbox-container input:checked ~ .custom-checkmark {
 	background-color: var(--color-primary);
 	border-color: var(--color-primary);
 	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
 }
 
-.new form .adv-menu .checkbox-container .custom-checkmark:after {
+.new form .checkbox-container .custom-checkmark:after {
 	content: '';
 	position: absolute;
 	display: none;
@@ -724,7 +728,7 @@
 	transform: rotate(45deg);
 }
 
-.new form .adv-menu .checkbox-container input:checked ~ .custom-checkmark:after {
+.new form .checkbox-container input:checked ~ .custom-checkmark:after {
 	display: block;
 }
 

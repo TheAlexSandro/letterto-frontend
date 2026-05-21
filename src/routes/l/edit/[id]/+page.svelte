@@ -70,6 +70,7 @@
 	let quill: Quill | null = $state(null);
 	let loggedIn = $state(false);
 	let lightboxSrc = $state<string | null>(null);
+	let showPreview = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -176,6 +177,9 @@
 	});
 
 	beforeNavigate(({ cancel }) => {
+		audio?.pause();
+		audio = null;
+		currentPlayingId = null;
 		if (editSuccess || !loggedIn) return;
 		const confirm = window.confirm(
 			'Are you sure you want to leave this page? Changes will not be saved.'
@@ -222,6 +226,9 @@
 	};
 
 	const select = (track: Track) => {
+		audio?.pause();
+		audio = null;
+		currentPlayingId = null;
 		musicError = false;
 		selected = track;
 		query = `${track.title} — ${track.artist.name}`;
@@ -235,9 +242,10 @@
 			currentPlayingId = null;
 			return;
 		}
-
-		musicLoad = track.id;
 		audio?.pause();
+		audio = null;
+		currentPlayingId = null;
+		musicLoad = track.id;
 
 		const previewUrl = await getFreshPreview(track.id);
 		if (!previewUrl) {
@@ -500,14 +508,30 @@
 					/>
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
-					<div class="output">
-						<span>Output:</span>
-						{#if isEmpty(letterMessage)}
-							Nothing to show...
-						{:else}
-							{@html letterMessage}
-						{/if}
+					<div class="checkbox-container">
+						<input
+							type="checkbox"
+							id="view"
+							onchange={() => {
+								showPreview = !showPreview;
+							}}
+							checked={showPreview}
+						/>
+						<div class="custom-checkmark"></div>
+						<span class="status-text">Show Preview</span>
 					</div>
+					{#if showPreview}
+						<div class="output">
+							<span>Preview:</span>
+							<div class="ql-editor">
+								{#if isEmpty(letterMessage)}
+									Nothing to show...
+								{:else}
+									{@html letterMessage}
+								{/if}
+							</div>
+						</div>
+					{/if}
 					<div class="music-picker">
 						<label for="music">Music</label>
 						<div class="input-wrap">
@@ -516,7 +540,7 @@
 								placeholder="Type song title/artist"
 								bind:value={query}
 								oninput={search}
-								disabled={buttonLoad}
+								disabled={buttonLoad || selected !== null}
 							/>
 							{#if selected}
 								<button type="button" aria-label="Clear" class="clear" onclick={clearSelected}>
@@ -559,7 +583,7 @@
 											</div>
 											<div class="btn">
 												<button
-													disabled={buttonLoad}
+													disabled={buttonLoad || musicLoad === track.id}
 													type="button"
 													class={currentPlayingId === track.id ? 'stop' : 'play'}
 													aria-label={currentPlayingId === track.id ? 'Stop' : 'Play'}
@@ -600,7 +624,7 @@
 									<span class="artist">{selected.artist.name}</span>
 								</div>
 								<button
-									disabled={buttonLoad}
+									disabled={buttonLoad || musicLoad === selected.id}
 									type="button"
 									aria-label={currentPlayingId === selected.id ? 'Stop' : 'Play'}
 									class="play"
@@ -615,19 +639,25 @@
 								</button>
 							</div>
 							{#if audio}
-								<div class="duration">
-									{duration}
+								<div class="pwr">
+									<div class="box">
+										<img src={deezer} alt="Deezer" />
+										<span>Deezer</span>
+									</div>
+
+									<div class="duration">{duration}</div>
 								</div>
 							{/if}
 						{/if}
 
-						<div class="pwr">
-							<div class="box">
-								<p>Powered by</p>
-								<img src={deezer} alt="Deezer" />
-								<span>Deezer</span>
+						{#if !audio}
+							<div class="pwr">
+								<div class="box">
+									<img src={deezer} alt="Deezer" />
+									<span>Deezer</span>
+								</div>
 							</div>
-						</div>
+						{/if}
 					</div>
 					{#if musicError}
 						<div class="error-input">Please select a music.</div>
@@ -767,7 +797,7 @@
 										<div class="item">View-Once</div>
 										<span class="desc"
 											>Enable this to burn the letter once viewed except the sender, the burned
-											letter can still be accessed by the sender.</span
+											letter can still be accessed and restored by the sender.</span
 										>
 									</div>
 									<div class="checkbox-container">

@@ -159,6 +159,20 @@
 	animation: spin 0.8s linear infinite;
 }
 
+.letter-wrap button:disabled {
+	cursor: default !important;
+	opacity: 0.6 !important;
+}
+
+.letter-wrap button:disabled:hover {
+	cursor: default !important;
+	box-shadow: none !important;
+	transform: none !important;
+	background: var(--color-primary) !important;
+	border-color: inherit;
+	opacity: 0.6 !important;
+}
+
 .letter-wrap .meta-row {
 	display: flex;
 	align-items: center;
@@ -439,15 +453,6 @@
 .letter-wrap .pwd form span {
 	color: var(--color-danger);
 	font-size: 13px;
-}
-
-.letter-wrap .pwd form .btns button:disabled {
-	opacity: 0.6;
-	cursor: default;
-}
-
-.letter-wrap .pwd form .btns button:disabled:hover {
-	box-shadow: none;
 }
 
 .lightbox-overlay {

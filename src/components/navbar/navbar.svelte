@@ -4,18 +4,26 @@
 
 	let menuOpen = $state(false);
 	let dropdownOpen = $state(false);
+	let dropdownOther = $state(false);
 	let isLog = $state(false);
 	let load = $state(false);
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
-		const data = await isLoggedIn.json() as App.Platform['resp'];
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		isLog = data['status_code'] !== 200 ? false : true;
 	});
 
-	const toggleDropdown = () => {
-		dropdownOpen = !dropdownOpen;
+	const toggleDropdown = (target: string) => {
+		if (target === 'dash') {
+			dropdownOther = false;
+			dropdownOpen = !dropdownOpen;
+		}
+		if (target === 'other') {
+			dropdownOpen = false;
+			dropdownOther = !dropdownOther;
+		}
 	};
 
 	const closeDropdown = () => {
@@ -27,13 +35,13 @@
 		dropdownOpen = false;
 	};
 
-	const logout = async() => {
+	const logout = async () => {
 		const c = window.confirm('Are you sure you want to logout?');
 		if (c) {
 			load = true;
 			await fetch('/api/req?path=user&ep=logout', {
 				method: 'POST'
-			})
+			});
 			window.location.href = '/';
 		}
 	};
@@ -56,7 +64,7 @@
 		<a href="/new" class="m">New Letter</a>
 
 		<div class="dropdown">
-			<button class="button" onclick={toggleDropdown} aria-expanded={dropdownOpen}>
+			<button class="button" onclick={() => toggleDropdown('dash')} aria-expanded={dropdownOpen}>
 				Dashboard
 				<i class={dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
 			</button>
@@ -85,6 +93,21 @@
 				</div>
 			{/if}
 		</div>
+
+		<div class="dropdown">
+			<button class="button" onclick={() => toggleDropdown('other')} aria-expanded={dropdownOther}>
+				Other
+				<i class={dropdownOther ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
+			</button>
+
+			{#if dropdownOther}
+				<div class="dropdown-menu">
+					<a href="https://t.me/kcpix" target="_blank" onclick={closeDropdown}>
+						<i class="ri-bug-line"></i> Report Bug
+					</a>
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	<button class="hamburger" aria-labelledby="hamburger-menu" onclick={() => (menuOpen = !menuOpen)}>
@@ -109,10 +132,24 @@
 				<a href="/dashboard/my-letters" onclick={closeAll}>
 					<i class="ri-mail-line"></i> My Letters
 				</a>
-				<a style="color: var(--color-danger);" href="#logout" onclick={() => { closeAll(); logout() }}>
+				<a
+					style="color: var(--color-danger);"
+					href="#logout"
+					onclick={() => {
+						closeAll();
+						logout();
+					}}
+				>
 					<i class="ri-logout-circle-line"></i> Logout
 				</a>
 			{/if}
+		</div>
+
+		<div class="mobile-dropdown-section">
+			<span class="mobile-dropdown-label">Other</span>
+			<a href="https://t.me/kcpix" target="_blank" onclick={closeAll}>
+				<i class="ri-bug-line"></i> Report Bug
+			</a>
 		</div>
 	</div>
 {/if}

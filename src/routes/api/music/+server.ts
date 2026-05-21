@@ -13,7 +13,6 @@ export async function GET({ url }) {
 		trackId = url.searchParams.get('id') ?? '';
 	}
 
-	console.log(trackId);
 	const urls =
 		path === 'search'
 			? `${DEEZER_API}/search?q=${encodeURIComponent(String(query))}&limit=10`

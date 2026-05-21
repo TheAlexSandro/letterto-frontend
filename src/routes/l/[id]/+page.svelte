@@ -235,7 +235,7 @@
 					</div>
 					<div class="right">
 						<img src={deezer} alt="deezer" />
-						<button type="button" class="music-play" onclick={togglePlay} aria-label="audio">
+						<button disabled={audioLoad} type="button" class="music-play" onclick={togglePlay} aria-label="audio">
 							{#if audioLoad}
 								<div class="spinner"></div>
 							{:else if audioPlayed}
