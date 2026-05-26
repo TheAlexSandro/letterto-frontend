@@ -148,36 +148,62 @@
 		{/if}
 
 		<div class="any">
-			<section class="features" id="features">
-				<div class="desc">
-					<h1>— FEATURES —</h1>
-					<p>Everything you may need</p>
-				</div>
+			<section class="features">
+				<p class="feat-label">FEATURES</p>
+				<h2>Everything you may need</h2>
+				<p class="feat-subtitle">
+					Powerful features to help you share letters securely and on your own terms.
+				</p>
 
-				<div class="card-list">
-					<div class="card">
-						<div class="title">
-							<i class="ri-lock-line" id="a"></i>
-							<span>Privacy</span>
+				<div class="feat-grid">
+					<div class="feat-card purple">
+						<div class="card-top">
+							<div class="card-icon"><i class="ri-lock-star-line"></i></div>
+							<span class="card-num">01</span>
 						</div>
-						<p>
+						<p class="card-name">Privacy</p>
+						<hr class="card-divider" />
+						<p class="card-desc">
 							Set your letter public or private. People can browse for your letter by the
 							recipient's name, or make it private so that only those with the link know it.
 						</p>
 					</div>
-					<div class="card">
-						<div class="title">
-							<i class="ri-timer-line" id="b"></i>
-							<span>View Once</span>
+
+					<div class="feat-card green">
+						<div class="card-top">
+							<div class="card-icon"><i class="ri-timer-line"></i></div>
+							<span class="card-num">02</span>
 						</div>
-						<p>Set your letter burn once viewed or keep them indefinitely.</p>
+						<p class="card-name">View Once</p>
+						<hr class="card-divider" />
+						<p class="card-desc">Set your letter to burn once viewed or keep them indefinitely.</p>
 					</div>
-					<div class="card">
-						<div class="title">
-							<i class="ri-shield-keyhole-line" id="c"></i>
-							<span>Password Protection</span>
+
+					<div class="feat-card amber">
+						<div class="card-top">
+							<div class="card-icon"><i class="ri-shield-check-line"></i></div>
+							<span class="card-num">03</span>
 						</div>
-						<p>Add a password for added security, only those with the password can access it.</p>
+						<p class="card-name">Password Protection</p>
+						<hr class="card-divider" />
+						<p class="card-desc">
+							Add a password for added security, only those with the password can access it.
+						</p>
+					</div>
+				</div>
+
+				<div class="feat-more">
+					<div class="f">
+						<span><i class="ri-bard-line"></i> And more, try it now!</span>
+						<div class="down">
+							<i class="ri-arrow-down-line"></i>
+						</div>
+						<button
+							class="fill"
+							onclick={() => {
+								window.location.href = '/new';
+							}}><i class="ri-mail-line"></i> Create new letter</button
+						>
 					</div>
 				</div>
 			</section>

@@ -770,7 +770,7 @@
 							handleCheckbox('adv');
 						}}
 						disabled={buttonLoad}
-						>Advanced
+						>More
 						{#if !adv}
 							<i class="ri-arrow-down-s-line"></i>
 						{:else}

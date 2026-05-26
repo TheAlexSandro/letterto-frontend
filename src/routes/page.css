@@ -47,7 +47,7 @@ main .header .left .btn {
 	align-items: center;
 }
 
-main .header .left button {
+main button {
 	display: flex;
 	align-items: center;
 	outline: 0;
@@ -63,22 +63,22 @@ main .header .left button {
 	font-weight: var(--font-semibold);
 }
 
-main .header .left .btn button i {
+main .btn button i {
 	font-size: 15px;
 }
 
-main .header .left button:hover {
+main button:hover {
 	opacity: 0.7;
 	transition: all 0.3s ease-in-out;
 }
 
-main .header .left .fill {
+main .fill {
 	background: var(--color-accent);
 	border: 1px solid var(--color-accent);
 	color: #fff;
 }
 
-main .header .left .out {
+main .out {
 	background: transparent;
 	border: 1px solid var(--color-accent);
 	color: var(--color-accent);
@@ -88,84 +88,225 @@ main .header .lla {
 	margin-top: -30px;
 }
 
-main .any {
-	padding: 20px 50px;
+.features {
+	border-top: 1px solid var(--color-border);
+	padding: 50px 60px;
+	min-width: 100%;
+	background: var(--color-background-tertiary, #f5f4fb);
+	margin-bottom: -50px;
 }
 
-main .any .features {
+.features .feat-label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	justify-content: center;
+	margin-bottom: 12px;
+	font-size: 12px;
+	font-weight: var(--font-semibold);
+	letter-spacing: 0.1em;
+	color: #7f77dd;
+}
+
+.features .feat-label::before,
+.features .feat-label::after {
+	content: '';
+	display: block;
+	height: 1px;
+	width: 28px;
+	background: #7f77dd;
+}
+
+.features h2 {
+	text-align: center;
+	font-size: 32px;
+	font-weight: var(--font-bold);
+	margin: 0 0 10px;
+}
+
+.features .feat-subtitle {
+	text-align: center;
+	font-size: 15px;
+	color: var(--color-text-muted);
+	margin: 0 auto 40px;
+	max-width: 480px;
+	line-height: 1.6;
+}
+
+.features .feat-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 16px;
+	max-width: 100%;
+	margin: 0 auto;
+}
+
+.features .feat-card {
+	background: #fff;
+	border: 1px solid #ececec;
+	border-radius: 16px;
+	padding: 20px;
 	display: flex;
 	flex-direction: column;
+	gap: 14px;
+}
+
+.features .feat-card .card-top {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+}
+
+.features .feat-card .card-icon {
+	width: 52px;
+	height: 52px;
+	border-radius: 12px;
+	display: flex;
 	align-items: center;
+	justify-content: center;
+	font-size: 22px;
 }
 
-main .any .features .desc {
-	text-align: center;
-}
-
-main .any .features .desc h1 {
-	font-size: 14px;
-	font-weight: var(--font-medium);
-	color: var(--color-accent);
-}
-
-main .any .features .desc p {
-	font-size: 20px;
+.features .feat-card .card-num {
+	font-size: 16px;
 	font-weight: var(--font-semibold);
 }
 
-main .any .features .card-list {
-	margin-top: 50px;
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 20px;
-	justify-content: space-between;
+.features .feat-card .card-name {
+	font-size: 16px;
+	font-weight: var(--font-semibold);
+	margin: 0;
 }
 
-main .any .features .card-list .card {
-	background: #fff;
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 24px rgba(109, 40, 217, 0.1);
+.features .feat-card .card-divider {
+	height: 1px;
+	border: none;
+	margin: 0;
 }
 
-main .any .features .card-list .card .title {
+.features .feat-card .card-desc {
+	font-size: 13px;
+	color: var(--color-text-muted);
+	line-height: 1.6;
+	margin: 0;
+	flex: 1;
+}
+
+.features .feat-card .card-arrow {
+	width: 34px;
+	height: 34px;
+	border-radius: 8px;
 	display: flex;
-	flex-direction: row;
-	gap: 15px;
 	align-items: center;
-	margin-bottom: 17px;
-	padding-bottom: 10px;
-	border-bottom: 1px solid var(--color-border);
+	justify-content: center;
+	cursor: pointer;
+	transition: opacity 0.2s;
 }
 
-main .any .features .card-list .card .title span {
-	font-weight: var(--font-medium);
+.features .feat-card .card-arrow:hover {
+	opacity: 0.7;
 }
 
-main .any .features .card-list .card i {
-	padding: 10px;
-	border-radius: 5px;
-	font-size: 25px;
+.features .feat-card.purple .card-icon {
+	background: #eeedfe;
+	color: #534ab7;
+}
+.features .feat-card.purple .card-num {
+	color: #afa9ec;
+}
+.features .feat-card.purple .card-divider {
+	background: #afa9ec;
+}
+.features .feat-card.purple .card-arrow {
+	background: #eeedfe;
+	color: #534ab7;
 }
 
-main .any .features .card-list .card .title #a {
-	background: #ede9fe;
-	color: var(--color-accent);
+.features .feat-card.green .card-icon {
+	background: #e1f5ee;
+	color: #0f6e56;
+}
+.features .feat-card.green .card-num {
+	color: #5dcaa5;
+}
+.features .feat-card.green .card-divider {
+	background: #5dcaa5;
+}
+.features .feat-card.green .card-arrow {
+	background: #e1f5ee;
+	color: #0f6e56;
 }
 
-main .any .features .card-list .card .title #b {
-	background: #31a24b31;
-	color: var(--color-success);
+.features .feat-card.amber .card-icon {
+	background: #faeeda;
+	color: #854f0b;
+}
+.features .feat-card.amber .card-num {
+	color: #ef9f27;
+}
+.features .feat-card.amber .card-divider {
+	background: #ef9f27;
+}
+.features .feat-card.amber .card-arrow {
+	background: #faeeda;
+	color: #854f0b;
 }
 
-main .any .features .card-list .card .title #c {
-	background: #f7b92830;
-	color: var(--color-warning);
+.features .feat-more .f {
+	margin-top: 28px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
 }
 
-main .any .features .card-list .card p {
-	font-size: 14px;
-	color: var(--color-text-secondary);
+.features .feat-more .f .down i {
+	display: block;
+	color: var(--color-text-muted);
+	font-size: 20px;
+	animation: bounce 1.2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+	0%,
+	100% {
+		transform: translateY(-3px);
+	}
+	50% {
+		transform: translateY(3px);
+	}
+}
+
+.features button {
+	font-size: 0.8rem;
+}
+
+.features .feat-more .f button i {
+	color: #fff;
+}
+
+.features .feat-more span {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #fff;
+	border: 1px solid var(--color-border);
+	border-radius: 999px;
+	padding: 8px 18px;
+	font-size: 13px;
+	color: var(--color-text-muted);
+}
+
+@media screen and (max-width: 768px) {
+	.features .feat-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+	.features .feat-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
 .lla {
@@ -382,8 +523,8 @@ main .list:hover .track {
 }
 
 main .list .track .l {
-    min-width: 350px;
-    max-width: 350px;
+	min-width: 350px;
+	max-width: 350px;
 }
 
 @keyframes marquee {
@@ -427,17 +568,17 @@ main .list .track .l {
 		min-width: 100%;
 	}
 
-	main .any {
-		padding: 25px;
-	}
-
-	main .any .features .card-list {
-		grid-template-columns: repeat(1, 1fr);
-		gap: 20px;
-	}
-
-	main .any .features .card-list .card {
+	.features {
+		padding: 30px 20px;
 		min-width: 100%;
+	}
+
+	.features h2 {
+		font-size: 25px;
+	}
+
+	.features .feat-grid {
+		grid-template-columns: 1fr;
 	}
 
 	.lla {
