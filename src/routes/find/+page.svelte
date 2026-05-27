@@ -108,6 +108,7 @@
 				placeholder="Recipient name..."
 				bind:value={name}
 				required
+				disabled={buttonLoad}
 			/>
 			<button disabled={buttonLoad} type="submit">
 				{#if buttonLoad}

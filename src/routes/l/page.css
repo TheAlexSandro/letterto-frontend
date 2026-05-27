@@ -405,8 +405,35 @@
 }
 
 .letter .pwd {
+	margin-top: 20px;
 	display: flex;
 	flex-direction: column;
+}
+
+.letter .pwd .desc {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: center;
+	text-align: center;
+}
+
+.letter .pwd .desc i {
+	font-size: 30px;
+	padding: 10px;
+	color: var(--color-accent);
+	background: #6c28d91b;
+	border-radius: 50px;
+}
+
+.letter .pwd .desc b {
+	font-weight: var(--font-semibold);
+	font-size: 20px;
+}
+
+.letter .pwd .desc span {
+	margin-top: -5px;
+	font-size: 16px;
 }
 
 .letter .pwd form {
@@ -576,6 +603,10 @@
 		width: 34px;
 		height: 34px;
 	}
+
+	.letter .pwd .desc {
+		padding: 0 10px;
+	}
 }
 
 @media screen and (width < 480px) {
@@ -595,6 +626,10 @@
 
 	.letter-wrap .right {
 		margin-left: -20px;
+	}
+
+	.letter .pwd {
+		margin-top: -10px;
 	}
 }
 

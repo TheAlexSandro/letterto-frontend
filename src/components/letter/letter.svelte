@@ -122,7 +122,11 @@
 		<a href="/l/{letter_id}" data-sveltekit-preload-data="off">
 			<div class="content">
 				{#if is_locked}
-					<div class="locked"><i class="ri-lock-line" id="a"></i> Content Locked</div>
+					<div class="locked">
+						<i class="ri-lock-line" id="a"></i>
+						<b>Letter Locked</b>
+						<span>Password is required to view this letter.</span>
+					</div>
 				{:else}
 					<p style="font-family: {resolveFont(font)};">
 						{stripHTML(message).length > 70
@@ -281,17 +285,30 @@
 
 	.l .content .locked {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		gap: 5px;
 		align-items: center;
 		padding: 10px;
 		border-radius: 5px;
 		justify-content: center;
+		text-align: center;
 		background: var(--color-accent-light);
 	}
 
 	.l .content .locked i {
-		font-size: 17px;
+		font-size: 20px;
+		padding: 10px;
+		color: var(--color-accent);
+		background: #6c28d91b;
+		border-radius: 50px;
+	}
+
+	.l .content .locked b {
+		font-weight: var(--font-semibold);
+	}
+
+	.l .content .locked span {
+		font-size: 13px;
 	}
 
 	.l .footer {

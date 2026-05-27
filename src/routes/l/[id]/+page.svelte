@@ -386,8 +386,11 @@
 				</div>
 			{:else}
 				<div class="pwd">
-					<h1>Upss...!</h1>
-					<p>This letter is password protected, please enter the password to proceed.</p>
+					<div class="desc">
+						<i class="ri-lock-line" id="a"></i>
+						<b>Letter Locked</b>
+						<span>Please enter the password to access this letter.</span>
+					</div>
 
 					<form method="post" onsubmit={unlock}>
 						<input
