@@ -140,7 +140,25 @@
 		setTimeout(() => (copied = false), 1800);
 	};
 
-	const getInitial = (name?: string) => name?.charAt(0).toUpperCase() ?? '?';
+	const dates = (d: string) => {
+		const [day, month, year] = d.split('/').map(Number);
+		const months = [
+			'Jan',
+			'Feb',
+			'Mar',
+			'Apr',
+			'May',
+			'Jun',
+			'Jul',
+			'Aug',
+			'Sep',
+			'Oct',
+			'Nov',
+			'Dec'
+		];
+		const formatted = `${day} ${months[month - 1]} 20${year}`;
+		return formatted;
+	};
 
 	const unlock = async (e: Event) => {
 		e.preventDefault();
@@ -179,10 +197,16 @@
 />
 
 <svelte:head>
-	<title>LetterTo - Letter {letterId}</title>
+	<title>LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}</title>
 	<meta property="og:url" content="/l/{letterId}" />
-	<meta property="og:title" content="LetterTo - Letter {letterId}" />
-	<meta name="twitter:title" content="LetterTo - Letter {letterId}" />
+	<meta
+		property="og:title"
+		content="LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}"
+	/>
+	<meta
+		name="twitter:title"
+		content="LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}"
+	/>
 </svelte:head>
 
 {#if windowLoad}
@@ -261,20 +285,17 @@
 				<div class="meta-row">
 					<div class="from-to-inline">
 						<div class="avatar">
-							{getInitial(!card?.sender ? 'Anonymous' : card?.sender)}
+							<i class="ri-quill-pen-ai-line"></i>
+							<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
 						</div>
-						<span class="name-text">{!card?.sender ? 'Anonymous' : card?.sender}</span>
-						<i class="ri-arrow-right-line arrow-icon"></i>
-						<div class="avatar avatar-to">
-							{getInitial(!card?.recipient_name ? 'Anonymous' : card?.recipient_name)}
+						<div class="avatar">
+							<i class="ri-user-heart-line"></i>
+							<span>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span>
 						</div>
-						<span class="name-text"
-							>{!card?.recipient_name ? 'Anonymous' : card?.recipient_name}</span
-						>
 					</div>
 					<div class="date-chip">
 						<i class="ri-calendar-line"></i>
-						{card?.created_at}
+						<span>{dates(String(card?.created_at))}</span>
 					</div>
 				</div>
 
