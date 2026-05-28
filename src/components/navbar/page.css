@@ -45,7 +45,8 @@
 	border-radius: 8px;
 }
 
-.button-spinner {
+.navbar .button-spinner,
+.mobile-menu .button-spinner {
 	margin: 0 auto;
 	width: 18px;
 	height: 18px;
