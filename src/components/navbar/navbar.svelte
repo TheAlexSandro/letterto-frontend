@@ -9,7 +9,7 @@
 	let load = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
+		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		isLog = data['status_code'] !== 200 ? false : true;
@@ -35,7 +35,9 @@
 		dropdownOpen = false;
 	};
 
-	const logout = async () => {
+	const logout = async (e: Event) => {
+		if (load) return;
+		e.stopPropagation();
 		const c = window.confirm('Are you sure you want to logout?');
 		if (c) {
 			load = true;
@@ -138,15 +140,12 @@
 				<a href="/dashboard/my-letters" onclick={closeAll}>
 					<i class="ri-mail-line"></i> My Letters
 				</a>
-				<a
-					style="color: var(--color-danger);"
-					href="#logout"
-					onclick={() => {
-						closeAll();
-						logout();
-					}}
-				>
-					<i class="ri-logout-circle-line"></i> Logout
+				<a style="color: var(--color-danger);" href="#logout" onclick={logout}>
+					{#if load}
+						<span class="button-spinner"></span>
+					{:else}
+						<i class="ri-logout-circle-line"></i> Logout
+					{/if}
 				</a>
 			{/if}
 		</div>

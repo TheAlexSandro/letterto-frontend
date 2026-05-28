@@ -17,7 +17,7 @@
 	let globalErr = $state('');
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=auth&ep=accountInfo');
+		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
 		const data = await isLoggedIn.json() as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {

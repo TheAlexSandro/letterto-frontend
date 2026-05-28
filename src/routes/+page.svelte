@@ -109,7 +109,7 @@
 			</div>
 		</section>
 
-		{#if letters.length >= 10}
+		{#if letters.length > 0}
 			<div class="list">
 				<div class="track">
 					{#each letters as letter}
