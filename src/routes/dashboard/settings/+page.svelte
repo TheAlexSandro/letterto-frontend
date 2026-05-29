@@ -3,6 +3,7 @@
 	import Footer from '../../../components/footer/footer.svelte';
 	import { onMount } from 'svelte';
 	import './page.css';
+	import { showToast } from '$lib/toast';
 
 	type Nav = 'profile' | 'passwd';
 
@@ -10,7 +11,11 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		const data = await isLoggedIn.json() as App.Platform['resp'];
+		if (!isLoggedIn.ok) {
+			showToast('Something went wrong, please try again later.', 'error', 5000);
+			return;
+		}
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth?redirect=dashboard/settings';

@@ -4,6 +4,7 @@
 	import Footer from '../../components/footer/footer.svelte';
 	import './page.css';
 	import { onMount } from 'svelte';
+	import { showToast } from '$lib/toast';
 
 	type Auth = 'signUp' | 'signIn';
 
@@ -20,12 +21,20 @@
 	let buttonLoad = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		const data = (await isLoggedIn.json()) as App.Platform['resp'];
+		try {
+			const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+			if (!isLoggedIn.ok) {
+				showToast('Something went wrong, please try again later.', 'error', 5000);
+				return;
+			}
+			const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
-		if (data['status_code'] === 200) {
-			window.location.href = '/dashboard/my-letters';
-			return;
+			if (data['status_code'] === 200) {
+				window.location.href = '/dashboard/my-letters';
+				return;
+			}
+		} catch {
+			showToast('Something went wrong, please try again later.', 'error', 5000);
 		}
 		windowLoad = false;
 	});
@@ -51,6 +60,11 @@
 				},
 				body: JSON.stringify({ name, username, password })
 			});
+			if (!ft.ok) {
+				globalErr = 'Something went wrong, please try again later.';
+				buttonLoad = false;
+				return;
+			}
 			const datas = (await ft.json()) as App.Platform['resp'];
 
 			if (datas['status_code'] !== 200) {

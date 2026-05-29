@@ -62,7 +62,7 @@ html {
 	justify-content: center;
 	align-items: center;
 	background: var(--color-bg);
-	z-index: 9999;
+	z-index: 999;
 }
 
 .preloader .spinner {

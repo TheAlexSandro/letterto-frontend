@@ -3,6 +3,7 @@
 	import Footer from '../../../components/footer/footer.svelte';
 	import { onMount } from 'svelte';
 	import '../page.css';
+	import { showToast } from '$lib/toast';
 
 	let windowLoad = $state(true);
 	let username = $state('');
@@ -18,7 +19,11 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		const data = await isLoggedIn.json() as App.Platform['resp'];
+		if (!isLoggedIn.ok) {
+			showToast('Something went wrong, please try again later.', 'error', 5000);
+			return;
+		}
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth?redirect=dashboard/profile';
@@ -47,25 +52,35 @@
 		buttonLoad = true;
 		noChange = false;
 		usernameErr = '';
-		const ft = await fetch(`/api/req?path=user&ep=edit`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ name, username })
-		});
-		const ftJson = await ft.json() as App.Platform['resp'];
-
-		if (ftJson['status_code'] !== 200) {
-			if (ftJson['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth?redirect=dashboard/profile';
+		try {
+			const ft = await fetch(`/api/req?path=user&ep=edit`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ name, username })
+			});
+			if (!ft.ok) {
+				buttonLoad = false;
+				globalErr = 'Something went wrong, please try again later.';
 				return;
 			}
-			usernameErr = ftJson['error_code'] === 'ID_OCCUPIED' ? ftJson['message'] : '';
-			globalErr = ftJson['error_code'] === '' ? ftJson['message'] : '';
+			const ftJson = (await ft.json()) as App.Platform['resp'];
+
+			if (ftJson['status_code'] !== 200) {
+				if (ftJson['error_code'] === 'UNAUTHORIZED') {
+					window.location.href = '/auth?redirect=dashboard/profile';
+					return;
+				}
+				usernameErr = ftJson['error_code'] === 'ID_OCCUPIED' ? ftJson['message'] : '';
+				globalErr = ftJson['error_code'] === '' ? ftJson['message'] : '';
+				buttonLoad = false;
+			} else {
+				window.location.reload();
+			}
+		} catch {
 			buttonLoad = false;
-		} else {
-			window.location.reload();
+			globalErr = 'Something went wrong, please try again later.';
 		}
 	};
 

@@ -2,14 +2,12 @@
 	import favicon from '$lib/assets/favicon.png';
 	import './global.css';
 	import { afterNavigate } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import Toast from '../components/toast/toast.svelte';
+	import { toast } from '$lib/toast';
 
 	let loading = $state(true);
-
-	onMount(() => {
-		afterNavigate(() => {
-			loading = false;
-		});
+	afterNavigate(() => {
+		loading = false;
 	});
 
 	let { children } = $props();
@@ -40,6 +38,12 @@
 	<meta name="twitter:image" content={favicon} />
 	<meta name="twitter:image:alt" content="Icon" />
 </svelte:head>
+
+<Toast
+	message={$toast.message}
+	type={$toast.type as 'success' | 'error' | 'info' | 'warning'}
+	show={$toast.show}
+/>
 
 {#if loading}
 	<div class="preloader">

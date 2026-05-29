@@ -8,6 +8,7 @@
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 	import deezer from '$lib/assets/deezer2.svg';
+	import { showToast } from '$lib/toast';
 
 	type Track = {
 		id: number;
@@ -63,6 +64,7 @@
 	let lightboxSrc = $state<string | null>(null);
 	let showPreview = $state(false);
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let findErr = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -92,8 +94,11 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+		if (!isLoggedIn.ok) {
+			showToast('Something went wrong, please try again later.', 'error', 5000);
+			return;
+		}
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth?redirect=new';
 			return;
@@ -172,12 +177,28 @@
 			return;
 		}
 		loading = true;
+		findErr = false;
 		clearTimeout(debounce);
 		debounce = setTimeout(async () => {
-			const res = await fetch(`/api/music?path=search&q=${query}`);
-			const data = (await res.json()) as App.Platform['resp'];
-			results = data.data ?? [];
-			loading = false;
+			try {
+				const res = await fetch(`/api/music?path=search&q=${query}`);
+				if (!res.ok) {
+					loading = false;
+					findErr = true;
+					return;
+				}
+				const data = (await res.json()) as any;
+				if (data['error']) {
+					loading = false;
+					findErr = true;
+					return;
+				}
+				results = data.data ?? [];
+				loading = false;
+			} catch {
+				loading = false;
+				findErr = true;
+			}
 		}, 400);
 	};
 
@@ -384,43 +405,53 @@
 		fd.append('image', imageFile as Blob);
 		fd.append('video', videoFile as Blob);
 
-		const ft = await fetch('/api/letters?path=new', {
-			method: 'POST',
-			body: fd
-		});
-		const submitJson = (await ft.json()) as App.Platform['resp'];
-
-		if (submitJson['status_code'] !== 200) {
-			if (submitJson['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth';
+		try {
+			const ft = await fetch('/api/letters?path=new', {
+				method: 'POST',
+				body: fd
+			});
+			if (!ft.ok) {
+				buttonLoad = false;
+				globalErr = 'Something went wrong, please try again later.';
 				return;
 			}
-			globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST'].includes(submitJson['error_code'])
-				? 'Something went wrong, please try again later...'
-				: '';
-			idError =
-				submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
-				submitJson['message'].includes('letter_id')
-					? 'Max is 20 characters.'
-					: submitJson['error_code'] === 'ID_OCCUPIED'
+			const submitJson = (await ft.json()) as App.Platform['resp'];
+
+			if (submitJson['status_code'] !== 200) {
+				if (submitJson['error_code'] === 'UNAUTHORIZED') {
+					window.location.href = '/auth';
+					return;
+				}
+				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST'].includes(submitJson['error_code'])
+					? 'Something went wrong, please try again later...'
+					: '';
+				idError =
+					submitJson['error_code'] === 'LENGTH_TOO_LONG' &&
+					submitJson['message'].includes('letter_id')
+						? 'Max is 20 characters.'
+						: submitJson['error_code'] === 'ID_OCCUPIED'
+							? submitJson['message']
+							: '';
+				passError =
+					(['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
+						submitJson['message'].includes('password')) ||
+					submitJson['error_code'] === 'INVALID_PASS_FORMAT'
 						? submitJson['message']
 						: '';
-			passError =
-				(['LENGTH_TOO_LONG', 'LENGTH_TOO_SHORT'].includes(submitJson['error_code']) &&
-					submitJson['message'].includes('password')) ||
-				submitJson['error_code'] === 'INVALID_PASS_FORMAT'
-					? submitJson['message']
-					: '';
-			fileError = submitJson['error_code'] === 'FILE_TOO_LARGE' ? submitJson['message'] : '';
-			if (idError || passError) {
-				adv = true;
-				await scrollToError();
+				fileError = submitJson['error_code'] === 'FILE_TOO_LARGE' ? submitJson['message'] : '';
+				if (idError || passError) {
+					adv = true;
+					await scrollToError();
+				}
+				buttonLoad = false;
+				dropdownClosed = false;
+				uploadRef!.style.opacity = '1 !important';
+			} else {
+				createSuccess = true;
 			}
+		} catch {
 			buttonLoad = false;
-			dropdownClosed = false;
-			uploadRef!.style.opacity = '1 !important';
-		} else {
-			createSuccess = true;
+			globalErr = 'Something went wrong, please try again later.';
 		}
 	};
 
@@ -508,7 +539,10 @@
 								{#if loading}
 									<div class="info-text">Searching...</div>
 								{:else if results.length === 0}
-									<div class="info-text"><i class="ri-alert-line"></i> Not Found</div>
+									<div class="info-text">
+										<i class="ri-alert-line"></i>
+										{!findErr ? 'Not Found' : 'Something went wrong...'}
+									</div>
 								{:else if results.length > 0}
 									{#each results as track}
 										<div class="item-wrap">
@@ -944,7 +978,7 @@
 
 					{#if globalErr}
 						<div class="wrap-error">
-							<div class="error">Something went wrong...</div>
+							<div class="error">{globalErr}</div>
 						</div>
 					{/if}
 

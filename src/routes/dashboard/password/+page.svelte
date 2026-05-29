@@ -3,6 +3,7 @@
 	import Footer from '../../../components/footer/footer.svelte';
 	import { onMount } from 'svelte';
 	import '../page.css';
+	import { showToast } from '$lib/toast';
 
 	let windowLoad = $state(true);
 	let new_password = $state('');
@@ -16,6 +17,10 @@
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+		if (!isLoggedIn.ok) {
+			showToast('Something went wrong, please try again later.', 'error', 5000);
+			return;
+		}
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 		if (data['status_code'] !== 200) {
@@ -31,26 +36,36 @@
 		buttonLoad = true;
 		oldPassErr = '';
 		passErr = '';
-		const ft = await fetch(`/api/req?path=user&ep=edit`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({ old_password, new_password })
-		});
-		const ftJson = (await ft.json()) as App.Platform['resp'];
-
-		if (ftJson['status_code'] !== 200) {
-			if (ftJson['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth?redirect=dashboard/password';
+		try {
+			const ft = await fetch(`/api/req?path=user&ep=edit`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ old_password, new_password })
+			});
+			if (!ft.ok) {
+				buttonLoad = false;
+				globalErr = 'Something went wrong, please try again later.';
 				return;
 			}
-			oldPassErr = ftJson['error_code'] === 'INVALID_PASSWORD' ? 'Wrong old password.' : '';
-			passErr = ftJson['error_code'] === 'LENGTH_TOO_SHORT' ? 'Minimum is 8 characters.' : '';
-			globalErr = ftJson['error_code'] === '' ? ftJson['message'] : '';
+			const ftJson = (await ft.json()) as App.Platform['resp'];
+
+			if (ftJson['status_code'] !== 200) {
+				if (ftJson['error_code'] === 'UNAUTHORIZED') {
+					window.location.href = '/auth?redirect=dashboard/password';
+					return;
+				}
+				oldPassErr = ftJson['error_code'] === 'INVALID_PASSWORD' ? 'Wrong old password.' : '';
+				passErr = ftJson['error_code'] === 'LENGTH_TOO_SHORT' ? 'Minimum is 8 characters.' : '';
+				globalErr = ftJson['error_code'] === '' ? ftJson['message'] : '';
+				buttonLoad = false;
+			} else {
+				returns();
+			}
+		} catch {
 			buttonLoad = false;
-		} else {
-			returns();
+			globalErr = 'Something went wrong, please try again later.';
 		}
 	};
 

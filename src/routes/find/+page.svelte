@@ -28,6 +28,7 @@
 	let observer: IntersectionObserver | null = null;
 	let name = $state('');
 	let fetchDone = $state(false);
+	let globalErr = $state('');
 
 	const setupObserver = () => {
 		if (observer) observer.disconnect();
@@ -73,22 +74,33 @@
 		noResult = false;
 		buttonLoad = true;
 		fetchDone = false;
+		globalErr = '';
 
-		const res = await fetch(
-			`/api/letters?path=search&recipient_name=${encodeURIComponent(name)}&offset=1`
-		);
-		const json = (await res.json()) as App.Platform['resp'];
+		try {
+			const res = await fetch(
+				`/api/letters?path=search&recipient_name=${encodeURIComponent(name)}&offset=1`
+			);
+			if (!res.ok) {
+				buttonLoad = false;
+				globalErr = 'Something went wrong, please try again later.';
+				return;
+			}
+			const json = (await res.json()) as App.Platform['resp'];
 
-		buttonLoad = false;
-		searched = true;
+			buttonLoad = false;
+			searched = true;
 
-		if (json['status_code'] === 200 && json['data']['letters']?.length > 0) {
-			letters = json['data']['letters'];
-			total = json['data']['total'];
-			offset = 2;
-			setTimeout(() => setupObserver(), 100);
-		} else {
-			noResult = true;
+			if (json['status_code'] === 200 && json['data']['letters']?.length > 0) {
+				letters = json['data']['letters'];
+				total = json['data']['total'];
+				offset = 2;
+				setTimeout(() => setupObserver(), 100);
+			} else {
+				noResult = true;
+			}
+		} catch {
+			buttonLoad = false;
+			globalErr = 'Something went wrong, please try again later.';
 		}
 	};
 </script>
@@ -118,6 +130,12 @@
 				{/if}
 			</button>
 		</form>
+
+		{#if globalErr}
+			<div class="error">
+				{globalErr}
+			</div>
+		{/if}
 
 		{#if searched}
 			{#if noResult}

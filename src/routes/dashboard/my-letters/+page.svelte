@@ -4,6 +4,7 @@
 	import './page.css';
 	import { onMount } from 'svelte';
 	import Letter from '../../../components/letter/letter.svelte';
+	import { showToast } from '$lib/toast';
 
 	type Card = {
 		id: string;
@@ -34,25 +35,33 @@
 
 		isFetching = true;
 
-		const ftLetter = await fetch(`/api/letters?path=myLetters&offset=${offset}`);
-		const dataLetter = (await ftLetter.json()) as App.Platform['resp'];
-
-		if (dataLetter['status_code'] !== 200) {
-			if (dataLetter['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = '/auth?redirect=dashboard/my-letters';
+		try {
+			const ftLetter = await fetch(`/api/letters?path=myLetters&offset=${offset}`);
+			if (!ftLetter.ok) {
+				showToast('Failed to fetch letter, please try again.', 'error', 5000);
 				return;
 			}
-			globalErr =
-				dataLetter['error_code'] === 'BAD_REQUEST'
-					? `Something went wrong, please reload this page.`
-					: ``;
-		} else {
-			cards = [...cards, ...dataLetter['data']];
-			offset++;
-		}
+			const dataLetter = (await ftLetter.json()) as App.Platform['resp'];
 
-		isFetching = false;
-		letterLoad = false;
+			if (dataLetter['status_code'] !== 200) {
+				if (dataLetter['error_code'] === 'UNAUTHORIZED') {
+					window.location.href = '/auth?redirect=dashboard/my-letters';
+					return;
+				}
+				globalErr =
+					dataLetter['error_code'] === 'BAD_REQUEST'
+						? `Something went wrong, please reload this page.`
+						: ``;
+			} else {
+				cards = [...cards, ...dataLetter['data']];
+				offset++;
+			}
+
+			isFetching = false;
+			letterLoad = false;
+		} catch {
+			showToast('Failed to fetch letter, please try again.', 'error', 5000);
+		}
 	};
 
 	onMount(() => {
@@ -63,31 +72,44 @@
 		window.addEventListener('resize', handleResize);
 
 		(async () => {
-			const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-			const data = (await isLoggedIn.json()) as App.Platform['resp'];
+			try {
+				const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+				if (!isLoggedIn.ok) {
+					windowLoad = false;
+					showToast('Something went wrong, please try again later.', 'error', 5000);
+					return;
+				}
+				const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
-			if (data['status_code'] !== 200) {
-				window.location.href = '/auth';
-				return;
+				if (data['status_code'] !== 200) {
+					window.location.href = '/auth';
+					return;
+				}
+
+				windowLoad = false;
+				const ftT = await fetch('/api/letters?path=total');
+				if (!ftT.ok) {
+					showToast('Failed to fetch total.', 'error', 5000);
+					return;
+				}
+				const dT = (await ftT.json()) as App.Platform['resp'];
+				total = dT['data']['total'];
+				await fetchLetters();
+				const observer = new IntersectionObserver(
+					(entries) => {
+						if (entries[0].isIntersecting) {
+							fetchLetters();
+						}
+					},
+					{ threshold: 1.0 }
+				);
+
+				if (sentinel) observer.observe(sentinel);
+
+				return () => observer.disconnect();
+			} catch {
+				showToast('Something went wrong, please try again later.', 'error', 5000);
 			}
-
-			windowLoad = false;
-			const ftT = await fetch('/api/letters?path=total');
-			const dT = (await ftT.json()) as App.Platform['resp'];
-			total = dT['data']['total'];
-			await fetchLetters();
-			const observer = new IntersectionObserver(
-				(entries) => {
-					if (entries[0].isIntersecting) {
-						fetchLetters();
-					}
-				},
-				{ threshold: 1.0 }
-			);
-
-			if (sentinel) observer.observe(sentinel);
-
-			return () => observer.disconnect();
 		})();
 
 		return () => {

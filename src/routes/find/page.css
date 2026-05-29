@@ -15,6 +15,18 @@
 	padding: 0 50px;
 }
 
+.find .cont .error {
+	background: rgba(255, 0, 0, 0.325);
+	padding: 5px;
+	text-align: center;
+	color: var(--color-text-primary);
+	border-radius: 5px;
+	border: 1px solid var(--color-danger);
+	margin-top: 20px;
+	font-size: 13px;
+	width: 30%;
+}
+
 .find .cont h1 {
 	font-weight: var(--font-medium);
 	margin-bottom: 20px;
@@ -51,9 +63,9 @@
 }
 
 .find form:focus-within {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
-    transition: all 0.3s ease-in-out;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 4px rgba(24, 119, 242, 0.1);
+	transition: all 0.3s ease-in-out;
 }
 
 .find form i {
@@ -159,6 +171,10 @@
 		padding: 0;
 	}
 
+	.find .cont .error {
+		width: 100%;
+	}
+
 	.find .cont h1 {
 		font-size: 20px;
 	}
@@ -176,5 +192,9 @@
 @media screen and (min-width: 768px) and (max-width: 1024px) {
 	.find .results {
 		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.find .cont .error {
+		width: 50%;
 	}
 }
