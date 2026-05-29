@@ -337,7 +337,12 @@
 
 .new form .music-picker .pwr {
 	display: flex;
-	justify-content: flex-end;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.new form .music-picker .pwr .error-input {
+	margin: 0;
 }
 
 .new form .music-picker .pwr .box {

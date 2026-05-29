@@ -52,6 +52,7 @@
 	let fileError = $state('');
 	let passError = $state('');
 	let idError = $state('');
+	let messageErr = $state(false);
 
 	let createSuccess = $state(false);
 	let buttonLoad = $state(false);
@@ -371,7 +372,7 @@
 		dropdownClosed = true;
 		adv = false;
 		uploadRef!.style.opacity = '0.8 !important';
-		if (!selected || (usePassword && !password) || !letterId) {
+		if (!selected || (usePassword && !password) || !letterId || !letterMessage) {
 			if (!selected) {
 				musicError = true;
 			}
@@ -384,6 +385,11 @@
 			if (letterId && letterId.length > 20) {
 				idError = 'Max reference id length is 20 characters.';
 			}
+			if (!letterMessage) {
+				messageErr = true;
+			}
+			buttonLoad = false;
+			dropdownClosed = false;
 			await scrollToError();
 			return;
 		}
@@ -517,6 +523,9 @@
 							</div>
 						</div>
 					{/if}
+					{#if messageErr}
+						<div class="error-input">Message can't be empty.</div>
+					{/if}
 					<div class="music-picker">
 						<label for="music">Music</label>
 						<div class="input-wrap">
@@ -640,6 +649,12 @@
 
 						{#if !selected}
 							<div class="pwr">
+								<div class="error-input">
+									{#if musicError}
+										Please select a music.
+									{/if}
+								</div>
+
 								<div class="box">
 									<img src={deezer} alt="Deezer" />
 									<span>Deezer</span>
@@ -647,9 +662,6 @@
 							</div>
 						{/if}
 					</div>
-					{#if musicError}
-						<div class="error-input">Please select a music.</div>
-					{/if}
 					<div bind:this={uploadRef} class="file-upload">
 						<label for="attach">Attachment</label>
 						<span>Optional, add images or videos to your letter to make it more romantic...</span>

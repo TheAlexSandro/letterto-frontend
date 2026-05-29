@@ -234,12 +234,6 @@
 	font-weight: var(--font-medium);
 }
 
-.letter-wrap .date-chip span {
-	border-left: 1px solid var(--color-border);
-	padding: 3px;
-	padding-left: 8px;
-}
-
 .letter-wrap .date-chip i {
 	font-size: 18px;
 	background: #ede9fe;
@@ -566,16 +560,17 @@
 @media screen and (max-width: 600px) {
 	.letter {
 		min-height: calc(100vh - 70px);
-		margin-top: 80px;
+		margin-top: 70px;
 	}
 
 	.letter .meta-row {
-		align-items: center;
+		align-items: flex-start;
+		flex-direction: column;
 		gap: 15px;
 	}
 
 	.letter-wrap .progress-bar {
-		height: 6px;
+		height: 4px;
 	}
 
 	.letter-wrap .pwd form .btns button {
@@ -587,7 +582,7 @@
 	}
 
 	.letter-wrap .music-info .artist {
-		font-size: 12px;
+		font-size: 11px;
 	}
 
 	.letter-wrap .music-left img {
