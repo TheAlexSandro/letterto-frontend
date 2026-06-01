@@ -1109,6 +1109,14 @@
 						<div class="divider"></div>
 
 						<div class="actions">
+							<button
+								class="btn-out"
+								onclick={() => {
+									window.location.reload();
+								}}
+							>
+								<i class="ri-pencil-line"></i> Edit
+							</button>
 							<button class="btn-pri" onclick={() => viewLetter(letterId)}>
 								<i class="ri-eye-line"></i> View letter
 							</button>
