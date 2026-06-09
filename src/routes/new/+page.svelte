@@ -898,6 +898,7 @@
 											<option value="cv">Caveat</option>
 											<option value="ind-fl">Indie Flower</option>
 											<option value="playwrite-de">Playwrite DE SAS</option>
+											<option value="playwrite-no">Playwrite Norge</option>
 											<option value="alike">Alike</option>
 										</select>
 										<i class="ri-arrow-down-s-line"></i>

@@ -11,7 +11,7 @@ export const resolveFont = (font: string) => {
 		cv: 'Caveat',
 		'ind-fl': `"Indie Flower"; cursive`,
 		'playwrite-de': `"Playwrite DE SAS"; cursive`,
-		'playwrite-no': `"Playwrite NO; cursive"`,
+		'playwrite-no': `"Playwrite NO"; cursive`,
 		alike: `"Alike"; serif`
 	} as const;
 	return dt[font as keyof typeof dt];
