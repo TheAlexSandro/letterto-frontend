@@ -902,7 +902,7 @@
 									<div class="menu-info">
 										<div class="item">Password</div>
 										<span class="desc"
-											>Enable a password for added privacy, only those with the password can access
+											>Enable password to lock this letter, only those with the password can access
 											it.</span
 										>
 									</div>
@@ -940,7 +940,7 @@
 											/>
 											<div class="custom-checkmark"></div>
 											<span class="status-text"
-												>{showPassword ? 'Password showen' : 'Password hidden'}</span
+												>{showPassword ? 'Hide password' : 'Show password'}</span
 											>
 										</div>
 									</div>
@@ -990,7 +990,7 @@
 
 							<div class="wrapper">
 								<div class="menu-info">
-									<div class="item">Custom URL</div>
+									<div class="item">Custom ID</div>
 									<span class="desc">Enter the reference ID for the letter you want.</span>
 								</div>
 								<div class="w">
