@@ -1,7 +1,7 @@
 {
-	"name": "confessit",
+	"name": "letterto",
 	"private": true,
-	"version": "0.0.1",
+	"version": "12.06.26",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
