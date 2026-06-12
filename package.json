@@ -30,5 +30,10 @@
 	"dependencies": {
 		"@lottiefiles/dotlottie-svelte": "^0.10.0",
 		"quill": "^2.0.3"
+	},
+	"allowScripts": {
+		"esbuild@0.27.3": true,
+		"workerd@1.20260611.1": true,
+		"sharp@0.34.5": true
 	}
 }
