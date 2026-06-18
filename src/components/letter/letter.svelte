@@ -488,7 +488,7 @@
 	}
 
 	.l .btn #menu-trigger {
-		padding: 6px;
+		padding: 7px;
 		border-radius: 8px;
 		outline: 0;
 		color: var(--color-text-secondary);
