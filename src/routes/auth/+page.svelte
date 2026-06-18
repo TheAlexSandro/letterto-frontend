@@ -30,7 +30,7 @@
 			const data = (await isLoggedIn.json()) as App.Platform['resp'];
 
 			if (data['status_code'] === 200) {
-				window.location.href = '/dashboard/my-letters';
+				window.location.href = '/dashboard';
 				return;
 			}
 		} catch {

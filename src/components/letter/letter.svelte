@@ -17,11 +17,14 @@
 	import { resolveFont } from '$lib/utils/utils';
 	import { stripHTML } from '$lib/utils/utils';
 	import { onMount } from 'svelte';
+	import { isDeletingLetter, openDropdownId } from '$lib/stores/letter';
 
 	let copied = $state(false);
-	let letterLoad = $state(false);
 	let buttonLoad = $state(false);
 	let windowWidth = $state(0);
+	let dropdownRef = $state<HTMLDivElement | null>(null);
+
+	let dropdownOpen = $derived($openDropdownId === letter_id);
 
 	onMount(() => {
 		windowWidth = window.innerWidth;
@@ -30,8 +33,18 @@
 		};
 		window.addEventListener('resize', handleResize);
 
+		const handleClickOutside = (e: MouseEvent) => {
+			if (dropdownRef && !dropdownRef.contains(e.target as Node)) {
+				if ($openDropdownId === letter_id) {
+					openDropdownId.set(null);
+				}
+			}
+		};
+		document.addEventListener('click', handleClickOutside);
+
 		return () => {
 			window.removeEventListener('resize', handleResize);
+			document.removeEventListener('click', handleClickOutside);
 		};
 	});
 
@@ -51,7 +64,9 @@
 			'Are you sure you want to delete this letter? The message, the image/video in this letter will also be deleted.'
 		);
 		if (c) {
-			letterLoad = true;
+			buttonLoad = true;
+			isDeletingLetter.set(true);
+			openDropdownId.set(null);
 			const ft = await fetch(`/api/letters?path=remove&id=${letterId}`);
 			const jsons = (await ft.json()) as App.Platform['resp'];
 
@@ -89,31 +104,64 @@
 				<span>{created_at}</span>
 			</div>
 		{:else}
-			<div class="btn">
+			<div class="btn" bind:this={dropdownRef}>
 				<button
-					id="trans"
-					aria-labelledby="copy"
-					onclick={() => copyLink(letter_id)}
-					disabled={copied || buttonLoad}
+					id="menu-trigger"
+					aria-label="Actions"
+					disabled={buttonLoad || (!buttonLoad && $isDeletingLetter)}
+					onclick={(e) => {
+						e.stopPropagation();
+						openDropdownId.set(dropdownOpen ? null : letter_id);
+					}}
 				>
-					{#if !copied}
-						<i class="ri-file-copy-line"></i>
+					{#if !buttonLoad}
+						<i class={dropdownOpen ? 'ri-close-line open' : 'ri-more-2-fill'}></i>
 					{:else}
-						<i class="ri-check-line"></i>
+						<span class="button-spinner"></span>
 					{/if}
 				</button>
-				<button
-					disabled={buttonLoad}
-					id="blue"
-					aria-labelledby="edit"
-					onclick={() => editOpen(letter_id)}><i class="ri-pencil-line"></i></button
-				>
-				<button
-					disabled={buttonLoad}
-					id="red"
-					aria-labelledby="remove"
-					onclick={() => delLetter(letter_id)}><i class="ri-delete-bin-line"></i></button
-				>
+				{#if dropdownOpen}
+					<div class="dropdown">
+						<button
+							class="dropdown-item a"
+							onclick={(e) => {
+								e.stopPropagation();
+								copyLink(letter_id);
+							}}
+							disabled={copied || buttonLoad}
+						>
+							{#if !copied}
+								<i class="ri-file-copy-line"></i>
+								<span>Copy Link</span>
+							{:else}
+								<i class="ri-check-line"></i>
+								<span>Copied!</span>
+							{/if}
+						</button>
+						<button
+							class="dropdown-item b"
+							disabled={buttonLoad}
+							onclick={(e) => {
+								e.stopPropagation();
+								editOpen(letter_id);
+							}}
+						>
+							<i class="ri-pencil-line"></i>
+							<span>Edit</span>
+						</button>
+						<button
+							class="dropdown-item danger"
+							disabled={buttonLoad}
+							onclick={(e) => {
+								e.stopPropagation();
+								delLetter(letter_id);
+							}}
+						>
+							<i class="ri-delete-bin-line"></i>
+							<span>Delete</span>
+						</button>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -186,7 +234,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-start;
 		padding-bottom: 10px;
 		border-bottom: 1px solid var(--color-border);
 	}
@@ -432,49 +480,118 @@
 	} */
 
 	.l .btn {
-		display: flex;
-		flex-direction: row;
-		gap: 10px;
+		position: relative;
 	}
 
-	.l .btn button {
-		padding: 7px;
-		border-radius: 5px;
+	.l .btn .button-spinner {
+		border-top-color: var(--color-accent);
+	}
+
+	.l .btn #menu-trigger {
+		padding: 6px;
+		border-radius: 8px;
 		outline: 0;
-		border: 0;
+		color: var(--color-text-secondary);
+		background: var(--color-accent-light);
+		border: 1px solid var(--color-accent);
 		cursor: pointer;
 		display: flex;
 		align-items: center;
+		transition: background 0.15s;
+		font-family: inherit;
 	}
 
-	.l .btn button i {
-		color: white;
-		font-size: 15px;
+	.l .btn #menu-trigger i {
+		font-size: 16px;
+		color: var(--color-text-secondary);
+		transition:
+			transform 0.2s ease,
+			opacity 0.15s ease;
 	}
 
-	.l .btn button:hover {
-		opacity: 0.8;
+	.l .btn #menu-trigger i.open {
+		transform: rotate(90deg);
 	}
 
-	.l .btn button:disabled {
+	.l .btn #menu-trigger:hover {
+		background: #f3eeff;
+		border-color: var(--color-primary);
+	}
+
+	.l .btn #menu-trigger:hover i {
+		color: var(--color-primary);
+	}
+
+	.l .btn #menu-trigger:disabled {
 		opacity: 0.6;
 		cursor: default;
 	}
 
-	.l .btn button:disabled:hover {
-		cursor: default;
+	@keyframes dropdown-in {
+		from {
+			opacity: 0;
+			transform: translateY(-6px) scale(0.97);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
 	}
 
-	.l .btn #blue {
+	.l .btn .dropdown {
+		position: absolute;
+		top: calc(100% + 6px);
+		right: 0;
+		background: #fff;
+		border: 1px solid var(--color-border);
+		border-radius: 10px;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+		display: flex;
+		flex-direction: column;
+		min-width: 140px;
+		z-index: 50;
+		overflow: hidden;
+		padding: 10px;
+		animation: dropdown-in 0.15s ease forwards;
+		transform-origin: top right;
+		gap: 3px;
+	}
+
+	.l .btn .dropdown-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 12px;
+		border: 0;
+		outline: 0;
+		background: transparent;
+		cursor: pointer;
+		font-size: 13px;
+		font-weight: var(--font-medium);
+		color: var(--color-text-primary);
+		border-radius: 7px;
+		transition: background 0.15s;
+		text-align: left;
+		font-family: inherit;
+	}
+
+	.l .btn .dropdown-item i {
+		font-size: 15px;
+	}
+
+	.l .btn .dropdown-item:hover {
 		background: var(--color-accent);
+		color: white;
 	}
 
-	.l .btn #red {
+	.l .btn .dropdown-item:hover.danger {
 		background: var(--color-danger);
+		color: white;
 	}
 
-	.l .btn #trans {
-		background: #4e6689;
+	.l .btn .dropdown-item:disabled {
+		opacity: 0.5;
+		cursor: default;
 	}
 
 	@media screen and (max-width: 600px) {

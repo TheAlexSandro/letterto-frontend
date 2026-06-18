@@ -905,11 +905,6 @@
 									</div>
 								</div>
 
-								<div class="helper-text" style="margin-top: 0;">
-									For some reason, we removed the text effects from your message, but your effects
-									will still be saved.
-								</div>
-
 								<div class="preview" style="font-family: {resolveFont(font)};">
 									{@html renderPreview()}
 								</div>

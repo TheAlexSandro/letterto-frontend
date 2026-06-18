@@ -105,7 +105,7 @@
 		const ftJson = (await ft.json()) as App.Platform['resp'];
 		if (ftJson['status_code'] !== 200) {
 			setTimeout(() => {
-				window.location.href = '/dashboard/my-letters';
+				window.location.href = '/dashboard';
 			}, 500);
 			return;
 		}
@@ -975,12 +975,7 @@
 										<i class="ri-arrow-down-s-line"></i>
 									</div>
 								</div>
-
-								<div class="helper-text" style="margin-top: 0;">
-									For some reason, we removed the text effects from your message, but your effects
-									will still be saved.
-								</div>
-
+								
 								<div class="preview" style="font-family: {resolveFont(font)};">
 									{@html renderPreview()}
 								</div>

@@ -68,38 +68,6 @@
 
 	<div class="menu desktop">
 		<a href="/#features" class="m">Features</a>
-		<a href="/new" class="m">New Letter</a>
-
-		<div class="dropdown">
-			<button class="button" onclick={() => toggleDropdown('dash')} aria-expanded={dropdownOpen}>
-				Dashboard
-				<i class={dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
-			</button>
-
-			{#if dropdownOpen}
-				<div class="dropdown-menu">
-					{#if !isLog}
-						<a href="/auth?redirect=dashboard/my-letters" onclick={closeDropdown}>
-							<i class="ri-user-3-line"></i> Login
-						</a>
-					{:else}
-						<a href="/dashboard/settings" onclick={closeDropdown}>
-							<i class="ri-settings-line"></i> Settings
-						</a>
-						<a href="/dashboard/my-letters" onclick={closeDropdown}>
-							<i class="ri-mail-line"></i> My Letters
-						</a>
-						<a style="color: var(--color-danger);" onclick={logout} href="#logout">
-							{#if load}
-								<span class="button-spinner"></span>
-							{:else}
-								<i class="ri-logout-circle-line"></i> Logout
-							{/if}
-						</a>
-					{/if}
-				</div>
-			{/if}
-		</div>
 
 		<div class="dropdown">
 			<button class="button" onclick={() => toggleDropdown('other')} aria-expanded={dropdownOther}>
@@ -115,6 +83,47 @@
 				</div>
 			{/if}
 		</div>
+
+		<div class="dropdown">
+			<button
+				class="button"
+				onclick={() => toggleDropdown('dash')}
+				aria-expanded={dropdownOpen}
+				aria-labelledby="user"
+			>
+				<div class="user">
+					<i class="ri-user-3-line"></i>
+				</div>
+				<i class={dropdownOpen ? 'ri-arrow-up-s-line' : 'ri-arrow-down-s-line'}></i>
+			</button>
+
+			{#if dropdownOpen}
+				<div class="dropdown-menu">
+					{#if !isLog}
+						<a href="/auth?redirect=dashboard" onclick={closeDropdown}>
+							<i class="ri-login-circle-line"></i> Login
+						</a>
+					{:else}
+						<a href="/new" class="m" onclick={closeDropdown}
+							><i class="ri-add-circle-line"></i> New Letter</a
+						>
+						<a href="/dashboard" onclick={closeDropdown}>
+							<i class="ri-mail-line"></i> My Letters
+						</a>
+						<a href="/dashboard/settings" onclick={closeDropdown}>
+							<i class="ri-settings-line"></i> Settings
+						</a>
+						<a style="color: var(--color-danger);" onclick={logout} href="#logout">
+							{#if load}
+								<span class="button-spinner"></span>
+							{:else}
+								<i class="ri-logout-circle-line"></i> Logout
+							{/if}
+						</a>
+					{/if}
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	<button class="hamburger" aria-labelledby="hamburger-menu" onclick={() => (menuOpen = !menuOpen)}>
@@ -125,19 +134,29 @@
 {#if menuOpen}
 	<div class="mobile-menu">
 		<a href="/#features" class="m" onclick={closeAll}>Features</a>
-		<a href="/new" class="m" onclick={closeAll}>New Letter</a>
+
+		<div class="mobile-dropdown-section">
+			<span class="mobile-dropdown-label">Other</span>
+			<a href="https://t.me/kcpix" target="_blank" onclick={closeAll}>
+				<i class="ri-bug-line"></i> Report Bug
+			</a>
+		</div>
+
 		<div class="mobile-dropdown-section">
 			<span class="mobile-dropdown-label">Dashboard</span>
 			{#if !isLog}
-				<a href="/auth?redirect=dashboard/my-letters" onclick={closeAll}>
-					<i class="ri-user-3-line"></i> Login
+				<a href="/auth?redirect=dashboard" onclick={closeAll}>
+					<i class="ri-login-circle-line"></i> Login
 				</a>
 			{:else}
+				<a href="/new" class="m" onclick={closeAll}> 
+					<i class="ri-add-circle-line"></i> New Letter
+				</a>
+				<a href="/dashboard" onclick={closeAll}>
+					<i class="ri-mail-line"></i> My Letters
+				</a>
 				<a href="/dashboard/settings" onclick={closeAll}>
 					<i class="ri-settings-line"></i> Settings
-				</a>
-				<a href="/dashboard/my-letters" onclick={closeAll}>
-					<i class="ri-mail-line"></i> My Letters
 				</a>
 				<a style="color: var(--color-danger);" href="#logout" onclick={logout}>
 					{#if load}
@@ -147,13 +166,6 @@
 					{/if}
 				</a>
 			{/if}
-		</div>
-
-		<div class="mobile-dropdown-section">
-			<span class="mobile-dropdown-label">Other</span>
-			<a href="https://t.me/kcpix" target="_blank" onclick={closeAll}>
-				<i class="ri-bug-line"></i> Report Bug
-			</a>
 		</div>
 	</div>
 {/if}
@@ -252,6 +264,12 @@
 		background: var(--color-primary-light);
 	}
 
+	.navbar .menu button .user i {
+		font-size: 17px;
+		display: block;
+		margin-right: -6px;
+	}
+
 	.navbar .dropdown {
 		position: relative;
 	}
@@ -344,11 +362,14 @@
 	}
 
 	.mobile-menu a {
+		display: flex;
+		align-items: center;
 		text-decoration: none;
 		color: var(--color-menu);
 		font-weight: var(--font-medium);
 		padding: 10px 8px;
 		border-bottom: 1px solid var(--color-border);
+		gap: 8px;
 		font-size: 15px;
 		transition:
 			background 0.15s ease,
@@ -358,6 +379,11 @@
 	.mobile-menu a:hover {
 		background: var(--color-primary-light);
 		color: var(--color-primary);
+	}
+
+	.mobile-menu a i {
+		font-size: 16px;
+		opacity: 0.7;
 	}
 
 	.mobile-dropdown-section {
