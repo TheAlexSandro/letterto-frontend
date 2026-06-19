@@ -2,7 +2,7 @@
 	import Navbar from '../../../components/navbar/navbar.svelte';
 	import Footer from '../../../components/footer/footer.svelte';
 	import { onMount } from 'svelte';
-	import '../page.css';
+	import '../profile.css';
 	import { showToast } from '$lib/toast';
 
 	let windowLoad = $state(true);
