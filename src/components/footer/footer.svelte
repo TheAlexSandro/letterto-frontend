@@ -11,7 +11,7 @@
 <footer>
 	<p>Copyright © {getYear()} LetterTo. All rights reserved.</p>
 	<div class="nav">
-		<a href="https://t.me/kcpix" target="_blank">Report bug/error</a>
+		<a href="https://t.me/kcpix" target="_blank">Support</a>
 		<a href={PUBLIC_STATUS_PAGE} target="_blank">Status</a>
 	</div>
 </footer>

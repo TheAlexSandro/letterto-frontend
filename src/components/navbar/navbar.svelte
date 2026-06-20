@@ -78,7 +78,7 @@
 			{#if dropdownOther}
 				<div class="dropdown-menu">
 					<a href="https://t.me/kcpix" target="_blank" onclick={closeDropdown}>
-						<i class="ri-bug-line"></i> Report Bug
+						<i class="ri-customer-service-2-line"></i> Support
 					</a>
 				</div>
 			{/if}
@@ -138,7 +138,7 @@
 		<div class="mobile-dropdown-section">
 			<span class="mobile-dropdown-label">Other</span>
 			<a href="https://t.me/kcpix" target="_blank" onclick={closeAll}>
-				<i class="ri-bug-line"></i> Report Bug
+				<i class="ri-customer-service-2-line"></i> Support
 			</a>
 		</div>
 

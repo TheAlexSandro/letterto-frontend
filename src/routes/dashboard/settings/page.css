@@ -1,9 +1,10 @@
 .settings {
-	min-height: calc(100vh - 100px);
+	min-height: calc(100vh - 50px);
 	display: flex;
 	flex-direction: column;
-	margin-top: 100px;
-	padding: 0 80px;
+	align-items: center;
+	margin-top: 50px;
+	padding: 40px 20px;
 }
 
 .settings .container {
@@ -48,29 +49,30 @@
 
 .settings .container .menu .item .right {
 	margin-right: 10px;
-    transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
 }
 
 .settings .container .menu .item:hover .right {
 	margin-right: 2px;
-    transition: all 0.2s ease-in-out;
+	transition: all 0.2s ease-in-out;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 768px) and (max-width: 1023px) {
 	.settings {
+		margin-top: 100px;
 		padding: 0 25px;
 	}
 }
 
-@media (max-width: 400px) {
+@media (max-width: 767px) {
 	.settings {
-		padding: 0 12px;
-		margin-top: 80px;
+		padding: 24px 16px;
+		margin-top: 60px;
 	}
 }
 
-@media (min-width: 1440px) {
+@media (min-width: 1280px) {
 	.settings .container {
-		max-width: 850px;
+		max-width: 500px;
 	}
 }
