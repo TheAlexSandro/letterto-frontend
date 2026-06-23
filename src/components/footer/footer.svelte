@@ -25,6 +25,7 @@
 					<span>Letter</span>
 					<a href="/new">New Letter</a>
 					<a href="/dashboard">My Letters</a>
+					<a href="/find">Find Letter</a>
 				</div>
 				<div class="card">
 					<span>Account</span>
