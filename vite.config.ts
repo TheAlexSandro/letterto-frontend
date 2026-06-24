@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
 	plugins: [sveltekit()],
 	server: {
-		allowedHosts: ['tunes-blank-screensaver-inspired.trycloudflare.com']
+		allowedHosts: ['worked-lexmark-joins-heat.trycloudflare.com']
 	},
 	assetsInclude: ['**/*.lottie']
 });

@@ -103,6 +103,11 @@
 		if (data['status_code'] !== 200) {
 			window.location.href = '/auth?redirect=new';
 			return;
+		} else {
+			if (data.data['role'] === 'banned') {
+				window.location.href = '/dashboard';
+				return;
+			}
 		}
 
 		loggedIn = true;
@@ -428,7 +433,7 @@
 					window.location.href = '/auth';
 					return;
 				}
-				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST'].includes(submitJson['error_code'])
+				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST', 'BANNED'].includes(submitJson['error_code'])
 					? 'Something went wrong, please try again later...'
 					: '';
 				idError =

@@ -23,6 +23,7 @@
 		sender?: string | null;
 		recipient_name?: string | null;
 		is_burned: string;
+		warn: string | null;
 	};
 
 	const { data }: { data: PageData } = $props();
@@ -42,6 +43,8 @@
 	let isBurned = $state(false);
 	let lightboxSrc = $state<string | null>(null);
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let isAdmin = $state(false);
+	let actLoad = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -61,6 +64,12 @@
 	};
 
 	onMount(async () => {
+		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+		const data = (await isLoggedIn.json()) as App.Platform['resp'];
+		if (data['status_code'] === 200) {
+			isAdmin = ['admin', 'owner'].includes(data.data['role']);
+		}
+
 		const ft = await fetch(`/api/letters?path=getInfo&id=${letterId}`);
 		const ftJson = (await ft.json()) as App.Platform['resp'];
 		if (ftJson['status_code'] !== 200) {
@@ -188,6 +197,27 @@
 			window.location.reload();
 		}
 	};
+
+	const act = async (act: string) => {
+		actLoad = true;
+		const ft = await fetch('/api/req?path=letter&ep=action', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ letter_id: letterId, action: act })
+		});
+		const js = (await ft.json()) as App.Platform['resp'];
+		if (js['status_code'] !== 200) {
+			if (js['error_code'] === 'UNAUTHORIZED') {
+				window.location.href = `/auth?redirect=l/${letterId}`;
+				return;
+			}
+			actLoad = false;
+		} else {
+			window.location.reload();
+		}
+	};
 </script>
 
 <svelte:window
@@ -298,6 +328,35 @@
 						<span>{dates(String(card?.created_at))}</span>
 					</div>
 				</div>
+
+				{#if isAdmin}
+					<div class="action">
+						<div class="top">
+							<button class="w" disabled={actLoad || card?.warn === '1'} onclick={() => act('1')}>
+								{#if actLoad}
+									<span class="button-spinner"></span>
+								{:else}
+									<i class="ri-alert-line"></i> Warn
+								{/if}</button
+							>
+							<button class="b" disabled={actLoad || card?.warn === '2'} onclick={() => act('2')}>
+								{#if actLoad}
+									<span class="button-spinner"></span>
+								{:else}
+									<i class="ri-spam-3-line"></i> Ban
+								{/if}</button
+							>
+						</div>
+						{#if card?.warn}
+							<button class="r" disabled={actLoad} onclick={() => act('-')}>
+								{#if actLoad}
+									<span class="button-spinner"></span>
+								{:else}<i class="ri-close-circle-line"></i> Remove Punishment
+								{/if}</button
+							>
+						{/if}
+					</div>
+				{/if}
 
 				<div class="card">
 					{#if card?.image || card?.video}

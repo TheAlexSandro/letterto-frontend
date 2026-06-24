@@ -73,7 +73,7 @@
 					return;
 				}
 				usernameErr = ftJson['error_code'] === 'ID_OCCUPIED' ? ftJson['message'] : '';
-				globalErr = ftJson['error_code'] === '' ? ftJson['message'] : '';
+				globalErr = ['BAD_REQUEST', 'BANNED'].includes(ftJson['error_code']) ? ftJson['message'] : '';
 				buttonLoad = false;
 			} else {
 				window.location.reload();

@@ -38,7 +38,7 @@
 	let viewOnce: boolean = $state(false);
 	let usePassword: boolean = $state(false);
 	let showPassword: boolean = $state(false);
-	let password = $state('');
+	let password = $state('-');
 	let font: string = $state('playwrite-nz');
 	let letterId = $state('');
 	let imageFile: File | null = $state(null);
@@ -97,6 +97,11 @@
 		if (data['status_code'] !== 200) {
 			window.location.href = `/auth?redirect=l/edit/${ids}`;
 			return;
+		} else {
+			if (data.data['role'] === 'banned') {
+				window.location.href = '/dashboard';
+				return;
+			}
 		}
 
 		const ft = await fetch(`/api/letters?path=getInfo&id=${ids}&edit=yes`);
@@ -492,7 +497,7 @@
 					window.location.href = '/auth';
 					return;
 				}
-				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST'].includes(submitJson['error_code'])
+				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST', 'RESTRICTED_MODIFICATION', 'LETTER_BANNED', 'BANNED'].includes(submitJson['error_code'])
 					? 'Something went wrong, please try again later...'
 					: '';
 				idError =
@@ -555,15 +560,22 @@
 					<div class="idk {warn === '1' ? 'warn' : 'ban'}">
 						{#if warn === '1'}
 							<i class="ri-alert-line"></i>
-							<p>
-								Some of the content in this letter are violating the ToS, please review and change
-								immediately in order to comply with the ToS. You have 3 days left.
-							</p>
+							<div class="desc">
+								<p>
+									Some of the content in this letter are violating the ToS, please review and change
+									immediately in order to comply with the ToS. You have 3 days left.
+								</p>
+								<p>If you believe this is a mistake, please contact support.</p>
+							</div>
 						{:else}
 							<i class="ri-spam-3-line"></i>
-							<p>
-								This letter has been banned, you are not allowed to make any changes in this letter.
-							</p>
+							<div class="desc">
+								<p>
+									This letter has been banned, you are not allowed to make any changes in this
+									letter.
+								</p>
+								<p>If you believe this is a mistake, please contact support.</p>
+							</div>
 						{/if}
 					</div>
 				{/if}

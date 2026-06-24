@@ -26,6 +26,14 @@
 	margin-bottom: 30px;
 }
 
+.new .idk .desc {
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
 .new .warn {
 	background: rgba(255, 255, 0, 0.369);
 	padding: 10px;

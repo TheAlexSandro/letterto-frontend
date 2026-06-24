@@ -74,45 +74,41 @@
 		window.addEventListener('resize', handleResize);
 
 		(async () => {
-			try {
-				const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-				if (!isLoggedIn.ok) {
-					windowLoad = false;
-					showToast('Something went wrong, please try again later.', 'error', 5000);
-					return;
-				}
-				const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
-				if (data['status_code'] !== 200) {
-					window.location.href = '/auth';
-					return;
-				}
-
-				userRole = data.data['role'];
+			const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
+			if (!isLoggedIn.ok) {
 				windowLoad = false;
-				const ftT = await fetch('/api/letters?path=total');
-				if (!ftT.ok) {
-					showToast('Failed to fetch total.', 'error', 5000);
-					return;
-				}
-				const dT = (await ftT.json()) as App.Platform['resp'];
-				total = dT['data']['total'];
-				await fetchLetters();
-				const observer = new IntersectionObserver(
-					(entries) => {
-						if (entries[0].isIntersecting) {
-							fetchLetters();
-						}
-					},
-					{ threshold: 1.0 }
-				);
-
-				if (sentinel) observer.observe(sentinel);
-
-				return () => observer.disconnect();
-			} catch {
 				showToast('Something went wrong, please try again later.', 'error', 5000);
+				return;
 			}
+			const data = (await isLoggedIn.json()) as App.Platform['resp'];
+
+			if (data['status_code'] !== 200) {
+				window.location.href = '/auth';
+				return;
+			}
+
+			userRole = data.data['role'];
+			windowLoad = false;
+			const ftT = await fetch('/api/letters?path=total');
+			if (!ftT.ok) {
+				showToast('Failed to fetch total.', 'error', 5000);
+				return;
+			}
+			const dT = (await ftT.json()) as App.Platform['resp'];
+			total = dT['data']['total'];
+			await fetchLetters();
+			const observer = new IntersectionObserver(
+				(entries) => {
+					if (entries[0].isIntersecting) {
+						fetchLetters();
+					}
+				},
+				{ threshold: 1.0 }
+			);
+
+			if (sentinel) observer.observe(sentinel);
+
+			return () => observer.disconnect();
 		})();
 
 		return () => {
@@ -142,12 +138,12 @@
 			<p>
 				Several users have reported you for activity that is considered a violation of the Terms of
 				Service. Your account has been temporarily suspended to ensure the safety and comfort of the
-				community. If you believe this is a mistake, please contact the support team.
+				community. If you believe this is a mistake, please contact the support.
 			</p>
 
 			<p>
-				While you are banned, you will not be able to change your name or username, create
-				a new letter, or edit a letter you have already created, you are only allowed to change your
+				While you are banned, you will not be able to change your name or username, create a new
+				letter, or edit the existing letter, you are only allowed to change your
 				password.
 			</p>
 		</section>
