@@ -80,4 +80,8 @@
 	:global(.ql-align-justify) {
 		text-align: justify;
 	}
+	:global(.ql-disabled) {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
 </style>

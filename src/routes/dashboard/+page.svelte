@@ -17,6 +17,7 @@
 		music_profile: string;
 		music_title: string;
 		artist: string;
+		warn: string;
 	};
 
 	let windowLoad = $state(true);
@@ -28,6 +29,7 @@
 	let offset = $state(1);
 	let isFetching = $state(false);
 	let sentinel: HTMLElement | null = $state(null);
+	let userRole = $state('');
 
 	const fetchLetters = async () => {
 		if (isFetching) return;
@@ -86,6 +88,7 @@
 					return;
 				}
 
+				userRole = data.data['role'];
 				windowLoad = false;
 				const ftT = await fetch('/api/letters?path=total');
 				if (!ftT.ok) {
@@ -131,52 +134,72 @@
 	</div>
 {:else}
 	<Navbar />
-	<section class="dash">
-		<h1>Your Letters</h1>
-		<p>Edit, create new letter or delete the existing letter here...</p>
 
-		<div class="result">
-			{#if letterLoad}
-				<div class="spinner-wrap">
-					<span class="spinner"></span>
-					<p>Loading...</p>
-				</div>
-			{:else if globalErr}
-				<div class="error">
-					{globalErr}
-				</div>
-			{:else if cards.length < 1}
-				<p class="no-result">No letter, start creating a new letter now.</p>
-			{:else if cards.length > 0}
-				<div class="card-list">
-					{#each cards as card}
-						<Letter
-							letter_id={card.id}
-							message={card.message}
-							music_profile={card.music_profile}
-							music_title={card.music_title}
-							created_at={card.created_at}
-							recipient_name={card.recipient_name}
-							sender={card.sender}
-							font={card.font}
-							artis={card.artist}
-							edit="true"
-						/>
-					{/each}
-				</div>
+	{#if userRole === 'banned'}
+		<section class="banned">
+			<i class="ri-hand"></i>
+			<h1>Account Banned</h1>
+			<p>
+				Several users have reported you for activity that is considered a violation of the Terms of
+				Service. Your account has been temporarily suspended to ensure the safety and comfort of the
+				community. If you believe this is a mistake, please contact the support team.
+			</p>
 
-				<div bind:this={sentinel} class="sentinel">
-					{#if isFetching}
-						<div class="spinner-wrap">
-							<span class="spinner"></span>
-							<p>Loading...</p>
-						</div>
-					{:else if cards.length >= total}
-						<p class="no-result">All letters has been loaded.</p>
-					{/if}
-				</div>
-			{/if}
-		</div>
-	</section>
+			<p>
+				While you are banned, you will not be able to change your name or username, create
+				a new letter, or edit a letter you have already created, you are only allowed to change your
+				password.
+			</p>
+		</section>
+	{:else}
+		<section class="dash">
+			<h1>Your Letters</h1>
+			<p>Edit, create new letter or delete the existing letter here...</p>
+
+			<div class="result">
+				{#if letterLoad}
+					<div class="spinner-wrap">
+						<span class="spinner"></span>
+						<p>Loading...</p>
+					</div>
+				{:else if globalErr}
+					<div class="error">
+						{globalErr}
+					</div>
+				{:else if cards.length < 1}
+					<p class="no-result">No letter, start creating a new letter now.</p>
+				{:else if cards.length > 0}
+					<div class="card-list">
+						{#each cards as card}
+							<Letter
+								letter_id={card.id}
+								message={card.message}
+								music_profile={card.music_profile}
+								music_title={card.music_title}
+								created_at={card.created_at}
+								recipient_name={card.recipient_name}
+								sender={card.sender}
+								font={card.font}
+								artis={card.artist}
+								warn={card.warn}
+								edit="true"
+							/>
+						{/each}
+					</div>
+
+					<div bind:this={sentinel} class="sentinel">
+						{#if isFetching}
+							<div class="spinner-wrap">
+								<span class="spinner"></span>
+								<p>Loading...</p>
+							</div>
+						{:else if cards.length >= total}
+							<p class="no-result">All letters has been loaded.</p>
+						{/if}
+					</div>
+				{/if}
+			</div>
+		</section>
+	{/if}
 	<Footer />
 {/if}

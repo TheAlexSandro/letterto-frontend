@@ -2,10 +2,18 @@ import { BACKEND_URL } from '$env/static/private';
 import { json } from '@sveltejs/kit';
 
 export async function GET({ url, request }) {
-	const path = url.searchParams.get('path');
-	const endpoint = url.searchParams.get('ep');
+	const params = url.searchParams;
+	const path = params.get('path');
+	const endpoint = params.get('ep');
 
-	const ft = await fetch(`${BACKEND_URL}/${path}/${endpoint}`, {
+	const forwardedParams = new URLSearchParams(params);
+	forwardedParams.delete('path');
+	forwardedParams.delete('ep');
+
+	const query = forwardedParams.toString();
+	const targetUrl = `${BACKEND_URL}/${path}/${endpoint}${query ? `?${query}` : ''}`;
+
+	const ft = await fetch(targetUrl, {
 		method: 'GET',
 		credentials: 'include',
 		headers: {
@@ -13,6 +21,7 @@ export async function GET({ url, request }) {
 			Cookie: request.headers.get('cookie') || ''
 		}
 	});
+
 	const data = await ft.json();
 	const response = json(data);
 	const cookie = ft.headers.get('set-cookie');

@@ -75,6 +75,7 @@
 	let showPreview = $state(false);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let findErr = $state(false);
+	let warn = $state('-');
 
 	async function scrollToError() {
 		await tick();
@@ -140,6 +141,7 @@
 		showRecipient = letData['show_recipient'] === 'yes' ? true : false;
 		viewOnce = letData['view_once'] === 'yes' ? true : false;
 		isBurned = letData['is_burned'] === 'yes' ? true : false;
+		warn = letData['warn'];
 
 		windowLoad = false;
 		const { default: Quill } = await import('quill');
@@ -172,12 +174,14 @@
 		});
 
 		quill.on('text-change', () => {
+			if (buttonLoad || warn === '2') return;
 			letterMessage = quill?.root.innerHTML ?? '';
 		});
 
 		const toolbar = quill.getModule('toolbar') as any;
 		if (toolbar) {
 			toolbar.addHandler('clean', () => {
+				if (buttonLoad || warn === '2') return;
 				quill!.root.innerHTML = '';
 				letterMessage = '';
 			});
@@ -198,6 +202,12 @@
 		);
 		if (!confirm) {
 			cancel();
+		}
+	});
+
+	$effect(() => {
+		if (quill) {
+			quill.enable(!buttonLoad && warn !== '2');
 		}
 	});
 
@@ -541,6 +551,23 @@
 				<p>What will you change here?</p>
 			</div>
 			{#if !editSuccess}
+				{#if ['1', '2'].includes(warn)}
+					<div class="idk {warn === '1' ? 'warn' : 'ban'}">
+						{#if warn === '1'}
+							<i class="ri-alert-line"></i>
+							<p>
+								Some of the content in this letter are violating the ToS, please review and change
+								immediately in order to comply with the ToS. You have 3 days left.
+							</p>
+						{:else}
+							<i class="ri-spam-3-line"></i>
+							<p>
+								This letter has been banned, you are not allowed to make any changes in this letter.
+							</p>
+						{/if}
+					</div>
+				{/if}
+
 				<form method="post" onsubmit={handeSubmit}>
 					<label for="name">Recipient Name</label>
 					<input
@@ -549,7 +576,7 @@
 						placeholder="Alex Johnson"
 						required
 						bind:value={recipientName}
-						disabled={buttonLoad}
+						disabled={buttonLoad || warn === '2'}
 					/>
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
@@ -588,10 +615,16 @@
 								placeholder="Type song title/artist"
 								bind:value={query}
 								oninput={search}
-								disabled={buttonLoad || selected !== null}
+								disabled={buttonLoad || selected !== null || warn === '2'}
 							/>
 							{#if selected}
-								<button type="button" aria-label="Clear" class="clear" onclick={clearSelected}>
+								<button
+									type="button"
+									aria-label="Clear"
+									class="clear"
+									onclick={clearSelected}
+									disabled={buttonLoad || warn === '2'}
+								>
 									<i class="ri-close-line"></i>
 								</button>
 							{/if}
@@ -728,7 +761,7 @@
 										id="image-upload"
 										accept="image/*"
 										onchange={(e) => handleFile(e, 'image')}
-										disabled={buttonLoad}
+										disabled={buttonLoad || warn === '2'}
 									/>
 									{#if imagePreview}
 										<div class="preview">
@@ -744,7 +777,7 @@
 												aria-label="Remove image"
 												class="remove"
 												onclick={() => clearFile('image')}
-												disabled={buttonLoad}
+												disabled={buttonLoad || warn === '2'}
 											>
 												<i class="ri-close-line"></i>
 											</button>
@@ -770,7 +803,7 @@
 										id="video-upload"
 										accept="video/*"
 										onchange={(e) => handleFile(e, 'video')}
-										disabled={buttonLoad}
+										disabled={buttonLoad || warn === '2'}
 									/>
 									{#if videoPreview}
 										<div class="preview">
@@ -793,7 +826,7 @@
 												aria-label="Remove video"
 												class="remove"
 												onclick={() => clearFile('video')}
-												disabled={buttonLoad}
+												disabled={buttonLoad || warn === '2'}
 											>
 												<i class="ri-close-line"></i>
 											</button>
@@ -820,7 +853,7 @@
 						onclick={() => {
 							handleCheckbox('adv');
 						}}
-						disabled={buttonLoad}
+						disabled={buttonLoad || ['1', '2'].includes(warn)}
 						>More
 						{#if !adv}
 							<i class="ri-arrow-down-s-line"></i>
@@ -975,7 +1008,7 @@
 										<i class="ri-arrow-down-s-line"></i>
 									</div>
 								</div>
-								
+
 								<div class="preview" style="font-family: {resolveFont(font)};">
 									{@html renderPreview()}
 								</div>
@@ -1062,7 +1095,12 @@
 					{/if}
 
 					<div class="btns">
-						<button style="min-width: 25%;" disabled={buttonLoad} class="submit" type="submit">
+						<button
+							style="min-width: 25%;"
+							disabled={buttonLoad || warn === '2'}
+							class="submit"
+							type="submit"
+						>
 							{#if buttonLoad}
 								<span class="button-spinner"></span>
 							{:else}

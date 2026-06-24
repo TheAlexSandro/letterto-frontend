@@ -18,6 +18,44 @@
 	margin-bottom: 30px;
 }
 
+.new .idk {
+	display: flex;
+	flex-direction: row;
+	gap: 12px;
+	align-items: center;
+	margin-bottom: 30px;
+}
+
+.new .warn {
+	background: rgba(255, 255, 0, 0.369);
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid var(--color-warning);
+}
+
+.new .ban {
+	background: rgba(255, 0, 0, 0.369);
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid var(--color-danger);
+}
+
+.new .idk p {
+	font-size: 12px;
+}
+
+.new .idk i {
+	font-size: 20px;
+}
+
+.new .warn i {
+	color: rgb(127, 127, 47);
+}
+
+.new .ban i {
+	color: rgb(127, 47, 47);
+}
+
 .new form {
 	display: flex;
 	flex-direction: column;
@@ -752,7 +790,6 @@
 .new form .custom-select select {
 	appearance: none;
 	-webkit-appearance: none;
-
 	width: 100%;
 	padding: 12px;
 	font-family: inherit;
@@ -1187,6 +1224,10 @@
 
 	.new .desc h1 {
 		font-size: 1.6rem;
+	}
+
+	.new .idk i {
+		font-size: 25px;
 	}
 
 	.new form {

@@ -11,7 +11,8 @@
 		is_locked = null,
 		artis = null,
 		edit = null,
-		hide_sender = null
+		hide_sender = null,
+		warn = null
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
@@ -209,6 +210,19 @@
 			<img src={deezer} alt="Deezer Logo" />
 		</div>
 	</div>
+	{#if warn !== "-" && edit === 'true'}
+		<div class="bottom">
+			{#if warn === "1"}
+				<div class="warn">
+					<i class="ri-alert-line"></i> Violates Terms of Service.
+				</div>
+			{:else}
+				<div class="ban">
+					<i class="ri-spam-3-line"></i> Letter Banned.
+				</div>
+			{/if}
+		</div>
+	{/if}
 </section>
 
 <style>
@@ -592,6 +606,23 @@
 	.l .btn .dropdown-item:disabled {
 		opacity: 0.5;
 		cursor: default;
+	}
+
+	.l .bottom {
+		margin-bottom: -5px;
+		font-size: 12px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: 7px;
+	}
+
+	.l .bottom .warn {
+		color: rgb(139, 139, 37);
+	}
+
+	.l .bottom .ban {
+		color: red;
 	}
 
 	@media screen and (max-width: 600px) {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { PUBLIC_STATUS_PAGE } from '$env/static/public';
 	import { PUBLIC_TGUSN } from '$env/static/public';
+	import { PUBLIC_ASSETS_STORAGE } from '$env/static/public';
 
 	const getYear = () => {
 		const dt = new Date();
@@ -36,6 +37,7 @@
 					<span>Information</span>
 					<a href="https://t.me/{PUBLIC_TGUSN}" target="_blank">Support</a>
 					<a href={PUBLIC_STATUS_PAGE} target="_blank">Status</a>
+					<a href="{PUBLIC_ASSETS_STORAGE}/tos.txt">ToS</a>
 				</div>
 			</div>
 		</div>

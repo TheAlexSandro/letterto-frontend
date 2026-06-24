@@ -6,11 +6,12 @@
 	let dropdownOther = $state(false);
 	let isLog = $state(false);
 	let load = $state(false);
+	let isAdmin = $state(false);
 
 	onMount(async () => {
 		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
 		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
+		isAdmin = ['admin', 'owner'].includes(data.data['role']);
 		isLog = data['status_code'] !== 200 ? false : true;
 	});
 
@@ -113,6 +114,11 @@
 						<a href="/dashboard/settings" onclick={closeDropdown}>
 							<i class="ri-settings-line"></i> Settings
 						</a>
+						{#if isAdmin}
+							<a href="/dashboard/admin" onclick={closeDropdown}>
+								<i class="ri-user-settings-line"></i> Admin
+							</a>
+						{/if}
 						<a style="color: var(--color-danger);" onclick={logout} href="#logout">
 							{#if load}
 								<span class="button-spinner"></span>
@@ -149,7 +155,7 @@
 					<i class="ri-login-circle-line"></i> Login
 				</a>
 			{:else}
-				<a href="/new" class="m" onclick={closeAll}> 
+				<a href="/new" class="m" onclick={closeAll}>
 					<i class="ri-add-circle-line"></i> New Letter
 				</a>
 				<a href="/dashboard" onclick={closeAll}>
@@ -158,6 +164,11 @@
 				<a href="/dashboard/settings" onclick={closeAll}>
 					<i class="ri-settings-line"></i> Settings
 				</a>
+				{#if isAdmin}
+					<a href="/dashboard/admin" onclick={closeAll}>
+						<i class="ri-user-settings-line"></i> Admin
+					</a>
+				{/if}
 				<a style="color: var(--color-danger);" href="#logout" onclick={logout}>
 					{#if load}
 						<span class="button-spinner"></span>
