@@ -9,6 +9,7 @@
 	import type Quill from 'quill';
 	import deezer from '$lib/assets/deezer2.svg';
 	import { showToast } from '$lib/toast';
+	import { isLoggedIn } from '$lib/utils/utils';
 
 	type Track = {
 		id: number;
@@ -61,7 +62,7 @@
 	let copied = $state(false);
 	let editor: HTMLDivElement | null = $state(null);
 	let quill: Quill | null = $state(null);
-	let loggedIn = $state(false);
+	let login = $state(false);
 	let lightboxSrc = $state<string | null>(null);
 	let showPreview = $state(false);
 	let videoEl = $state<HTMLVideoElement | null>(null);
@@ -94,23 +95,22 @@
 	};
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		if (!isLoggedIn.ok) {
+		const loggedIn = await isLoggedIn();
+		if (loggedIn === 'error') {
 			showToast('Something went wrong, please try again later.', 'error', 5000);
 			return;
 		}
-		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-		if (data['status_code'] !== 200) {
+		if (!loggedIn) {
 			window.location.href = '/auth?redirect=new';
 			return;
 		} else {
-			if (data.data['role'] === 'banned') {
+			if (loggedIn.role === 'banned') {
 				window.location.href = '/dashboard';
 				return;
 			}
 		}
 
-		loggedIn = true;
+		login = true;
 		font = randomFont();
 		windowLoad = false;
 		const { default: Quill } = await import('quill');
@@ -164,7 +164,7 @@
 		audio?.pause();
 		audio = null;
 		currentPlayingId = null;
-		if (createSuccess || !loggedIn) return;
+		if (createSuccess || !login) return;
 		const confirm = window.confirm(
 			'Are you sure you want to leave this page? Changes will not be saved.'
 		);

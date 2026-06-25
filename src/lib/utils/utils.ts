@@ -1,6 +1,13 @@
 const previewCache = new Map<number, { url: string; fetchedAt: number }>();
 const CACHE_TTL = 1000 * 60 * 3;
 
+interface LoggedIn {
+	name: string;
+	role: 'user' | 'admin' | 'owner' | 'banned';
+	user_id: string;
+	username: string;
+}
+
 export const resolveFont = (font: string) => {
 	const dt = {
 		'playwrite-nz': `"Playwrite NZ Guides"; cursive`,
@@ -56,4 +63,15 @@ export const generateID = (length: number) => {
 	}
 
 	return result;
+};
+
+export const isLoggedIn = async () => {
+	const ft = await fetch(`/api/req?path=user&ep=accountInfo`);
+	if (!ft.ok) return 'error';
+	const data = (await ft.json()) as App.Platform['resp'];
+	if (data['status_code'] !== 200) {
+		if (data['error_code'] === 'UNAUTHORIZED') return false;
+		return 'error';
+	}
+	return data.data as LoggedIn;
 };

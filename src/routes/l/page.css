@@ -244,70 +244,111 @@
 }
 
 .letter-wrap .action {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	align-items: center;
-	padding: 10px 0 20px 0;
-}
-
-.letter-wrap .action .top {
+	position: relative;
+	padding: 0;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
+	margin-bottom: 20px;
+	justify-content: flex-end;
 	gap: 10px;
-	width: 100%;
 }
 
 .letter-wrap .action button {
-	padding: 7px 20px;
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 5px;
+	font-size: 14px;
+	background: #ede9fe;
+	color: var(--color-primary);
+	padding: 7px;
 	border-radius: 8px;
+	border: 1px solid var(--color-accent);
 	outline: 0;
-	border: 0;
-	font-family: inherit;
 	cursor: pointer;
 }
 
-.letter-wrap .action button:disabled {
-	cursor: default;
-	opacity: 0.8 !important;
+.letter-wrap .action .button-spinner {
+	display: block;
+	margin: auto;
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-top-color: var(--color-accent);
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
 }
 
 .letter-wrap .action button:hover {
-	opacity: 0.8;
+	opacity: 0.8 !important;
 }
 
-.letter-wrap .action button.w {
+.letter-wrap .action button:disabled {
+	opacity: 0.8 !important;
+}
+
+.letter-wrap .action button:hover:disabled {
+	opacity: 0.8 !important;
+	background: #ede9fe !important;
+	border: 1px solid var(--color-accent);
+}
+
+.letter-wrap .action span {
+	font-size: 14px;
+}
+
+.letter-wrap .action .card {
+	position: absolute;
+	top: calc(100% + 8px);
+	right: 0;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+	padding: 12px;
+	gap: 4px;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+	border-radius: 8px;
+}
+
+.letter-wrap .action .card button {
+	width: 100%;
+	justify-content: center;
+	border: 0;
+	outline: 0;
+	padding: 7px 50px;
+	display: flex;
+	flex-direction: row;
+	gap: 7px;
+	align-items: center;
+	font-family: inherit;
+}
+
+.letter-wrap .action .card button.w {
 	background: var(--color-warning);
+	color: black;
 }
 
-.letter-wrap .action button.w:disabled:hover {
+.letter-wrap .action .card button.w:disabled {
+	opacity: 0.6 !important;
+}
+
+.letter-wrap .action .card button.w:disabled:hover {
 	background: var(--color-warning) !important;
+	color: black !important;
+	border: 0;
 }
 
-.letter-wrap .action button.b {
-	color: white;
+.letter-wrap .action .card button.b {
 	background: var(--color-danger);
+	color: white;
 }
 
-.letter-wrap .action button.b:disabled:hover {
-	color: white;
+.letter-wrap .action .card button.b:disabled {
+	opacity: 0.6 !important;
+}
+
+.letter-wrap .action .card button.b:disabled:hover {
 	background: var(--color-danger) !important;
-}
-
-.letter-wrap .action button.r {
-	color: white;
-	background: var(--color-accent);
-}
-
-.letter-wrap .action button.r:disabled:hover {
-	color: white;
-	background: var(--color-accent) !important;
+	color: white !important;
+	border: 0;
 }
 
 .letter-wrap .card {

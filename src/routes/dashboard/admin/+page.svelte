@@ -5,6 +5,7 @@
 	import Navbar from '../../../components/navbar/navbar.svelte';
 	import Footer from '../../../components/footer/footer.svelte';
 	import { showToast } from '$lib/toast';
+	import { isLoggedIn } from '$lib/utils/utils';
 
 	type AdminUser = {
 		id: number;
@@ -174,15 +175,12 @@
 	});
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		if (!isLoggedIn.ok) {
-			windowLoad = false;
+		const loggedIn = await isLoggedIn();
+		if (loggedIn === 'error') {
 			showToast('Something went wrong, please try again later.', 'error', 5000);
 			return;
 		}
-		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
-		if (data['status_code'] !== 200 || !/(admin|owner)/i.exec(String(data.data['role']))) {
+		if (!loggedIn || !/(admin|owner)/i.exec(loggedIn.role)) {
 			window.location.href = '/auth';
 			return;
 		}

@@ -5,6 +5,7 @@
 	import { onMount } from 'svelte';
 	import Letter from '../../components/letter/letter.svelte';
 	import { showToast } from '$lib/toast';
+	import { isLoggedIn } from '$lib/utils/utils';
 
 	type Card = {
 		id: string;
@@ -74,20 +75,17 @@
 		window.addEventListener('resize', handleResize);
 
 		(async () => {
-			const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-			if (!isLoggedIn.ok) {
-				windowLoad = false;
+			const loggedIn = await isLoggedIn();
+			if (loggedIn === 'error') {
 				showToast('Something went wrong, please try again later.', 'error', 5000);
 				return;
 			}
-			const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
-			if (data['status_code'] !== 200) {
+			if (!loggedIn) {
 				window.location.href = '/auth';
 				return;
 			}
 
-			userRole = data.data['role'];
+			userRole = loggedIn.role;
 			windowLoad = false;
 			const ftT = await fetch('/api/letters?path=total');
 			if (!ftT.ok) {

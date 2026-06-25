@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import '../profile.css';
 	import { showToast } from '$lib/toast';
+	import { isLoggedIn } from '$lib/utils/utils';
 
 	let windowLoad = $state(true);
 	let new_password = $state('');
@@ -16,14 +17,12 @@
 	let showPass = $state(false);
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		if (!isLoggedIn.ok) {
+		const loggedIn = await isLoggedIn();
+		if (loggedIn === 'error') {
 			showToast('Something went wrong, please try again later.', 'error', 5000);
 			return;
 		}
-		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-
-		if (data['status_code'] !== 200) {
+		if (!loggedIn) {
 			window.location.href = '/auth?redirect=dashboard/password';
 			return;
 		}

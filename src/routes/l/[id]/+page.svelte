@@ -8,6 +8,8 @@
 	import { DotLottieSvelte } from '@lottiefiles/dotlottie-svelte';
 	import Fire from '$lib/assets/Fire.lottie';
 	import deezer from '$lib/assets/deezer.svg';
+	import { isLoggedIn } from '$lib/utils/utils';
+	import { showToast } from '$lib/toast';
 
 	type Card = {
 		user_id: string;
@@ -45,6 +47,7 @@
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let isAdmin = $state(false);
 	let actLoad = $state(false);
+	let actionMenuOpen = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -64,10 +67,9 @@
 	};
 
 	onMount(async () => {
-		const isLoggedIn = await fetch('/api/req?path=user&ep=accountInfo');
-		const data = (await isLoggedIn.json()) as App.Platform['resp'];
-		if (data['status_code'] === 200) {
-			isAdmin = ['admin', 'owner'].includes(data.data['role']);
+		const loggedIn = await isLoggedIn();
+		if (loggedIn !== 'error' && loggedIn !== false && loggedIn.role) {
+			isAdmin = ['admin', 'owner'].includes(loggedIn.role);
 		}
 
 		const ft = await fetch(`/api/letters?path=getInfo&id=${letterId}`);
@@ -200,6 +202,7 @@
 
 	const act = async (act: string) => {
 		actLoad = true;
+		actionMenuOpen = false;
 		const ft = await fetch('/api/req?path=letter&ep=action', {
 			method: 'POST',
 			headers: {
@@ -209,11 +212,11 @@
 		});
 		const js = (await ft.json()) as App.Platform['resp'];
 		if (js['status_code'] !== 200) {
+			actLoad = false;
 			if (js['error_code'] === 'UNAUTHORIZED') {
-				window.location.href = `/auth?redirect=l/${letterId}`;
+				showToast('Access Denied', 'error');
 				return;
 			}
-			actLoad = false;
 		} else {
 			window.location.reload();
 		}
@@ -223,6 +226,11 @@
 <svelte:window
 	onkeydown={(e) => {
 		if (e.key === 'Escape') closeLightbox();
+	}}
+	onclick={(e) => {
+		if (actionMenuOpen && !(e.target as HTMLElement).closest('.action')) {
+			actionMenuOpen = false;
+		}
 	}}
 />
 
@@ -331,29 +339,33 @@
 
 				{#if isAdmin}
 					<div class="action">
-						<div class="top">
-							<button class="w" disabled={actLoad || card?.warn === '1'} onclick={() => act('1')}>
-								{#if actLoad}
-									<span class="button-spinner"></span>
-								{:else}
-									<i class="ri-alert-line"></i> Warn
-								{/if}</button
-							>
-							<button class="b" disabled={actLoad || card?.warn === '2'} onclick={() => act('2')}>
-								{#if actLoad}
-									<span class="button-spinner"></span>
-								{:else}
-									<i class="ri-spam-3-line"></i> Ban
-								{/if}</button
-							>
-						</div>
-						{#if card?.warn}
-							<button class="r" disabled={actLoad} onclick={() => act('-')}>
-								{#if actLoad}
-									<span class="button-spinner"></span>
-								{:else}<i class="ri-close-circle-line"></i> Remove Punishment
-								{/if}</button
-							>
+						<span>Action</span>
+						<button
+							aria-labelledby="menu"
+							aria-expanded={actionMenuOpen}
+							onclick={() => (actionMenuOpen = !actionMenuOpen)}
+						>
+							{#if actLoad}
+								<span class="button-spinner"></span>
+							{:else}
+								<i class="ri-sound-module-line"></i>
+							{/if}
+						</button>
+
+						{#if actionMenuOpen}
+							<div class="card">
+								<button class="w" disabled={card?.warn === '1'} onclick={() => act('1')}
+									><i class="ri-alert-line"></i> Warn</button
+								>
+								<button class="b" disabled={card?.warn === '2'} onclick={() => act('2')}
+									><i class="ri-spam-3-line"></i> Ban</button
+								>
+								{#if card?.warn}
+									<button onclick={() => act('-')}
+										><i class="ri-close-circle-line"></i> Remove</button
+									>
+								{/if}
+							</div>
 						{/if}
 					</div>
 				{/if}
