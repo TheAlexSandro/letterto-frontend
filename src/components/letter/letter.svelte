@@ -13,7 +13,7 @@
 		edit = null,
 		hide_sender = null,
 		warn = null,
-		view = null
+		view = 0
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
@@ -81,6 +81,12 @@
 
 			window.location.reload();
 		}
+	};
+
+	const formatCompact = (num: number): string => {
+		return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
+			.format(num)
+			.toLowerCase();
 	};
 </script>
 
@@ -229,7 +235,7 @@
 
 			<div class="view">
 				<i class="ri-eye-line"></i>
-				{view} viewer
+				{formatCompact(Number(view))} viewer
 			</div>
 		</div>
 	{/if}
