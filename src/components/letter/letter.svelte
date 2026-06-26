@@ -211,26 +211,28 @@
 			<img src={deezer} alt="Deezer Logo" />
 		</div>
 	</div>
-	<div class="info-bot">
-		{#if warn !== '-' && edit === 'true'}
-			<div class="bottom">
-				{#if warn === '1'}
-					<div class="warn">
-						<i class="ri-alert-line"></i> Violates Terms of Service.
-					</div>
-				{:else}
-					<div class="ban">
-						<i class="ri-spam-3-line"></i> Letter Banned.
-					</div>
-				{/if}
-			</div>
-		{/if}
+	{#if edit === 'true'}
+		<div class="info-bot">
+			{#if warn !== '-'}
+				<div class="bottom">
+					{#if warn === '1'}
+						<div class="warn">
+							<i class="ri-alert-line"></i> Violates Terms of Service.
+						</div>
+					{:else}
+						<div class="ban">
+							<i class="ri-spam-3-line"></i> Letter Banned.
+						</div>
+					{/if}
+				</div>
+			{/if}
 
-		<div class="view">
-			<i class="ri-eye-line"></i>
-			{view} viewer
+			<div class="view">
+				<i class="ri-eye-line"></i>
+				{view} viewer
+			</div>
 		</div>
-	</div>
+	{/if}
 </section>
 
 <style>
