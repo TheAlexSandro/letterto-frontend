@@ -19,6 +19,7 @@
 		music_title: string;
 		artist: string;
 		warn: string;
+		viewer: number;
 	};
 
 	let windowLoad = $state(true);
@@ -176,6 +177,7 @@
 								font={card.font}
 								artis={card.artist}
 								warn={card.warn}
+								view={card.viewer}
 								edit="true"
 							/>
 						{/each}

@@ -12,7 +12,8 @@
 		artis = null,
 		edit = null,
 		hide_sender = null,
-		warn = null
+		warn = null,
+		view = null
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
@@ -210,19 +211,26 @@
 			<img src={deezer} alt="Deezer Logo" />
 		</div>
 	</div>
-	{#if warn !== "-" && edit === 'true'}
-		<div class="bottom">
-			{#if warn === "1"}
-				<div class="warn">
-					<i class="ri-alert-line"></i> Violates Terms of Service.
-				</div>
-			{:else}
-				<div class="ban">
-					<i class="ri-spam-3-line"></i> Letter Banned.
-				</div>
-			{/if}
+	<div class="info-bot">
+		{#if warn !== '-' && edit === 'true'}
+			<div class="bottom">
+				{#if warn === '1'}
+					<div class="warn">
+						<i class="ri-alert-line"></i> Violates Terms of Service.
+					</div>
+				{:else}
+					<div class="ban">
+						<i class="ri-spam-3-line"></i> Letter Banned.
+					</div>
+				{/if}
+			</div>
+		{/if}
+
+		<div class="view">
+			<i class="ri-eye-line"></i>
+			{view} viewer
 		</div>
-	{/if}
+	</div>
 </section>
 
 <style>
@@ -608,8 +616,14 @@
 		cursor: default;
 	}
 
-	.l .bottom {
-		margin-bottom: -5px;
+	.l .info-bot {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		line-height: 1;
+	}
+
+	.l .info-bot .bottom {
 		font-size: 12px;
 		display: flex;
 		flex-direction: row;
@@ -617,12 +631,18 @@
 		gap: 7px;
 	}
 
-	.l .bottom .warn {
+	.l .info-bot .bottom .warn {
 		color: rgb(139, 139, 37);
 	}
 
-	.l .bottom .ban {
+	.l .info-bot .bottom .ban {
 		color: red;
+	}
+
+	.l .info-bot .view {
+		font-size: 13px;
+		margin-left: auto;
+		color: #333333dd;
 	}
 
 	@media screen and (max-width: 600px) {
