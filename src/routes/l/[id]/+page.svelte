@@ -50,6 +50,11 @@
 	let actionMenuOpen = $state(false);
 	let imageLoaded = $state(false);
 	let videoLoaded = $state(false);
+	let imageLoadTime = $state(0);
+	let videoLoadTime = $state(0);
+	let showSlowWarning = $state(false);
+	let slowTimer: ReturnType<typeof setTimeout> | null = null;
+	let infoPopupOpen = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -66,6 +71,18 @@
 		const rect = bar.getBoundingClientRect();
 		const ratio = (e.clientX - rect.left) / rect.width;
 		audio.currentTime = ratio * duration;
+	};
+
+	const observeResourceTiming = (url: string, onDone: (duration: number) => void) => {
+		const observer = new PerformanceObserver((list) => {
+			for (const entry of list.getEntries()) {
+				if (entry.name === url) {
+					onDone(entry.duration);
+					observer.disconnect();
+				}
+			}
+		});
+		observer.observe({ type: 'resource', buffered: true });
 	};
 
 	onMount(async () => {
@@ -88,8 +105,23 @@
 		}
 		card = ftJson['data'];
 
-		if (!showPassword && ftJson['error_code'] !== 'BURNED') {
-			await fetch(`/api/letters?path=burn&id=${letterId}`);
+		if (card?.image || card?.video) {
+			slowTimer = setTimeout(() => {
+				if (!imageLoaded || !videoLoaded) {
+					showSlowWarning = true;
+				}
+			}, 5000);
+		}
+
+		if (card?.image) {
+			observeResourceTiming(card.image, (duration) => {
+				imageLoadTime = duration;
+			});
+		}
+		if (card?.video) {
+			observeResourceTiming(card.video, (duration) => {
+				videoLoadTime = duration;
+			});
 		}
 		windowLoad = false;
 	});
@@ -228,11 +260,17 @@
 
 <svelte:window
 	onkeydown={(e) => {
-		if (e.key === 'Escape') closeLightbox();
+		if (e.key === 'Escape') {
+			closeLightbox();
+			infoPopupOpen = false;
+		}
 	}}
 	onclick={(e) => {
 		if (actionMenuOpen && !(e.target as HTMLElement).closest('.action')) {
 			actionMenuOpen = false;
+		}
+		if (infoPopupOpen && !(e.target as HTMLElement).closest('.media-info')) {
+			infoPopupOpen = false;
 		}
 	}}
 />
@@ -396,7 +434,13 @@
 											aria-hidden="true"
 											alt="Letter image"
 											onclick={() => openLightbox(card!.image!)}
-											onload={() => (imageLoaded = true)}
+											onload={() => {
+												imageLoaded = true;
+												if (imageLoaded && (videoLoaded || !card?.video)) {
+													showSlowWarning = false;
+													if (slowTimer) clearTimeout(slowTimer);
+												}
+											}}
 											class:loaded={imageLoaded}
 											style="cursor:zoom-in"
 										/>
@@ -407,9 +451,16 @@
 										{/if}
 										<video
 											src={card?.video}
+											preload="metadata"
 											controls
 											bind:this={videoEl}
-											onloadeddata={() => (videoLoaded = true)}
+											onloadeddata={() => {
+												videoLoaded = true;
+												if (videoLoaded && (imageLoaded || !card?.image)) {
+													showSlowWarning = false;
+													if (slowTimer) clearTimeout(slowTimer);
+												}
+											}}
 											class:loaded={videoLoaded}
 											onplay={() => {
 												if (audio && audioPlayed) {
@@ -434,7 +485,13 @@
 										aria-hidden="true"
 										alt="Letter image"
 										onclick={() => openLightbox(card!.image!)}
-										onload={() => (imageLoaded = true)}
+										onload={() => {
+											imageLoaded = true;
+											if (imageLoaded && (videoLoaded || !card?.video)) {
+												showSlowWarning = false;
+												if (slowTimer) clearTimeout(slowTimer);
+											}
+										}}
 										class:loaded={imageLoaded}
 										style="cursor:zoom-in"
 									/>
@@ -446,9 +503,16 @@
 									{/if}
 									<video
 										src={card?.video}
+										preload="metadata"
 										controls
 										bind:this={videoEl}
-										onloadeddata={() => (videoLoaded = true)}
+										onloadeddata={() => {
+											videoLoaded = true;
+											if (videoLoaded && (imageLoaded || !card?.image)) {
+												showSlowWarning = false;
+												if (slowTimer) clearTimeout(slowTimer);
+											}
+										}}
 										class:loaded={videoLoaded}
 										onplay={() => {
 											if (audio && audioPlayed) {
@@ -462,6 +526,36 @@
 								</div>
 							{/if}
 						</div>
+						<!-- {#if showSlowWarning && (!imageLoaded || !videoLoaded)} -->
+							<div class="media-info">
+								<i class="ri-alert-line"></i> Taking longer than usual...
+								<button
+									aria-label="More info"
+									aria-expanded={infoPopupOpen}
+									onclick={() => (infoPopupOpen = !infoPopupOpen)}
+								>
+									<i class="ri-question-line"></i>
+								</button>
+
+								{#if infoPopupOpen}
+									<div class="info-popup">
+										<p>
+											Loading times can be caused by many factors, with the main one usually being
+											your internet connection.
+										</p>
+										<p>
+											If you're using a proxy or VPN and the loading is taking a long time to
+											finish, consider turning it off.
+										</p>
+										<p>
+											Otherwise, please wait a little longer — the image or video size may be large
+											and take more time to load.
+										</p>
+										<p>If you notice something is wrong, please contact support.</p>
+									</div>
+								{/if}
+							</div>
+						<!-- {/if} -->
 					{/if}
 
 					<div class="body">
