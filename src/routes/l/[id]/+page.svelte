@@ -526,7 +526,7 @@
 								</div>
 							{/if}
 						</div>
-						<!-- {#if showSlowWarning && (!imageLoaded || !videoLoaded)} -->
+						{#if showSlowWarning && (!imageLoaded || !videoLoaded)}
 							<div class="media-info">
 								<i class="ri-alert-line"></i> Taking longer than usual...
 								<button
@@ -555,7 +555,7 @@
 									</div>
 								{/if}
 							</div>
-						<!-- {/if} -->
+						{/if}
 					{/if}
 
 					<div class="body">
