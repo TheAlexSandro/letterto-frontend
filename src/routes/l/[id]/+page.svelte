@@ -48,6 +48,8 @@
 	let isAdmin = $state(false);
 	let actLoad = $state(false);
 	let actionMenuOpen = $state(false);
+	let imageLoaded = $state(false);
+	let videoLoaded = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -103,6 +105,7 @@
 		}
 		if (!audio) {
 			audio = new Audio(previewUrl);
+			audio.loop = true;
 
 			audio.addEventListener(
 				'loadedmetadata',
@@ -116,11 +119,11 @@
 				currentTime = audio!.currentTime;
 			});
 
-			audio.addEventListener('ended', () => {
-				audioPlayed = false;
-				currentTime = 0;
-				audio!.currentTime = 0;
-			});
+			// audio.addEventListener('ended', () => {
+			// 	audioPlayed = false;
+			// 	currentTime = 0;
+			// 	audio!.currentTime = 0;
+			// });
 		}
 
 		if (audioPlayed) {
@@ -278,11 +281,18 @@
 							alt={card?.music_title}
 						/>
 						<div class="music-info">
-							<span class="title"
-								>{card!.music_title.length >= 36
-									? card?.music_title.substring(0, 36) + '...'
-									: card?.music_title}</span
-							>
+							<div class="title-wrap">
+								<span class="title" class:marquee={card!.music_title.length > 36}>
+									{#if card!.music_title.length > 36}
+										<span class="marquee-content">
+											<span>{card?.music_title}</span>
+											<span>{card?.music_title}</span>
+										</span>
+									{:else}
+										{card?.music_title}
+									{/if}
+								</span>
+							</div>
 							<span class="artist">{card?.artist}</span>
 							<!-- svelte-ignore a11y_click_events_have_key_events -->
 							<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -375,7 +385,10 @@
 						<div class="media-wrap">
 							{#if card?.image && card?.video}
 								<div class="media-dual">
-									<div class="media-item">
+									<div class="media-item" class:loading={!imageLoaded}>
+										{#if !imageLoaded}
+											<div class="skeleton"></div>
+										{/if}
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
 										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 										<img
@@ -383,14 +396,21 @@
 											aria-hidden="true"
 											alt="Letter image"
 											onclick={() => openLightbox(card!.image!)}
+											onload={() => (imageLoaded = true)}
+											class:loaded={imageLoaded}
 											style="cursor:zoom-in"
 										/>
 									</div>
-									<div class="media-item">
+									<div class="media-item" class:loading={!videoLoaded}>
+										{#if !videoLoaded}
+											<div class="skeleton"></div>
+										{/if}
 										<video
 											src={card?.video}
 											controls
 											bind:this={videoEl}
+											onloadeddata={() => (videoLoaded = true)}
+											class:loaded={videoLoaded}
 											onplay={() => {
 												if (audio && audioPlayed) {
 													audio.pause();
@@ -403,7 +423,10 @@
 									</div>
 								</div>
 							{:else if card?.image}
-								<div class="media-single">
+								<div class="media-single" class:loading={!imageLoaded}>
+									{#if !imageLoaded}
+										<div class="skeleton"></div>
+									{/if}
 									<!-- svelte-ignore a11y_click_events_have_key_events -->
 									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 									<img
@@ -411,15 +434,22 @@
 										aria-hidden="true"
 										alt="Letter image"
 										onclick={() => openLightbox(card!.image!)}
+										onload={() => (imageLoaded = true)}
+										class:loaded={imageLoaded}
 										style="cursor:zoom-in"
 									/>
 								</div>
 							{:else if card?.video}
-								<div class="media-single">
+								<div class="media-single" class:loading={!videoLoaded}>
+									{#if !videoLoaded}
+										<div class="skeleton"></div>
+									{/if}
 									<video
 										src={card?.video}
 										controls
 										bind:this={videoEl}
+										onloadeddata={() => (videoLoaded = true)}
+										class:loaded={videoLoaded}
 										onplay={() => {
 											if (audio && audioPlayed) {
 												audio.pause();

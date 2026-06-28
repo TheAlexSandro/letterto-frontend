@@ -75,10 +75,44 @@
 	flex: 1;
 	min-width: 0;
 }
+
+.letter-wrap .music-info .title-wrap {
+	overflow: hidden;
+	white-space: nowrap;
+	width: 100%;
+	mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
 .letter-wrap .music-info .title {
 	font-size: 17px;
 	font-weight: var(--font-semibold);
 	color: #fff;
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.letter-wrap .music-info .title.marquee {
+	mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
+.letter-wrap .music-info .title .marquee-content {
+	display: inline-flex;
+	gap: 40px;
+	animation: marquee 8s linear infinite;
+}
+
+.letter-wrap .music-info .title.marquee:hover .marquee-content {
+	animation-play-state: paused;
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(calc(-50% - 20px));
+	}
 }
 
 .letter-wrap .music-info .artist {
@@ -395,6 +429,54 @@
 	height: 180px;
 	object-fit: cover;
 	display: block;
+}
+
+.letter-wrap .media-single,
+.letter-wrap .media-dual .media-item {
+	position: relative;
+}
+
+.letter-wrap .media-single.loading,
+.letter-wrap .media-dual .media-item.loading {
+	min-height: 180px;
+}
+
+.letter-wrap .skeleton {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		90deg,
+		var(--color-border) 25%,
+		var(--color-bg-tertiary) 37%,
+		var(--color-border) 63%
+	);
+	background-size: 200% 100%;
+	animation: skeleton-shimmer 1.4s ease-in-out infinite;
+	border-radius: inherit;
+}
+
+.letter-wrap .media-single img,
+.letter-wrap .media-single video,
+.letter-wrap .media-dual .media-item img,
+.letter-wrap .media-dual .media-item video {
+	opacity: 0;
+	transition: opacity 0.25s ease;
+}
+
+.letter-wrap .media-single img.loaded,
+.letter-wrap .media-single video.loaded,
+.letter-wrap .media-dual .media-item img.loaded,
+.letter-wrap .media-dual .media-item video.loaded {
+	opacity: 1;
+}
+
+@keyframes skeleton-shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
 }
 
 .letter-wrap .body {
