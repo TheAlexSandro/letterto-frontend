@@ -55,6 +55,7 @@
 	let showSlowWarning = $state(false);
 	let slowTimer: ReturnType<typeof setTimeout> | null = null;
 	let infoPopupOpen = $state(false);
+	let letterNotFound = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -98,6 +99,8 @@
 				showPassword = true;
 			} else if (ftJson['error_code'] === 'BURNED') {
 				isBurned = true;
+			} else if (ftJson['error_code'] === 'LETTER_NOT_FOUND') {
+				letterNotFound = true;
 			} else {
 				window.location.href = '/';
 				return;
@@ -296,134 +299,186 @@
 	<Navbar />
 
 	<section class="letter">
-		<div class="letter-wrap">
-			{#if isBurned}
-				<div class="burned">
-					<div class="fire">
-						<DotLottieSvelte src={Fire} loop autoplay />
+		{#if !letterNotFound}
+			<div class="letter-wrap">
+				{#if isBurned}
+					<div class="burned">
+						<div class="fire">
+							<DotLottieSvelte src={Fire} loop autoplay />
+						</div>
+						<h1>Burned!</h1>
+						<p>
+							This letter has been burned, you can ask the sender to restore it so you can view once
+							again.
+						</p>
 					</div>
-					<h1>Burned!</h1>
-					<p>
-						This letter has been burned, you can ask the sender to restore it so you can view once
-						again.
-					</p>
-				</div>
-			{:else if !showPassword}
-				<div class="music-pill">
-					<div class="music-left">
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-						<img
-							onclick={() => openLightbox(card!.music_profile!)}
-							src={card?.music_profile}
-							alt={card?.music_title}
-						/>
-						<div class="music-info">
-							<div class="title-wrap">
-								<span class="title" class:marquee={card!.music_title.length > 36}>
-									{#if card!.music_title.length > 36}
-										<span class="marquee-content">
-											<span>{card?.music_title}</span>
-											<span>{card?.music_title}</span>
-										</span>
-									{:else}
-										{card?.music_title}
-									{/if}
-								</span>
-							</div>
-							<span class="artist">{card?.artist}</span>
+				{:else if !showPassword}
+					<div class="music-pill">
+						<div class="music-left">
 							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_static_element_interactions -->
-							<div class="progress">
-								<div class="progress-bar" onclick={seekTo}>
-									<div
-										class="progress-fill"
-										style="width: {duration ? (currentTime / duration) * 100 : 0}%"
-									></div>
+							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+							<img
+								onclick={() => openLightbox(card!.music_profile!)}
+								src={card?.music_profile}
+								alt={card?.music_title}
+							/>
+							<div class="music-info">
+								<div class="title-wrap">
+									<span class="title" class:marquee={card!.music_title.length > 36}>
+										{#if card!.music_title.length > 36}
+											<span class="marquee-content">
+												<span>{card?.music_title}</span>
+												<span>{card?.music_title}</span>
+											</span>
+										{:else}
+											{card?.music_title}
+										{/if}
+									</span>
 								</div>
-								<div class="progress-times">
-									<span>{formatTime(currentTime)}</span>
-									<span>{formatTime(duration)}</span>
+								<span class="artist">{card?.artist}</span>
+								<!-- svelte-ignore a11y_click_events_have_key_events -->
+								<!-- svelte-ignore a11y_no_static_element_interactions -->
+								<div class="progress">
+									<div class="progress-bar" onclick={seekTo}>
+										<div
+											class="progress-fill"
+											style="width: {duration ? (currentTime / duration) * 100 : 0}%"
+										></div>
+									</div>
+									<div class="progress-times">
+										<span>{formatTime(currentTime)}</span>
+										<span>{formatTime(duration)}</span>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-					<div class="right">
-						<img src={deezer} alt="deezer" />
-						<button
-							disabled={audioLoad}
-							type="button"
-							class="music-play"
-							onclick={togglePlay}
-							aria-label="audio"
-						>
-							{#if audioLoad}
-								<div class="spinner"></div>
-							{:else if audioPlayed}
-								<i class="ri-pause-fill"></i>
-							{:else}
-								<i class="ri-play-fill"></i>
-							{/if}
-						</button>
-					</div>
-				</div>
-
-				<div class="meta-row">
-					<div class="from-to-inline">
-						<div class="avatar">
-							<i class="ri-quill-pen-ai-line"></i>
-							<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
-						</div>
-						<div class="avatar">
-							<i class="ri-user-heart-line"></i>
-							<span>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span>
-						</div>
-					</div>
-					<div class="date-chip">
-						<i class="ri-calendar-line"></i>
-						<span>{dates(String(card?.created_at))}</span>
-					</div>
-				</div>
-
-				{#if isAdmin}
-					<div class="action">
-						<span>Action</span>
-						<button
-							aria-labelledby="menu"
-							aria-expanded={actionMenuOpen}
-							onclick={() => (actionMenuOpen = !actionMenuOpen)}
-						>
-							{#if actLoad}
-								<span class="button-spinner"></span>
-							{:else}
-								<i class="ri-sound-module-line"></i>
-							{/if}
-						</button>
-
-						{#if actionMenuOpen}
-							<div class="card">
-								<button class="w" disabled={card?.warn === '1'} onclick={() => act('1')}
-									><i class="ri-alert-line"></i> Warn</button
-								>
-								<button class="b" disabled={card?.warn === '2'} onclick={() => act('2')}
-									><i class="ri-spam-3-line"></i> Ban</button
-								>
-								{#if card?.warn}
-									<button onclick={() => act('-')}
-										><i class="ri-close-circle-line"></i> Remove</button
-									>
+						<div class="right">
+							<img src={deezer} alt="deezer" />
+							<button
+								disabled={audioLoad}
+								type="button"
+								class="music-play"
+								onclick={togglePlay}
+								aria-label="audio"
+							>
+								{#if audioLoad}
+									<div class="spinner"></div>
+								{:else if audioPlayed}
+									<i class="ri-pause-fill"></i>
+								{:else}
+									<i class="ri-play-fill"></i>
 								{/if}
-							</div>
-						{/if}
+							</button>
+						</div>
 					</div>
-				{/if}
 
-				<div class="card">
-					{#if card?.image || card?.video}
-						<div class="media-wrap">
-							{#if card?.image && card?.video}
-								<div class="media-dual">
-									<div class="media-item" class:loading={!imageLoaded}>
+					<div class="meta-row">
+						<div class="from-to-inline">
+							<div class="avatar">
+								<i class="ri-quill-pen-ai-line"></i>
+								<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
+							</div>
+							<div class="avatar">
+								<i class="ri-user-heart-line"></i>
+								<span>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span>
+							</div>
+						</div>
+						<div class="date-chip">
+							<i class="ri-calendar-line"></i>
+							<span>{dates(String(card?.created_at))}</span>
+						</div>
+					</div>
+
+					{#if isAdmin}
+						<div class="action">
+							<span>Action</span>
+							<button
+								aria-labelledby="menu"
+								aria-expanded={actionMenuOpen}
+								onclick={() => (actionMenuOpen = !actionMenuOpen)}
+							>
+								{#if actLoad}
+									<span class="button-spinner"></span>
+								{:else}
+									<i class="ri-sound-module-line"></i>
+								{/if}
+							</button>
+
+							{#if actionMenuOpen}
+								<div class="card">
+									<button class="w" disabled={card?.warn === '1'} onclick={() => act('1')}
+										><i class="ri-alert-line"></i> Warn</button
+									>
+									<button class="b" disabled={card?.warn === '2'} onclick={() => act('2')}
+										><i class="ri-spam-3-line"></i> Ban</button
+									>
+									{#if card?.warn}
+										<button onclick={() => act('-')}
+											><i class="ri-close-circle-line"></i> Remove</button
+										>
+									{/if}
+								</div>
+							{/if}
+						</div>
+					{/if}
+
+					<div class="card">
+						{#if card?.image || card?.video}
+							<div class="media-wrap">
+								{#if card?.image && card?.video}
+									<div class="media-dual">
+										<div class="media-item" class:loading={!imageLoaded}>
+											{#if !imageLoaded}
+												<div class="skeleton"></div>
+											{/if}
+											<!-- svelte-ignore a11y_click_events_have_key_events -->
+											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+											<img
+												src={card?.image}
+												aria-hidden="true"
+												alt="Letter image"
+												onclick={() => openLightbox(card!.image!)}
+												onload={() => {
+													imageLoaded = true;
+													if (imageLoaded && (videoLoaded || !card?.video)) {
+														showSlowWarning = false;
+														if (slowTimer) clearTimeout(slowTimer);
+													}
+												}}
+												class:loaded={imageLoaded}
+												style="cursor:zoom-in"
+											/>
+										</div>
+										<div class="media-item" class:loading={!videoLoaded}>
+											{#if !videoLoaded}
+												<div class="skeleton"></div>
+											{/if}
+											<video
+												src={card?.video}
+												preload="metadata"
+												controls
+												bind:this={videoEl}
+												onloadeddata={() => {
+													videoLoaded = true;
+													if (videoLoaded && (imageLoaded || !card?.image)) {
+														showSlowWarning = false;
+														if (slowTimer) clearTimeout(slowTimer);
+													}
+												}}
+												class:loaded={videoLoaded}
+												onplay={() => {
+													if (audio && audioPlayed) {
+														audio.pause();
+														audioPlayed = false;
+													}
+												}}
+											>
+												<track kind="captions" />
+											</video>
+										</div>
+									</div>
+								{:else if card?.image}
+									<div class="media-single" class:loading={!imageLoaded}>
 										{#if !imageLoaded}
 											<div class="skeleton"></div>
 										{/if}
@@ -445,7 +500,8 @@
 											style="cursor:zoom-in"
 										/>
 									</div>
-									<div class="media-item" class:loading={!videoLoaded}>
+								{:else if card?.video}
+									<div class="media-single" class:loading={!videoLoaded}>
 										{#if !videoLoaded}
 											<div class="skeleton"></div>
 										{/if}
@@ -472,152 +528,135 @@
 											<track kind="captions" />
 										</video>
 									</div>
-								</div>
-							{:else if card?.image}
-								<div class="media-single" class:loading={!imageLoaded}>
-									{#if !imageLoaded}
-										<div class="skeleton"></div>
-									{/if}
-									<!-- svelte-ignore a11y_click_events_have_key_events -->
-									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-									<img
-										src={card?.image}
-										aria-hidden="true"
-										alt="Letter image"
-										onclick={() => openLightbox(card!.image!)}
-										onload={() => {
-											imageLoaded = true;
-											if (imageLoaded && (videoLoaded || !card?.video)) {
-												showSlowWarning = false;
-												if (slowTimer) clearTimeout(slowTimer);
-											}
-										}}
-										class:loaded={imageLoaded}
-										style="cursor:zoom-in"
-									/>
-								</div>
-							{:else if card?.video}
-								<div class="media-single" class:loading={!videoLoaded}>
-									{#if !videoLoaded}
-										<div class="skeleton"></div>
-									{/if}
-									<video
-										src={card?.video}
-										preload="metadata"
-										controls
-										bind:this={videoEl}
-										onloadeddata={() => {
-											videoLoaded = true;
-											if (videoLoaded && (imageLoaded || !card?.image)) {
-												showSlowWarning = false;
-												if (slowTimer) clearTimeout(slowTimer);
-											}
-										}}
-										class:loaded={videoLoaded}
-										onplay={() => {
-											if (audio && audioPlayed) {
-												audio.pause();
-												audioPlayed = false;
-											}
-										}}
-									>
-										<track kind="captions" />
-									</video>
-								</div>
-							{/if}
-						</div>
-						{#if showSlowWarning && (!imageLoaded || !videoLoaded)}
-							<div class="media-info">
-								<i class="ri-alert-line"></i> Taking longer than usual...
-								<button
-									aria-label="More info"
-									aria-expanded={infoPopupOpen}
-									onclick={() => (infoPopupOpen = !infoPopupOpen)}
-								>
-									<i class="ri-question-line"></i>
-								</button>
-
-								{#if infoPopupOpen}
-									<div class="info-popup">
-										<p>
-											Loading times can be caused by many factors, with the main one usually being
-											your internet connection.
-										</p>
-										<p>
-											If you're using a proxy or VPN and the loading is taking a long time to
-											finish, consider turning it off.
-										</p>
-										<p>
-											Otherwise, please wait a little longer — the image or video size may be large
-											and take more time to load.
-										</p>
-										<p>If you notice something is wrong, please contact support.</p>
-									</div>
 								{/if}
 							</div>
-						{/if}
-					{/if}
+							{#if showSlowWarning && (!imageLoaded || !videoLoaded)}
+								<div class="media-info">
+									<i class="ri-alert-line"></i> Taking longer than usual...
+									<button
+										aria-label="More info"
+										aria-expanded={infoPopupOpen}
+										onclick={() => (infoPopupOpen = !infoPopupOpen)}
+									>
+										<i class="ri-question-line"></i>
+									</button>
 
-					<div class="body">
-						<div class="ql-editor">
-							<p class="message" style="font-family: {resolveFont(String(card?.font))};">
-								{@html card?.message}
-							</p>
+									{#if infoPopupOpen}
+										<div class="info-popup">
+											<p>
+												Loading times can be caused by many factors, with the main one usually being
+												your internet connection.
+											</p>
+											<p>
+												If you're using a proxy or VPN and the loading is taking a long time to
+												finish, consider turning it off.
+											</p>
+											<p>
+												Otherwise, please wait a little longer — the image or video size may be
+												large and take more time to load.
+											</p>
+											<p>If you notice something is wrong, please contact support.</p>
+										</div>
+									{/if}
+								</div>
+							{/if}
+						{/if}
+
+						<div class="body">
+							<div class="ql-editor">
+								<p class="message" style="font-family: {resolveFont(String(card?.font))};">
+									{@html card?.message}
+								</p>
+							</div>
+						</div>
+
+						<div class="card-footer">
+							<div class="footer-left">
+								<i class="ri-heart-fill"></i>
+								Made with Love
+							</div>
+							<div class="footer-right">
+								<button class="copy-btn" onclick={copyLink}>
+									<i class={copied ? 'ri-check-line' : 'ri-link'}></i>
+									Copy
+								</button>
+							</div>
 						</div>
 					</div>
-
-					<div class="card-footer">
-						<div class="footer-left">
-							<i class="ri-heart-fill"></i>
-							Made with Love
+				{:else}
+					<div class="pwd">
+						<div class="desc">
+							<i class="ri-lock-line" id="a"></i>
+							<b>Letter Locked</b>
+							<span>Please enter the password to access this letter.</span>
 						</div>
-						<div class="footer-right">
-							<button class="copy-btn" onclick={copyLink}>
-								<i class={copied ? 'ri-check-line' : 'ri-link'}></i>
-								Copy
-							</button>
+
+						<form method="post" onsubmit={unlock}>
+							<input
+								type="password"
+								name="password"
+								id="password"
+								placeholder="••••••••"
+								required
+								bind:value={password}
+								disabled={buttonLoad}
+							/>
+							{#if passErr}
+								<span>{passErr}</span>
+							{/if}
+
+							<div class="btns">
+								<button disabled={buttonLoad}>
+									{#if buttonLoad}
+										<span class="button-spinner"></span>
+									{:else}<i class="ri-lock-unlock-line"></i> Unlock
+									{/if}</button
+								>
+							</div>
+						</form>
+					</div>
+				{/if}
+			</div>
+		{:else}
+			<div class="notfound-wrap">
+				<div class="scene">
+					<svg class="flightpath" viewBox="0 0 400 200" aria-hidden="true">
+						<path d="M20,170 Q120,40 200,90 T380,30" />
+					</svg>
+
+					<div class="envelope-wrap">
+						<svg class="envelope" viewBox="0 0 320 220" aria-hidden="true">
+							<rect class="body" x="10" y="40" width="300" height="160" rx="14" />
+							<path class="flap" d="M10,42 L160,142 L310,42 Z" />
+							<rect class="line line-1" x="120" y="148" width="130" height="7" rx="3.5" />
+							<rect class="line line-2" x="120" y="166" width="85" height="7" rx="3.5" />
+							<circle class="seal" cx="160" cy="118" r="20" />
+							<text class="seal-letter" x="160" y="125" text-anchor="middle">L</text>
+						</svg>
+
+						<div class="postmark">
+							<span class="postmark-eyebrow">Post Office</span>
+							<span class="postmark-code">404</span>
+							<span class="postmark-foot">Not Found</span>
 						</div>
 					</div>
 				</div>
-			{:else}
-				<div class="pwd">
-					<div class="desc">
-						<i class="ri-lock-line" id="a"></i>
-						<b>Letter Locked</b>
-						<span>Please enter the password to access this letter.</span>
-					</div>
 
-					<form method="post" onsubmit={unlock}>
-						<input
-							type="password"
-							name="password"
-							id="password"
-							placeholder="••••••••"
-							required
-							bind:value={password}
-							disabled={buttonLoad}
-						/>
-						{#if passErr}
-							<span>{passErr}</span>
-						{/if}
+				<p class="eyebrow">404</p>
+				<h1 class="title">Letter Not Found</h1>
+				<p class="desc">Please check the letter ID, you may entered incorrectly or the letter just does not exist.</p>
 
-						<div class="btns">
-							<button disabled={buttonLoad}>
-								{#if buttonLoad}
-									<span class="button-spinner"></span>
-								{:else}<i class="ri-lock-unlock-line"></i> Unlock
-								{/if}</button
-							>
-						</div>
-					</form>
-				</div>
-			{/if}
-		</div>
+				<a href="/" class="cta">
+					<i class="ri-arrow-left-line"></i>
+					Return
+				</a>
+			</div>
+		{/if}
 	</section>
 
 	<Footer />
 
-	{#if lightboxSrc}
+	{#if lightboxSrc && (imageLoaded || videoLoaded)}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div

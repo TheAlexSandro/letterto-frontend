@@ -803,6 +803,210 @@
 	background: rgba(255, 255, 255, 0.28);
 }
 
+.letter .notfound-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	max-width: 420px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+.letter .notfound-wrap .scene {
+	position: relative;
+	width: 100%;
+	max-width: 320px;
+	margin-bottom: 2.25rem;
+}
+
+.letter .notfound-wrap .flightpath {
+	position: absolute;
+	top: -10px;
+	left: -20px;
+	width: calc(100% + 40px);
+	height: auto;
+	z-index: 0;
+	opacity: 0.5;
+}
+
+.letter .notfound-wrap .flightpath path {
+	fill: none;
+	stroke: var(--color-text-muted);
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-dasharray: 6 10;
+	animation: dash-drift 14s linear infinite;
+}
+
+@keyframes dash-drift {
+	to {
+		stroke-dashoffset: -200;
+	}
+}
+
+.letter .notfound-wrap .envelope-wrap {
+	position: relative;
+	z-index: 1;
+	width: 100%;
+	animation: float-y 4.5s ease-in-out infinite;
+}
+
+@keyframes float-y {
+	0%,
+	100% {
+		transform: translateY(0) rotate(-1.5deg);
+	}
+	50% {
+		transform: translateY(-16px) rotate(1.5deg);
+	}
+}
+
+.letter .notfound-wrap .envelope {
+	width: 100%;
+	height: auto;
+	display: block;
+	filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.12));
+}
+
+.letter .notfound-wrap .envelope .body {
+	fill: var(--color-surface);
+	stroke: var(--color-border);
+	stroke-width: 1.5;
+}
+
+.letter .notfound-wrap .envelope .flap {
+	fill: var(--color-bg-tertiary);
+	stroke: var(--color-border);
+	stroke-width: 1.5;
+	stroke-linejoin: round;
+}
+
+.letter .notfound-wrap .envelope .line {
+	fill: var(--color-border);
+}
+
+.letter .notfound-wrap .envelope .seal {
+	fill: var(--color-primary);
+	stroke: var(--color-primary-hover);
+	stroke-width: 1.5;
+}
+
+.letter .notfound-wrap .envelope .seal-letter {
+	font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+	font-weight: 700;
+	font-size: 18px;
+	fill: #fff;
+}
+
+.letter .notfound-wrap .postmark {
+	position: absolute;
+	top: -6px;
+	right: -10px;
+	width: 112px;
+	height: 112px;
+	border-radius: 50%;
+	border: 2.5px dashed var(--color-danger);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	background: color-mix(in srgb, var(--color-danger) 6%, transparent);
+	transform: rotate(-12deg);
+	animation: stamp-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.25s both;
+}
+
+@keyframes stamp-in {
+	0% {
+		opacity: 0;
+		transform: scale(2.6) rotate(-32deg);
+	}
+	55% {
+		opacity: 1;
+		transform: scale(0.85) rotate(-9deg);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1) rotate(-12deg);
+	}
+}
+
+.letter .notfound-wrap .postmark-eyebrow,
+.letter .notfound-wrap .postmark-foot {
+	font-family: ui-monospace, 'SF Mono', 'Courier New', monospace;
+	font-size: 8px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--color-danger);
+	opacity: 0.85;
+}
+
+.letter .notfound-wrap .postmark-foot {
+	font-size: 7.5px;
+}
+
+.letter .notfound-wrap .postmark-code {
+	font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+	font-weight: 700;
+	font-size: 26px;
+	color: var(--color-danger);
+	line-height: 1;
+}
+
+.letter .notfound-wrap .eyebrow {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--color-danger);
+	margin-bottom: 0.6rem;
+}
+
+.letter .notfound-wrap .title {
+	font-weight: 700;
+	font-size: 26px;
+	color: var(--color-text-primary);
+	margin-bottom: 0.85rem;
+}
+
+.letter .notfound-wrap .desc {
+	font-size: 14.5px;
+	line-height: 1.65;
+	color: rgba(86, 86, 86, 0.832);
+	margin-bottom: 2rem;
+}
+
+.letter .notfound-wrap .cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-primary-text);
+	background: var(--color-primary);
+	border-radius: 8px;
+	padding: 10px 20px;
+	text-decoration: none;
+	transition: background 0.15s;
+}
+
+.letter .notfound-wrap .cta:hover {
+	background: var(--color-primary-hover);
+}
+
+.letter .notfound-wrap .cta i {
+	font-size: 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.letter .notfound-wrap .envelope-wrap,
+	.letter .notfound-wrap .postmark,
+	.letter .notfound-wrap .flightpath path {
+		animation: none !important;
+	}
+}
+
 @keyframes lb-fade-in {
 	from {
 		opacity: 0;
@@ -867,6 +1071,25 @@
 
 	.letter .pwd .desc {
 		padding: 0 10px;
+	}
+
+	.letter .notfound-wrap .scene {
+		max-width: 270px;
+	}
+
+	.letter .notfound-wrap .postmark {
+		width: 92px;
+		height: 92px;
+		top: -4px;
+		right: -6px;
+	}
+
+	.letter .notfound-wrap .postmark-code {
+		font-size: 22px;
+	}
+
+	.letter .notfound-wrap .title {
+		font-size: 21px;
 	}
 }
 
