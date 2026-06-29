@@ -235,7 +235,7 @@
 
 			<div class="view">
 				<i class="ri-eye-line"></i>
-				{formatCompact(Number(view))} viewer
+				{formatCompact(Number(view))}x viewed
 			</div>
 		</div>
 	{/if}
