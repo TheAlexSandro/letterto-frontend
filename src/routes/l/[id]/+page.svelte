@@ -340,7 +340,9 @@
 								</svg>
 							</div>
 
-							<p class="gate-title">A letter for <em>{card?.recipient_name?.toLowerCase()}</em></p>
+							<p class="gate-title">
+								A letter for <em>{!card?.recipient_name ? 'anonymous' : card?.recipient_name.toLowerCase()}</em>
+							</p>
 							<p class="gate-desc">Click the button below to open the letter.</p>
 
 							{#if card?.audio_autoplay}
