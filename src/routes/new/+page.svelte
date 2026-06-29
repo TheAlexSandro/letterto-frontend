@@ -19,7 +19,7 @@
 		album: { cover_small: string; cover_medium: string; cover_big: string };
 	};
 
-	type Checkbox = 'viewOnce' | 'pass' | 'showPass' | 'adv' | 'showSend' | 'showRecp';
+	type Checkbox = 'viewOnce' | 'pass' | 'showPass' | 'adv' | 'audioAuto' | 'showSend' | 'showRecp';
 
 	let windowLoad = $state(true);
 	let query = $state('');
@@ -67,6 +67,7 @@
 	let showPreview = $state(false);
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let findErr = $state(false);
+	let audioAutoplay = $state(true);
 
 	async function scrollToError() {
 		await tick();
@@ -338,6 +339,9 @@
 		if (type === 'showPass') {
 			showPassword = !showPassword;
 		}
+		if (type === 'audioAuto') {
+			audioAutoplay = !audioAutoplay;
+		}
 		if (type === 'showSend') {
 			showSender = !showSender;
 		}
@@ -413,6 +417,7 @@
 		fd.append('show_recipient', showRecipient ? 'yes' : 'no');
 		fd.append('view_once', viewOnce ? 'yes' : 'no');
 		fd.append('artist', String(selected.artist.name));
+		fd.append('audio_autoplay', audioAutoplay ? 'yes' : 'no');
 		fd.append('image', imageFile as Blob);
 		fd.append('video', videoFile as Blob);
 
@@ -949,6 +954,34 @@
 									https://{window.location.hostname}/l/{letterId}
 								</p>
 							</div>
+
+							<div class="space"></div>
+
+							<div class="menu-row">
+								<div class="menu-info">
+									<div class="item">Audio Autoplay</div>
+									<span class="desc"
+										>Enable this to let the audio auto play when the letter opened.</span
+									>
+								</div>
+								<div class="checkbox-container">
+									<input
+										type="checkbox"
+										id="view"
+										onchange={() => {
+											handleCheckbox('audioAuto');
+										}}
+										checked={audioAutoplay}
+									/>
+									<div class="custom-checkmark"></div>
+									<span class="status-text">{audioAutoplay ? 'enabled' : 'disabled'}</span>
+								</div>
+							</div>
+							{#if audioAutoplay}
+								<p class="helper-text">
+									To ensure the user safety, user will be given a warning before they open the letter.
+								</p>
+							{/if}
 
 							<div class="space"></div>
 

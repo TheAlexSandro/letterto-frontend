@@ -62,6 +62,7 @@ export async function POST({ url, request }) {
 	fd.append('font', (form.get('font') as string) || '');
 	fd.append('show_sender', (form.get('show_sender') as string) || '');
 	fd.append('show_recipient', (form.get('show_recipient') as string) || '');
+	fd.append('audio_autoplay', (form.get('audio_autoplay') as string) || '');
 	fd.append('view_once', (form.get('view_once') as string) || '');
 	fd.append('artist', (form.get('artist') as string) || '');
 	fd.append('is_burned', (form.get('is_burned') as string) || '');

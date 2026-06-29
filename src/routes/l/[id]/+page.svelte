@@ -10,6 +10,7 @@
 	import deezer from '$lib/assets/deezer.svg';
 	import { isLoggedIn } from '$lib/utils/utils';
 	import { showToast } from '$lib/toast';
+	import { fade } from 'svelte/transition';
 
 	type Card = {
 		user_id: string;
@@ -25,7 +26,8 @@
 		sender?: string | null;
 		recipient_name?: string | null;
 		is_burned: string;
-		warn: string | null;
+		warn: string;
+		audio_autoplay: boolean;
 	};
 
 	const { data }: { data: PageData } = $props();
@@ -56,6 +58,8 @@
 	let slowTimer: ReturnType<typeof setTimeout> | null = null;
 	let infoPopupOpen = $state(false);
 	let letterNotFound = $state(false);
+	let letterOpened = $state(false);
+	let opening = $state(false);
 
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
@@ -84,6 +88,17 @@
 			}
 		});
 		observer.observe({ type: 'resource', buffered: true });
+	};
+
+	const openLetter = () => {
+		if (opening || letterOpened) return;
+		opening = true;
+		if (card?.audio_autoplay) {
+			togglePlay();
+		}
+		setTimeout(() => {
+			letterOpened = true;
+		}, 1000);
 	};
 
 	onMount(async () => {
@@ -313,276 +328,309 @@
 						</p>
 					</div>
 				{:else if !showPassword}
-					<div class="music-pill">
-						<div class="music-left">
-							<!-- svelte-ignore a11y_click_events_have_key_events -->
-							<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-							<img
-								onclick={() => openLightbox(card!.music_profile!)}
-								src={card?.music_profile}
-								alt={card?.music_title}
-							/>
-							<div class="music-info">
-								<div class="title-wrap">
-									<span class="title" class:marquee={card!.music_title.length > 36}>
-										{#if card!.music_title.length > 36}
-											<span class="marquee-content">
-												<span>{card?.music_title}</span>
-												<span>{card?.music_title}</span>
-											</span>
-										{:else}
-											{card?.music_title}
-										{/if}
-									</span>
-								</div>
-								<span class="artist">{card?.artist}</span>
-								<!-- svelte-ignore a11y_click_events_have_key_events -->
-								<!-- svelte-ignore a11y_no_static_element_interactions -->
-								<div class="progress">
-									<div class="progress-bar" onclick={seekTo}>
-										<div
-											class="progress-fill"
-											style="width: {duration ? (currentTime / duration) * 100 : 0}%"
-										></div>
-									</div>
-									<div class="progress-times">
-										<span>{formatTime(currentTime)}</span>
-										<span>{formatTime(duration)}</span>
-									</div>
-								</div>
+					{#if !letterOpened}
+						<div class="envelope-gate" class:opening>
+							<div class="envelope-gate-scene">
+								<svg class="gate-envelope" viewBox="0 0 320 220" aria-hidden="true">
+									<rect class="g-body" x="10" y="40" width="300" height="160" rx="14" />
+									<rect class="g-paper" x="42" y="14" width="236" height="148" rx="6" />
+									<path class="g-flap" d="M10,42 L160,142 L310,42 Z" />
+									<circle class="g-seal" cx="160" cy="92" r="20" />
+									<text class="g-seal-letter" x="160" y="99" text-anchor="middle">L</text>
+								</svg>
 							</div>
-						</div>
-						<div class="right">
-							<img src={deezer} alt="deezer" />
-							<button
-								disabled={audioLoad}
-								type="button"
-								class="music-play"
-								onclick={togglePlay}
-								aria-label="audio"
-							>
-								{#if audioLoad}
-									<div class="spinner"></div>
-								{:else if audioPlayed}
-									<i class="ri-pause-fill"></i>
-								{:else}
-									<i class="ri-play-fill"></i>
-								{/if}
-							</button>
-						</div>
-					</div>
 
-					<div class="meta-row">
-						<div class="from-to-inline">
-							<div class="avatar">
-								<i class="ri-quill-pen-ai-line"></i>
-								<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
-							</div>
-							<div class="avatar">
-								<i class="ri-user-heart-line"></i>
-								<span>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span>
-							</div>
-						</div>
-						<div class="date-chip">
-							<i class="ri-calendar-line"></i>
-							<span>{dates(String(card?.created_at))}</span>
-						</div>
-					</div>
+							<p class="gate-title">A letter for <em>{card?.recipient_name?.toLowerCase()}</em></p>
+							<p class="gate-desc">Click the button below to open the letter.</p>
 
-					{#if isAdmin}
-						<div class="action">
-							<span>Action</span>
-							<button
-								aria-labelledby="menu"
-								aria-expanded={actionMenuOpen}
-								onclick={() => (actionMenuOpen = !actionMenuOpen)}
-							>
-								{#if actLoad}
-									<span class="button-spinner"></span>
-								{:else}
-									<i class="ri-sound-module-line"></i>
-								{/if}
-							</button>
-
-							{#if actionMenuOpen}
-								<div class="card">
-									<button class="w" disabled={card?.warn === '1'} onclick={() => act('1')}
-										><i class="ri-alert-line"></i> Warn</button
-									>
-									<button class="b" disabled={card?.warn === '2'} onclick={() => act('2')}
-										><i class="ri-spam-3-line"></i> Ban</button
-									>
-									{#if card?.warn}
-										<button onclick={() => act('-')}
-											><i class="ri-close-circle-line"></i> Remove</button
-										>
-									{/if}
+							{#if card?.audio_autoplay}
+								<div class="warning">
+									<i class="ri-information-line"></i>
+									This letter has audio autoplay enabled, please make sure about your device volume condition.
 								</div>
 							{/if}
-						</div>
-					{/if}
 
-					<div class="card">
-						{#if card?.image || card?.video}
-							<div class="media-wrap">
-								{#if card?.image && card?.video}
-									<div class="media-dual">
-										<div class="media-item" class:loading={!imageLoaded}>
-											{#if !imageLoaded}
-												<div class="skeleton"></div>
-											{/if}
-											<!-- svelte-ignore a11y_click_events_have_key_events -->
-											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-											<img
-												src={card?.image}
-												aria-hidden="true"
-												alt="Letter image"
-												onclick={() => openLightbox(card!.image!)}
-												onload={() => {
-													imageLoaded = true;
-													if (imageLoaded && (videoLoaded || !card?.video)) {
-														showSlowWarning = false;
-														if (slowTimer) clearTimeout(slowTimer);
-													}
-												}}
-												class:loaded={imageLoaded}
-												style="cursor:zoom-in"
-											/>
+							<button class="gate-open-btn" onclick={openLetter} disabled={opening}>
+								<i class="ri-mail-open-line"></i>
+								Open
+							</button>
+						</div>
+					{:else}
+						<div transition:fade={{ duration: 350 }}>
+							<div class="music-pill">
+								<div class="music-left">
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<img
+										onclick={() => openLightbox(card!.music_profile!)}
+										src={card?.music_profile}
+										alt={card?.music_title}
+									/>
+									<div class="music-info">
+										<div class="title-wrap">
+											<span class="title" class:marquee={card!.music_title.length > 36}>
+												{#if card!.music_title.length > 36}
+													<span class="marquee-content">
+														<span>{card?.music_title}</span>
+														<span>{card?.music_title}</span>
+													</span>
+												{:else}
+													{card?.music_title}
+												{/if}
+											</span>
 										</div>
-										<div class="media-item" class:loading={!videoLoaded}>
-											{#if !videoLoaded}
-												<div class="skeleton"></div>
-											{/if}
-											<video
-												src={card?.video}
-												preload="metadata"
-												controls
-												bind:this={videoEl}
-												onloadeddata={() => {
-													videoLoaded = true;
-													if (videoLoaded && (imageLoaded || !card?.image)) {
-														showSlowWarning = false;
-														if (slowTimer) clearTimeout(slowTimer);
-													}
-												}}
-												class:loaded={videoLoaded}
-												onplay={() => {
-													if (audio && audioPlayed) {
-														audio.pause();
-														audioPlayed = false;
-													}
-												}}
-											>
-												<track kind="captions" />
-											</video>
-										</div>
-									</div>
-								{:else if card?.image}
-									<div class="media-single" class:loading={!imageLoaded}>
-										{#if !imageLoaded}
-											<div class="skeleton"></div>
-										{/if}
+										<span class="artist">{card?.artist}</span>
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
-										<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-										<img
-											src={card?.image}
-											aria-hidden="true"
-											alt="Letter image"
-											onclick={() => openLightbox(card!.image!)}
-											onload={() => {
-												imageLoaded = true;
-												if (imageLoaded && (videoLoaded || !card?.video)) {
-													showSlowWarning = false;
-													if (slowTimer) clearTimeout(slowTimer);
-												}
-											}}
-											class:loaded={imageLoaded}
-											style="cursor:zoom-in"
-										/>
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div class="progress">
+											<div class="progress-bar" onclick={seekTo}>
+												<div
+													class="progress-fill"
+													style="width: {duration ? (currentTime / duration) * 100 : 0}%"
+												></div>
+											</div>
+											<div class="progress-times">
+												<span>{formatTime(currentTime)}</span>
+												<span>{formatTime(duration)}</span>
+											</div>
+										</div>
 									</div>
-								{:else if card?.video}
-									<div class="media-single" class:loading={!videoLoaded}>
-										{#if !videoLoaded}
-											<div class="skeleton"></div>
-										{/if}
-										<video
-											src={card?.video}
-											preload="metadata"
-											controls
-											bind:this={videoEl}
-											onloadeddata={() => {
-												videoLoaded = true;
-												if (videoLoaded && (imageLoaded || !card?.image)) {
-													showSlowWarning = false;
-													if (slowTimer) clearTimeout(slowTimer);
-												}
-											}}
-											class:loaded={videoLoaded}
-											onplay={() => {
-												if (audio && audioPlayed) {
-													audio.pause();
-													audioPlayed = false;
-												}
-											}}
-										>
-											<track kind="captions" />
-										</video>
-									</div>
-								{/if}
-							</div>
-							{#if showSlowWarning && (!imageLoaded || !videoLoaded)}
-								<div class="media-info">
-									<i class="ri-alert-line"></i> Taking longer than usual...
+								</div>
+								<div class="right">
+									<img src={deezer} alt="deezer" />
 									<button
-										aria-label="More info"
-										aria-expanded={infoPopupOpen}
-										onclick={() => (infoPopupOpen = !infoPopupOpen)}
+										disabled={audioLoad}
+										type="button"
+										class="music-play"
+										onclick={togglePlay}
+										aria-label="audio"
 									>
-										<i class="ri-question-line"></i>
+										{#if audioLoad}
+											<div class="spinner"></div>
+										{:else if audioPlayed}
+											<i class="ri-pause-fill"></i>
+										{:else}
+											<i class="ri-play-fill"></i>
+										{/if}
+									</button>
+								</div>
+							</div>
+
+							<div class="meta-row">
+								<div class="from-to-inline">
+									<div class="avatar">
+										<i class="ri-quill-pen-ai-line"></i>
+										<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
+									</div>
+									<div class="avatar">
+										<i class="ri-user-heart-line"></i>
+										<span
+											>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span
+										>
+									</div>
+								</div>
+								<div class="date-chip">
+									<i class="ri-calendar-line"></i>
+									<span>{dates(String(card?.created_at))}</span>
+								</div>
+							</div>
+
+							{#if isAdmin}
+								<div class="action">
+									<span>Action</span>
+									<button
+										aria-labelledby="menu"
+										aria-expanded={actionMenuOpen}
+										onclick={() => (actionMenuOpen = !actionMenuOpen)}
+									>
+										{#if actLoad}
+											<span class="button-spinner"></span>
+										{:else}
+											<i class="ri-sound-module-line"></i>
+										{/if}
 									</button>
 
-									{#if infoPopupOpen}
-										<div class="info-popup">
-											<p>
-												Loading times can be caused by many factors, with the main one usually being
-												your internet connection.
-											</p>
-											<p>
-												If you're using a proxy or VPN and the loading is taking a long time to
-												finish, consider turning it off.
-											</p>
-											<p>
-												Otherwise, please wait a little longer — the image or video size may be
-												large and take more time to load.
-											</p>
-											<p>If you notice something is wrong, please contact support.</p>
+									{#if actionMenuOpen}
+										<div class="card">
+											<button class="w" disabled={card?.warn === '1'} onclick={() => act('1')}
+												><i class="ri-alert-line"></i> Warn</button
+											>
+											<button class="b" disabled={card?.warn === '2'} onclick={() => act('2')}
+												><i class="ri-spam-3-line"></i> Ban</button
+											>
+											{#if card?.warn}
+												<button onclick={() => act('-')}
+													><i class="ri-close-circle-line"></i> Remove</button
+												>
+											{/if}
 										</div>
 									{/if}
 								</div>
 							{/if}
-						{/if}
 
-						<div class="body">
-							<div class="ql-editor">
-								<p class="message" style="font-family: {resolveFont(String(card?.font))};">
-									{@html card?.message}
-								</p>
+							<div class="card">
+								{#if card?.image || card?.video}
+									<div class="media-wrap">
+										{#if card?.image && card?.video}
+											<div class="media-dual">
+												<div class="media-item" class:loading={!imageLoaded}>
+													{#if !imageLoaded}
+														<div class="skeleton"></div>
+													{/if}
+													<!-- svelte-ignore a11y_click_events_have_key_events -->
+													<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+													<img
+														src={card?.image}
+														aria-hidden="true"
+														alt="Letter image"
+														onclick={() => openLightbox(card!.image!)}
+														onload={() => {
+															imageLoaded = true;
+															if (imageLoaded && (videoLoaded || !card?.video)) {
+																showSlowWarning = false;
+																if (slowTimer) clearTimeout(slowTimer);
+															}
+														}}
+														class:loaded={imageLoaded}
+														style="cursor:zoom-in"
+													/>
+												</div>
+												<div class="media-item" class:loading={!videoLoaded}>
+													{#if !videoLoaded}
+														<div class="skeleton"></div>
+													{/if}
+													<video
+														src={card?.video}
+														preload="metadata"
+														controls
+														bind:this={videoEl}
+														onloadeddata={() => {
+															videoLoaded = true;
+															if (videoLoaded && (imageLoaded || !card?.image)) {
+																showSlowWarning = false;
+																if (slowTimer) clearTimeout(slowTimer);
+															}
+														}}
+														class:loaded={videoLoaded}
+														onplay={() => {
+															if (audio && audioPlayed) {
+																audio.pause();
+																audioPlayed = false;
+															}
+														}}
+													>
+														<track kind="captions" />
+													</video>
+												</div>
+											</div>
+										{:else if card?.image}
+											<div class="media-single" class:loading={!imageLoaded}>
+												{#if !imageLoaded}
+													<div class="skeleton"></div>
+												{/if}
+												<!-- svelte-ignore a11y_click_events_have_key_events -->
+												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+												<img
+													src={card?.image}
+													aria-hidden="true"
+													alt="Letter image"
+													onclick={() => openLightbox(card!.image!)}
+													onload={() => {
+														imageLoaded = true;
+														if (imageLoaded && (videoLoaded || !card?.video)) {
+															showSlowWarning = false;
+															if (slowTimer) clearTimeout(slowTimer);
+														}
+													}}
+													class:loaded={imageLoaded}
+													style="cursor:zoom-in"
+												/>
+											</div>
+										{:else if card?.video}
+											<div class="media-single" class:loading={!videoLoaded}>
+												{#if !videoLoaded}
+													<div class="skeleton"></div>
+												{/if}
+												<video
+													src={card?.video}
+													preload="metadata"
+													controls
+													bind:this={videoEl}
+													onloadeddata={() => {
+														videoLoaded = true;
+														if (videoLoaded && (imageLoaded || !card?.image)) {
+															showSlowWarning = false;
+															if (slowTimer) clearTimeout(slowTimer);
+														}
+													}}
+													class:loaded={videoLoaded}
+													onplay={() => {
+														if (audio && audioPlayed) {
+															audio.pause();
+															audioPlayed = false;
+														}
+													}}
+												>
+													<track kind="captions" />
+												</video>
+											</div>
+										{/if}
+									</div>
+									{#if showSlowWarning && (!imageLoaded || !videoLoaded)}
+										<div class="media-info">
+											<i class="ri-alert-line"></i> Taking longer than usual...
+											<button
+												aria-label="More info"
+												aria-expanded={infoPopupOpen}
+												onclick={() => (infoPopupOpen = !infoPopupOpen)}
+											>
+												<i class="ri-question-line"></i>
+											</button>
+
+											{#if infoPopupOpen}
+												<div class="info-popup">
+													<p>
+														Loading times can be caused by many factors, with the main one usually
+														being your internet connection.
+													</p>
+													<p>
+														If you're using a proxy or VPN and the loading is taking a long time to
+														finish, consider turning it off.
+													</p>
+													<p>
+														Otherwise, please wait a little longer — the image or video size may be
+														large and take more time to load.
+													</p>
+													<p>If you notice something is wrong, please contact support.</p>
+												</div>
+											{/if}
+										</div>
+									{/if}
+								{/if}
+
+								<div class="body">
+									<div class="ql-editor">
+										<p class="message" style="font-family: {resolveFont(String(card?.font))};">
+											{@html card?.message}
+										</p>
+									</div>
+								</div>
+
+								<div class="card-footer">
+									<div class="footer-left">
+										<i class="ri-heart-fill"></i>
+										Made with Love
+									</div>
+									<div class="footer-right">
+										<button class="copy-btn" onclick={copyLink}>
+											<i class={copied ? 'ri-check-line' : 'ri-link'}></i>
+											Copy
+										</button>
+									</div>
+								</div>
 							</div>
 						</div>
-
-						<div class="card-footer">
-							<div class="footer-left">
-								<i class="ri-heart-fill"></i>
-								Made with Love
-							</div>
-							<div class="footer-right">
-								<button class="copy-btn" onclick={copyLink}>
-									<i class={copied ? 'ri-check-line' : 'ri-link'}></i>
-									Copy
-								</button>
-							</div>
-						</div>
-					</div>
+					{/if}
 				{:else}
 					<div class="pwd">
 						<div class="desc">
@@ -644,7 +692,9 @@
 
 				<p class="eyebrow">404</p>
 				<h1 class="title">Letter Not Found</h1>
-				<p class="desc">Please check the letter ID, you may entered incorrectly or the letter just does not exist.</p>
+				<p class="desc">
+					Please check the letter ID, you may entered incorrectly or the letter just does not exist.
+				</p>
 
 				<a href="/" class="cta">
 					<i class="ri-arrow-left-line"></i>

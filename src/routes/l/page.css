@@ -14,6 +14,233 @@
 	margin: 0 auto;
 }
 
+.letter-wrap .envelope-gate {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: 1rem 0 2rem;
+}
+
+.letter-wrap .envelope-gate-scene {
+	width: 100%;
+	max-width: 280px;
+	margin-bottom: 1.75rem;
+	animation: gate-float 4s ease-in-out infinite;
+}
+
+.letter-wrap .envelope-gate.opening .envelope-gate-scene {
+	animation: none;
+}
+
+@keyframes gate-float {
+	0%,
+	100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
+}
+
+.letter-wrap .gate-envelope {
+	width: 100%;
+	height: auto;
+	display: block;
+	filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.14));
+}
+
+.letter-wrap .envelope-gate .warning {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	text-align: start;
+	background: rgba(255, 255, 0, 0.369);
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid var(--color-warning);
+	font-size: 12px;
+	margin-bottom: 30px;
+	max-width: 80%;
+}
+
+.letter-wrap .envelope-gate .warning i {
+	font-size: 15px;
+}
+
+.letter-wrap .g-body {
+	fill: var(--color-surface);
+	stroke: var(--color-border);
+	stroke-width: 1.5;
+}
+
+.letter-wrap .g-paper {
+	fill: var(--color-bg);
+	stroke: var(--color-border);
+	stroke-width: 1.5;
+	opacity: 0;
+	transform-origin: center bottom;
+}
+
+.letter-wrap .g-flap {
+	fill: var(--color-bg-tertiary);
+	stroke: var(--color-border);
+	stroke-width: 1.5;
+	stroke-linejoin: round;
+	transform-origin: center top;
+}
+
+.letter-wrap .g-seal {
+	fill: var(--color-primary);
+	stroke: var(--color-primary-hover);
+	stroke-width: 1.5;
+}
+
+.letter-wrap .g-seal-letter {
+	font-weight: 700;
+	font-size: 18px;
+	fill: #fff;
+	font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+}
+
+.letter-wrap .gate-title {
+	font-size: 16px;
+	font-weight: var(--font-semibold);
+	color: var(--color-text-primary);
+	margin-bottom: 0.3rem;
+}
+
+.letter-wrap .gate-title em {
+	font-style: italic;
+	color: var(--color-primary);
+}
+
+.letter-wrap .gate-desc {
+	font-size: 13.5px;
+	color: var(--color-text-muted);
+	margin-bottom: 1.5rem;
+}
+
+.letter-wrap .gate-open-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	font-family: inherit;
+	color: var(--color-primary-text);
+	background: var(--color-primary);
+	border: none;
+	border-radius: 8px;
+	padding: 11px 22px;
+	cursor: pointer;
+	transition: background 0.15s;
+}
+
+.letter-wrap .gate-open-btn:hover {
+	background: var(--color-primary-hover);
+}
+
+.letter-wrap .gate-open-btn i {
+	font-size: 16px;
+}
+
+.letter-wrap .envelope-gate.opening .g-seal,
+.letter-wrap .envelope-gate.opening .g-seal-letter {
+	animation: seal-break 0.3s ease forwards;
+}
+
+.letter-wrap .envelope-gate.opening .g-flap {
+	animation: flap-fold 0.35s ease 0.15s forwards;
+}
+
+.letter-wrap .envelope-gate.opening .g-paper {
+	animation: paper-rise 0.45s ease 0.35s forwards;
+}
+
+.letter-wrap .envelope-gate.opening .gate-title,
+.letter-wrap .envelope-gate.opening .gate-desc,
+.letter-wrap .envelope-gate.opening .gate-open-btn {
+	animation: gate-text-out 0.2s ease forwards;
+}
+
+.letter-wrap .envelope-gate.opening {
+	animation: gate-dismiss 0.3s ease 0.7s forwards;
+}
+
+@keyframes seal-break {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	40% {
+		opacity: 1;
+		transform: scale(1.2);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+}
+
+@keyframes flap-fold {
+	0% {
+		transform: scaleY(1);
+		opacity: 1;
+	}
+	100% {
+		transform: scaleY(0.05);
+		opacity: 0;
+	}
+}
+
+@keyframes paper-rise {
+	0% {
+		transform: translateY(0) scale(0.92);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(-24px) scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes gate-text-out {
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes gate-dismiss {
+	0% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	100% {
+		opacity: 0;
+		transform: scale(0.96);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.letter-wrap .envelope-gate-scene {
+		animation: none;
+	}
+
+	.letter-wrap .envelope-gate.opening .g-seal,
+	.letter-wrap .envelope-gate.opening .g-seal-letter,
+	.letter-wrap .envelope-gate.opening .g-flap,
+	.letter-wrap .envelope-gate.opening .g-paper,
+	.letter-wrap .envelope-gate.opening .gate-title,
+	.letter-wrap .envelope-gate.opening .gate-desc,
+	.letter-wrap .envelope-gate.opening .gate-open-btn,
+	.letter-wrap .envelope-gate.opening {
+		animation: none !important;
+		opacity: 0 !important;
+	}
+}
+
 .letter-wrap .burned {
 	display: flex;
 	flex-direction: column;
@@ -1090,6 +1317,10 @@
 
 	.letter .notfound-wrap .title {
 		font-size: 21px;
+	}
+
+	.letter-wrap .envelope-gate .warning {
+		max-width: 95%;
 	}
 }
 
