@@ -52,8 +52,6 @@
 	let actionMenuOpen = $state(false);
 	let imageLoaded = $state(false);
 	let videoLoaded = $state(false);
-	let imageLoadTime = $state(0);
-	let videoLoadTime = $state(0);
 	let showSlowWarning = $state(false);
 	let slowTimer: ReturnType<typeof setTimeout> | null = null;
 	let infoPopupOpen = $state(false);
@@ -129,17 +127,6 @@
 					showSlowWarning = true;
 				}
 			}, 5000);
-		}
-
-		if (card?.image) {
-			observeResourceTiming(card.image, (duration) => {
-				imageLoadTime = duration;
-			});
-		}
-		if (card?.video) {
-			observeResourceTiming(card.video, (duration) => {
-				videoLoadTime = duration;
-			});
 		}
 		windowLoad = false;
 	});
