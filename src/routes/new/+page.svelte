@@ -433,6 +433,11 @@
 					window.location.href = '/auth';
 					return;
 				}
+
+				if (submitJson['error_code'] === 'MESSAGE_EMPTY') {
+					messageErr = true;
+					await scrollToError();
+				}
 				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST', 'BANNED'].includes(submitJson['error_code'])
 					? 'Something went wrong, please try again later...'
 					: '';

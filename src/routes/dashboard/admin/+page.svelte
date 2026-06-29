@@ -181,7 +181,7 @@
 			return;
 		}
 		if (!loggedIn || !/(admin|owner)/i.exec(loggedIn.role)) {
-			window.location.href = '/auth';
+			window.location.href = '/dashboard';
 			return;
 		}
 

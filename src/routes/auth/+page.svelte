@@ -19,6 +19,7 @@
 	let passwordErr = $state('');
 	let nameErr = $state('');
 	let buttonLoad = $state(false);
+	let showPassword = $state(false);
 
 	onMount(async () => {
 		try {
@@ -157,7 +158,7 @@
 				{/if}
 				<label for="message">Password</label>
 				<input
-					type="password"
+					type={showPassword ? 'text' : 'password'}
 					name="password"
 					id="password"
 					placeholder="••••••••"
@@ -168,6 +169,17 @@
 				{#if passwordErr}
 					<span>{passwordErr}</span>
 				{/if}
+				<div class="checkbox-container">
+					<input
+						type="checkbox"
+						onchange={() => {
+							showPassword = !showPassword;
+						}}
+						checked={showPassword}
+					/>
+					<div class="custom-checkmark"></div>
+					<span class="status-text">Show Password</span>
+				</div>
 
 				<div class="btns">
 					<button

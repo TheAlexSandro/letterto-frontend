@@ -497,7 +497,17 @@
 					window.location.href = '/auth';
 					return;
 				}
-				globalErr = ['PARAMETER_EMPTY', 'BAD_REQUEST', 'RESTRICTED_MODIFICATION', 'LETTER_BANNED', 'BANNED'].includes(submitJson['error_code'])
+				if (submitJson['error_code'] === 'MESSAGE_EMPTY') {
+					messageErr = true;
+					await scrollToError();
+				}
+				globalErr = [
+					'PARAMETER_EMPTY',
+					'BAD_REQUEST',
+					'RESTRICTED_MODIFICATION',
+					'LETTER_BANNED',
+					'BANNED'
+				].includes(submitJson['error_code'])
 					? 'Something went wrong, please try again later...'
 					: '';
 				idError =
