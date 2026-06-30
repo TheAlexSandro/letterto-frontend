@@ -81,7 +81,6 @@
 
 	const randomFont = () => {
 		const dt = [
-			'playwrite-nz',
 			'cause',
 			'comic-neue',
 			'playwrite-br',

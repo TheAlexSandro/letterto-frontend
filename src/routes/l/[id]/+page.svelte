@@ -136,7 +136,7 @@
 
 		const previewUrl = await getFreshPreview(Number(card?.music));
 		if (!previewUrl) {
-			alert('Preview not available for this track.');
+			showToast('Music is not available.', 'error');
 			audioLoad = false;
 			return;
 		}

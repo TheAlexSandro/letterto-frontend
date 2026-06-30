@@ -140,11 +140,19 @@
 		}
 
 		footer .container .menu {
-			gap: 20px;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			column-gap: 24px;
+			row-gap: 24px;
 		}
 
 		footer .container .menu .card {
 			gap: 7px;
+			min-width: 0;
+		}
+
+		footer .container .menu .card a {
+			white-space: nowrap;
 		}
 
 		footer .container .bottom {
