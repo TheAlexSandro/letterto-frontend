@@ -3,7 +3,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 70px;
+	margin-top: 80px;
 	background: var(--color-bg);
 	padding: 2rem 1rem 4rem;
 }
@@ -47,6 +47,7 @@
 	width: 100%;
 	height: auto;
 	display: block;
+	overflow: visible;
 	filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.14));
 }
 
@@ -75,12 +76,20 @@
 	stroke-width: 1.5;
 }
 
+.letter-wrap .g-paper-group {
+	transform-origin: center;
+}
+
 .letter-wrap .g-paper {
 	fill: var(--color-bg);
 	stroke: var(--color-border);
 	stroke-width: 1.5;
 	opacity: 0;
-	transform-origin: center bottom;
+}
+
+.letter-wrap .g-skel {
+	fill: var(--color-border);
+	opacity: 0;
 }
 
 .letter-wrap .g-flap {
@@ -148,15 +157,46 @@
 
 .letter-wrap .envelope-gate.opening .g-seal,
 .letter-wrap .envelope-gate.opening .g-seal-letter {
-	animation: seal-break 0.3s ease forwards;
+	animation: seal-break 0.32s cubic-bezier(0.36, 0, 0.66, -0.56) forwards;
+	transform-origin: 160px 92px;
 }
 
 .letter-wrap .envelope-gate.opening .g-flap {
-	animation: flap-fold 0.35s ease 0.15s forwards;
+	animation: flap-fold 0.4s cubic-bezier(0.5, 0, 0.75, 0) 0.18s forwards;
+}
+
+.letter-wrap .envelope-gate.opening .g-paper-group {
+	animation: paper-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
 }
 
 .letter-wrap .envelope-gate.opening .g-paper {
-	animation: paper-rise 0.45s ease 0.35s forwards;
+	animation: paper-fade-in 0.3s ease 0.4s forwards;
+}
+
+.letter-wrap .envelope-gate.opening .g-skel-1 {
+	animation:
+		skel-fade-in 0.25s ease 0.62s forwards,
+		skel-pulse 1s ease-in-out 0.87s infinite;
+}
+.letter-wrap .envelope-gate.opening .g-skel-2 {
+	animation:
+		skel-fade-in 0.25s ease 0.7s forwards,
+		skel-pulse 1s ease-in-out 0.95s infinite;
+}
+.letter-wrap .envelope-gate.opening .g-skel-3 {
+	animation:
+		skel-fade-in 0.25s ease 0.78s forwards,
+		skel-pulse 1s ease-in-out 1.03s infinite;
+}
+.letter-wrap .envelope-gate.opening .g-skel-4 {
+	animation:
+		skel-fade-in 0.25s ease 0.86s forwards,
+		skel-pulse 1s ease-in-out 1.11s infinite;
+}
+.letter-wrap .envelope-gate.opening .g-skel-5 {
+	animation:
+		skel-fade-in 0.25s ease 0.94s forwards,
+		skel-pulse 1s ease-in-out 1.19s infinite;
 }
 
 .letter-wrap .envelope-gate.opening .gate-title,
@@ -166,43 +206,70 @@
 }
 
 .letter-wrap .envelope-gate.opening {
-	animation: gate-dismiss 0.3s ease 0.7s forwards;
+	animation: gate-dismiss 0.3s ease 3s forwards;
 }
 
 @keyframes seal-break {
 	0% {
 		opacity: 1;
-		transform: scale(1);
+		transform: scale(1) rotate(0deg);
 	}
-	40% {
+	50% {
 		opacity: 1;
-		transform: scale(1.2);
+		transform: scale(1.25) rotate(-8deg);
 	}
 	100% {
 		opacity: 0;
-		transform: scale(0.5);
+		transform: scale(0.4) rotate(18deg);
 	}
 }
 
 @keyframes flap-fold {
 	0% {
-		transform: scaleY(1);
+		transform: scaleY(1) skewX(0deg);
 		opacity: 1;
 	}
+	60% {
+		transform: scaleY(0.5) skewX(-3deg);
+		opacity: 0.7;
+	}
 	100% {
-		transform: scaleY(0.05);
+		transform: scaleY(0.02) skewX(0deg);
 		opacity: 0;
 	}
 }
 
 @keyframes paper-rise {
 	0% {
-		transform: translateY(0) scale(0.92);
-		opacity: 0;
+		transform: translateY(0) scale(0.9);
+	}
+	70% {
+		transform: translateY(-46px) scale(1.04);
 	}
 	100% {
-		transform: translateY(-24px) scale(1);
+		transform: translateY(-38px) scale(1.02);
+	}
+}
+
+@keyframes paper-fade-in {
+	to {
 		opacity: 1;
+	}
+}
+
+@keyframes skel-fade-in {
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes skel-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
 	}
 }
 
@@ -231,7 +298,13 @@
 	.letter-wrap .envelope-gate.opening .g-seal,
 	.letter-wrap .envelope-gate.opening .g-seal-letter,
 	.letter-wrap .envelope-gate.opening .g-flap,
+	.letter-wrap .envelope-gate.opening .g-paper-group,
 	.letter-wrap .envelope-gate.opening .g-paper,
+	.letter-wrap .envelope-gate.opening .g-skel-1,
+	.letter-wrap .envelope-gate.opening .g-skel-2,
+	.letter-wrap .envelope-gate.opening .g-skel-3,
+	.letter-wrap .envelope-gate.opening .g-skel-4,
+	.letter-wrap .envelope-gate.opening .g-skel-5,
 	.letter-wrap .envelope-gate.opening .gate-title,
 	.letter-wrap .envelope-gate.opening .gate-desc,
 	.letter-wrap .envelope-gate.opening .gate-open-btn,
@@ -1257,7 +1330,7 @@
 @media screen and (max-width: 600px) {
 	.letter {
 		min-height: calc(100vh - 70px);
-		margin-top: 70px;
+		margin-top: 80px;
 	}
 
 	.letter .meta-row {

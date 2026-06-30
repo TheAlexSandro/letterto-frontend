@@ -59,9 +59,6 @@
 	let letterOpened = $state(false);
 	let opening = $state(false);
 
-	const openLightbox = (src: string) => (lightboxSrc = src);
-	const closeLightbox = () => (lightboxSrc = null);
-
 	const formatTime = (s: number) => {
 		const m = Math.floor(s / 60);
 		const sec = Math.floor(s % 60);
@@ -76,27 +73,24 @@
 		audio.currentTime = ratio * duration;
 	};
 
-	const observeResourceTiming = (url: string, onDone: (duration: number) => void) => {
-		const observer = new PerformanceObserver((list) => {
-			for (const entry of list.getEntries()) {
-				if (entry.name === url) {
-					onDone(entry.duration);
-					observer.disconnect();
-				}
-			}
-		});
-		observer.observe({ type: 'resource', buffered: true });
-	};
-
-	const openLetter = () => {
+	const openLetter = async () => {
 		if (opening || letterOpened) return;
 		opening = true;
-		if (card?.audio_autoplay) {
-			togglePlay();
-		}
-		setTimeout(() => {
+
+		setTimeout(async () => {
+			if (card?.audio_autoplay) {
+				await togglePlay();
+			}
 			letterOpened = true;
-		}, 1000);
+
+			if (card?.image || card?.video) {
+				slowTimer = setTimeout(() => {
+					if (!imageLoaded || !videoLoaded) {
+						showSlowWarning = true;
+					}
+				}, 5000);
+			}
+		}, 700);
 	};
 
 	onMount(async () => {
@@ -120,14 +114,6 @@
 			}
 		}
 		card = ftJson['data'];
-
-		if (card?.image || card?.video) {
-			slowTimer = setTimeout(() => {
-				if (!imageLoaded || !videoLoaded) {
-					showSlowWarning = true;
-				}
-			}, 5000);
-		}
 		windowLoad = false;
 	});
 
@@ -136,10 +122,11 @@
 
 		const previewUrl = await getFreshPreview(Number(card?.music));
 		if (!previewUrl) {
-			showToast('Music is not available.', 'error');
+			alert('Preview not available for this track.');
 			audioLoad = false;
 			return;
 		}
+
 		if (!audio) {
 			audio = new Audio(previewUrl);
 			audio.loop = true;
@@ -156,34 +143,39 @@
 				currentTime = audio!.currentTime;
 			});
 
-			// audio.addEventListener('ended', () => {
-			// 	audioPlayed = false;
-			// 	currentTime = 0;
-			// 	audio!.currentTime = 0;
-			// });
+			audio.addEventListener('ended', () => {
+				audioPlayed = false;
+				currentTime = 0;
+				audio!.currentTime = 0;
+			});
 		}
 
 		if (audioPlayed) {
 			audioLoad = false;
 			audio.pause();
 			audioPlayed = false;
-		} else {
-			if (videoEl && !videoEl.paused) {
-				videoEl.pause();
-			}
+			return;
+		}
 
-			audio
-				.play()
-				.then(() => {
-					audioLoad = false;
-					audioPlayed = true;
-				})
-				.catch((err) => {
-					alert(err);
-					audioLoad = false;
-				});
+		if (videoEl && !videoEl.paused) {
+			videoEl.pause();
+		}
+
+		try {
+			await audio.play();
+			audioLoad = false;
+			audioPlayed = true;
+		} catch (err) {
+			alert(err);
+			audioLoad = false;
 		}
 	};
+
+	const openLightbox = (src: string, ready: boolean = true) => {
+		if (!ready) return;
+		lightboxSrc = src;
+	};
+	const closeLightbox = () => (lightboxSrc = null);
 
 	const copyLink = () => {
 		navigator.clipboard.writeText(window.location.href).catch(() => {});
@@ -318,9 +310,27 @@
 					{#if !letterOpened}
 						<div class="envelope-gate" class:opening>
 							<div class="envelope-gate-scene">
-								<svg class="gate-envelope" viewBox="0 0 320 220" aria-hidden="true">
+								<svg class="gate-envelope" viewBox="0 0 320 250" aria-hidden="true">
 									<rect class="g-body" x="10" y="40" width="300" height="160" rx="14" />
-									<rect class="g-paper" x="42" y="14" width="236" height="148" rx="6" />
+
+									<g transform="translate(0, 10)">
+										<g class="g-paper-group">
+											<rect class="g-paper" x="38" y="-6" width="244" height="172" rx="8" />
+											<rect class="g-skel g-skel-1" x="60" y="20" width="110" height="9" rx="4.5" />
+											<rect class="g-skel g-skel-2" x="60" y="42" width="200" height="9" rx="4.5" />
+											<rect class="g-skel g-skel-3" x="60" y="64" width="170" height="9" rx="4.5" />
+											<rect class="g-skel g-skel-4" x="60" y="86" width="190" height="9" rx="4.5" />
+											<rect
+												class="g-skel g-skel-5"
+												x="60"
+												y="108"
+												width="130"
+												height="9"
+												rx="4.5"
+											/>
+										</g>
+									</g>
+
 									<path class="g-flap" d="M10,42 L160,142 L310,42 Z" />
 									<circle class="g-seal" cx="160" cy="92" r="20" />
 									<text class="g-seal-letter" x="160" y="99" text-anchor="middle">L</text>
@@ -328,7 +338,9 @@
 							</div>
 
 							<p class="gate-title">
-								A letter for <em>{!card?.recipient_name ? 'anonymous' : card?.recipient_name.toLowerCase()}</em>
+								A letter for <em
+									>{!card?.recipient_name ? 'anonymous' : card?.recipient_name.toLowerCase()}</em
+								>
 							</p>
 							<p class="gate-desc">Click the button below to open the letter.</p>
 
@@ -469,10 +481,10 @@
 													<!-- svelte-ignore a11y_click_events_have_key_events -->
 													<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 													<img
-														src={card?.image}
+														src={letterOpened ? card?.image : undefined}
 														aria-hidden="true"
 														alt="Letter image"
-														onclick={() => openLightbox(card!.image!)}
+														onclick={() => openLightbox(card!.image!, imageLoaded)}
 														onload={() => {
 															imageLoaded = true;
 															if (imageLoaded && (videoLoaded || !card?.video)) {
@@ -489,7 +501,7 @@
 														<div class="skeleton"></div>
 													{/if}
 													<video
-														src={card?.video}
+														src={letterOpened ? card?.video : undefined}
 														preload="metadata"
 														controls
 														bind:this={videoEl}
@@ -520,10 +532,10 @@
 												<!-- svelte-ignore a11y_click_events_have_key_events -->
 												<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 												<img
-													src={card?.image}
+													src={letterOpened ? card?.image : undefined}
 													aria-hidden="true"
 													alt="Letter image"
-													onclick={() => openLightbox(card!.image!)}
+													onclick={() => openLightbox(card!.image!, imageLoaded)}
 													onload={() => {
 														imageLoaded = true;
 														if (imageLoaded && (videoLoaded || !card?.video)) {
@@ -541,7 +553,7 @@
 													<div class="skeleton"></div>
 												{/if}
 												<video
-													src={card?.video}
+													src={letterOpened ? card?.video : undefined}
 													preload="metadata"
 													controls
 													bind:this={videoEl}
