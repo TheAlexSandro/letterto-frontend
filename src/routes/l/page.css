@@ -3,7 +3,7 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: 80px;
+	margin-top: 70px;
 	background: var(--color-bg);
 	padding: 2rem 1rem 4rem;
 }
@@ -15,6 +15,7 @@
 }
 
 .letter-wrap .envelope-gate {
+	margin-top: 10px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -25,7 +26,7 @@
 .letter-wrap .envelope-gate-scene {
 	width: 100%;
 	max-width: 280px;
-	margin-bottom: 1.75rem;
+	margin-bottom: -10px;
 	animation: gate-float 4s ease-in-out infinite;
 }
 
@@ -199,8 +200,6 @@
 		skel-pulse 1s ease-in-out 1.19s infinite;
 }
 
-.letter-wrap .envelope-gate.opening .gate-title,
-.letter-wrap .envelope-gate.opening .gate-desc,
 .letter-wrap .envelope-gate.opening .gate-open-btn {
 	animation: gate-text-out 0.2s ease forwards;
 }
@@ -690,6 +689,7 @@
 	border: 1px solid var(--color-border);
 	border-radius: 20px;
 	overflow: visible;
+	box-shadow: var(--shadow-md);
 }
 
 .letter-wrap .media-wrap {
@@ -1330,7 +1330,11 @@
 @media screen and (max-width: 600px) {
 	.letter {
 		min-height: calc(100vh - 70px);
-		margin-top: 80px;
+		margin-top: 70px;
+	}
+
+	.letter-wrap .envelope-gate {
+		margin-top: 10px;
 	}
 
 	.letter .meta-row {

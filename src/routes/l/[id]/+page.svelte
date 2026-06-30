@@ -273,15 +273,29 @@
 />
 
 <svelte:head>
-	<title>LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}</title>
+	<title
+		>{!letterNotFound
+			? !card?.recipient_name
+				? 'LetterTo - Anonymous'
+				: `LetterTo - ${card?.recipient_name}`
+			: 'Letter Not Found'}</title
+	>
 	<meta property="og:url" content="/l/{letterId}" />
 	<meta
 		property="og:title"
-		content="LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}"
+		content={!letterNotFound
+			? !card?.recipient_name
+				? 'LetterTo - Anonymous'
+				: `LetterTo - ${card?.recipient_name}`
+			: 'Letter Not Found'}
 	/>
 	<meta
 		name="twitter:title"
-		content="LetterTo - {!card?.recipient_name ? 'Anonymous' : card?.recipient_name}"
+		content={!letterNotFound
+			? !card?.recipient_name
+				? 'LetterTo - Anonymous'
+				: `LetterTo - ${card?.recipient_name}`
+			: 'Letter Not Found'}
 	/>
 </svelte:head>
 
@@ -614,19 +628,6 @@
 										<p class="message" style="font-family: {resolveFont(String(card?.font))};">
 											{@html card?.message}
 										</p>
-									</div>
-								</div>
-
-								<div class="card-footer">
-									<div class="footer-left">
-										<i class="ri-heart-fill"></i>
-										Made with Love
-									</div>
-									<div class="footer-right">
-										<button class="copy-btn" onclick={copyLink}>
-											<i class={copied ? 'ri-check-line' : 'ri-link'}></i>
-											Copy
-										</button>
 									</div>
 								</div>
 							</div>
