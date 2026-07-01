@@ -56,19 +56,38 @@
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	gap: 10px;
-	text-align: start;
 	background: rgba(255, 255, 0, 0.369);
-	padding: 10px;
-	border-radius: 8px;
 	border: 1px solid var(--color-warning);
 	font-size: 12px;
+	border-radius: 8px;
+	max-width: 76%;
 	margin-bottom: 30px;
-	max-width: 80%;
+}
+
+.letter-wrap .envelope-gate .warning .wrap {
+	padding: 10px;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	text-align: left;
+	gap: 12px;
 }
 
 .letter-wrap .envelope-gate .warning i {
 	font-size: 15px;
+}
+
+.letter-wrap .envelope-gate .warning button {
+	padding: 15px;
+	background: transparent;
+	outline: 0;
+	border: 0;
+	border-left: 1px solid var(--color-warning);
+	cursor: pointer;
+}
+
+.letter-wrap .envelope-gate .warning button:hover {
+	opacity: 0.8;
 }
 
 .letter-wrap .g-body {

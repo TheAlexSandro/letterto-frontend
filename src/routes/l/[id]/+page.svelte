@@ -58,6 +58,7 @@
 	let letterNotFound = $state(false);
 	let letterOpened = $state(false);
 	let opening = $state(false);
+	let hideAutoplayWarning = $state(false);
 
 	const formatTime = (s: number) => {
 		const m = Math.floor(s / 60);
@@ -76,6 +77,7 @@
 	const openLetter = async () => {
 		if (opening || letterOpened) return;
 		opening = true;
+		let time = card?.audio_autoplay ? 1300 : 1000;
 
 		setTimeout(async () => {
 			if (card?.audio_autoplay) {
@@ -90,7 +92,7 @@
 					}
 				}, 5000);
 			}
-		}, 700);
+		}, time);
 	};
 
 	onMount(async () => {
@@ -358,10 +360,19 @@
 							</p>
 							<p class="gate-desc">Click the button below to open the letter.</p>
 
-							{#if card?.audio_autoplay}
+							{#if card?.audio_autoplay && !hideAutoplayWarning}
 								<div class="warning">
-									<i class="ri-information-line"></i>
-									This letter has audio autoplay enabled, please make sure about your device volume condition.
+									<div class="wrap">
+										<i class="ri-information-line"></i>
+										This letter has audio autoplay enabled, please make sure about your device volume
+										condition.
+									</div>
+									<button
+										aria-labelledby="close"
+										onclick={() => {
+											hideAutoplayWarning = !hideAutoplayWarning;
+										}}><i class="ri-close-circle-line"></i></button
+									>
 								</div>
 							{/if}
 
@@ -383,8 +394,8 @@
 									/>
 									<div class="music-info">
 										<div class="title-wrap">
-											<span class="title" class:marquee={card!.music_title.length > 36}>
-												{#if card!.music_title.length > 36}
+											<span class="title" class:marquee={card!.music_title.length > 20}>
+												{#if card!.music_title.length > 20}
 													<span class="marquee-content">
 														<span>{card?.music_title}</span>
 														<span>{card?.music_title}</span>
