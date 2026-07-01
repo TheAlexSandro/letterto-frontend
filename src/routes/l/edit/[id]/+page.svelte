@@ -1075,9 +1075,9 @@
 
 							<div class="menu-row">
 								<div class="menu-info">
-									<div class="item">Audio Autoplay</div>
+									<div class="item">Music Autoplay</div>
 									<span class="desc"
-										>Enable this to let the audio auto play when the letter opened.</span
+										>Enable this to let the music auto play when the letter opened.</span
 									>
 								</div>
 								<div class="checkbox-container">

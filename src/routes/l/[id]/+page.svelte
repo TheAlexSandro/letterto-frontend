@@ -364,8 +364,8 @@
 								<div class="warning">
 									<div class="wrap">
 										<i class="ri-information-line"></i>
-										This letter has audio autoplay enabled, please make sure about your device volume
-										condition.
+										This letter has music autoplay enabled, please check your device volume
+										condition first.
 									</div>
 									<button
 										aria-labelledby="close"
