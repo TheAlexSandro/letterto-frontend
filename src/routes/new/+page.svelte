@@ -68,6 +68,7 @@
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let findErr = $state(false);
 	let audioAutoplay = $state(true);
+	let mscL = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -239,11 +240,13 @@
 		audio = null;
 		currentPlayingId = null;
 		musicLoad = track.id;
+		mscL = true;
 
 		const previewUrl = await getFreshPreview(track.id);
 		if (!previewUrl) {
-			alert('Preview not available for this track.');
+			showToast('Preview not available for this track.', 'error');
 			musicLoad = 0;
+			mscL = false;
 			return;
 		}
 		const aud = new Audio(previewUrl);
@@ -253,10 +256,13 @@
 				if (videoEl && !videoEl.paused) {
 					videoEl.pause();
 				}
-				aud!.play().catch((err) => {
-					alert(err);
+				aud!.play().catch((err: Error) => {
+					musicLoad = 0;
+					mscL = false;
+					showToast(err.message, 'error');
 				});
 				musicLoad = 0;
+				mscL = false;
 				audio = aud;
 				currentPlayingId = track.id;
 			},
@@ -594,7 +600,7 @@
 											</div>
 											<div class="btn">
 												<button
-													disabled={buttonLoad || musicLoad === track.id}
+													disabled={buttonLoad || musicLoad === track.id || mscL}
 													type="button"
 													class={currentPlayingId === track.id ? 'stop' : 'play'}
 													aria-label={currentPlayingId === track.id ? 'Stop' : 'Play'}
@@ -978,7 +984,8 @@
 							</div>
 							{#if audioAutoplay}
 								<p class="helper-text">
-									To ensure the user safety, user will be given a warning before they open the letter.
+									To ensure the user safety, user will be given a warning before they open the
+									letter.
 								</p>
 							{/if}
 

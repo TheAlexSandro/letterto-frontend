@@ -78,6 +78,7 @@
 	let findErr = $state(false);
 	let warn = $state('-');
 	let audioAutoplay = $state(true);
+	let mscL = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -289,11 +290,13 @@
 		audio = null;
 		currentPlayingId = null;
 		musicLoad = track.id;
+		mscL = true;
 
 		const previewUrl = await getFreshPreview(track.id);
 		if (!previewUrl) {
-			alert('Preview not available for this track.');
+			showToast('Preview not available for this track.', 'error');
 			musicLoad = 0;
+			mscL = false;
 			return;
 		}
 		const aud = new Audio(previewUrl);
@@ -303,19 +306,15 @@
 				if (videoEl && !videoEl.paused) {
 					videoEl.pause();
 				}
+				aud!.play().catch((err: Error) => {
+					musicLoad = 0;
+					mscL = false;
+					showToast(err.message, 'error');
+				});
+				musicLoad = 0;
+				mscL = false;
 				audio = aud;
 				currentPlayingId = track.id;
-				aud
-					.play()
-					.then(() => {
-						musicLoad = 0;
-					})
-					.catch((err) => {
-						alert(err);
-						musicLoad = 0;
-						audio = null;
-						currentPlayingId = null;
-					});
 			},
 			{ once: true }
 		);
@@ -327,13 +326,6 @@
 		aud.addEventListener('ended', () => {
 			currentPlayingId = null;
 			audio = null;
-		});
-
-		aud.addEventListener('error', () => {
-			alert('Failed to load audio');
-			musicLoad = 0;
-			audio = null;
-			currentPlayingId = null;
 		});
 	};
 
@@ -695,7 +687,7 @@
 											</div>
 											<div class="btn">
 												<button
-													disabled={buttonLoad || musicLoad === track.id}
+													disabled={buttonLoad || musicLoad === track.id || mscL}
 													type="button"
 													class={currentPlayingId === track.id ? 'stop' : 'play'}
 													aria-label={currentPlayingId === track.id ? 'Stop' : 'Play'}
