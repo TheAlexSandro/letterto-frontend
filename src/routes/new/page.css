@@ -80,7 +80,7 @@
 	color: rgba(86, 86, 86, 0.832);
 }
 
-.new form #name{
+.new form #name {
 	padding: 12px;
 	width: 100%;
 	font-family: inherit;
@@ -91,7 +91,7 @@
 	transition: all 0.3s ease-in-out;
 }
 
-.new form input:disabled{
+.new form input:disabled {
 	opacity: 0.8;
 	cursor: default;
 }
@@ -252,6 +252,7 @@
 	flex: 1;
 	cursor: pointer;
 	padding: 6px 0;
+	min-width: 0;
 }
 
 .new form .music-picker .dropdown .item img {
@@ -268,15 +269,18 @@
 	flex-direction: column;
 	gap: 2px;
 	overflow: hidden;
+	min-width: 0;
 }
 
 .new form .music-picker .dropdown .item .title {
 	font-size: 0.9rem;
 	font-weight: 500;
 	color: var(--color-text-primary);
-	white-space: nowrap;
+	display: block;
 	overflow: hidden;
+	white-space: nowrap;
 	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 .new form .music-picker .dropdown .item .artist {
@@ -413,6 +417,177 @@
 	font-weight: var(--font-medium);
 }
 
+.new .music-pill {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #24292e;
+	border: 1px solid var(--color-border);
+	border-radius: 14px;
+	padding: 0.75rem 1rem;
+	margin-bottom: 1.25rem;
+	gap: 30px;
+	max-height: fit-content;
+}
+
+.new .music-pill .music-left {
+	display: flex;
+	align-items: center;
+	gap: 0.65rem;
+	flex: 1;
+	min-width: 0;
+}
+
+.new .music-pill .music-left img {
+	width: 90px;
+	height: 90px;
+	border-radius: 8px;
+	object-fit: cover;
+	flex-shrink: 0;
+	box-shadow: 0 4px 24px rgba(109, 40, 217, 0.5);
+	margin-right: 5px;
+	cursor: zoom-in;
+}
+
+.new .music-pill .music-info {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+}
+
+.new .music-pill .music-info .title-wrap {
+	overflow: hidden;
+	white-space: nowrap;
+	width: 100%;
+	mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
+.new .music-pill .music-info .title,
+.new .music-pill .music-info .title .marquee-content span {
+	font-size: 17px;
+	font-weight: var(--font-semibold);
+	color: #fff;
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.new .music-pill .music-info .title.marquee {
+	mask-image: linear-gradient(to right, #000 90%, transparent 100%);
+}
+
+.new .music-pill .music-info .title .marquee-content {
+	display: inline-flex;
+	gap: 40px;
+	animation: marquee 8s linear infinite;
+}
+
+.new .music-pill .music-info .title.marquee:hover .marquee-content {
+	animation-play-state: paused;
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(calc(-50% - 20px));
+	}
+}
+
+.new .music-pill .music-info .artist {
+	font-size: 13px;
+	color: #9e62fe;
+	margin-bottom: 10px;
+}
+
+.new .music-pill .progress-bar {
+	min-width: 100%;
+	height: 3px;
+	background: #59616996;
+	border-radius: 99px;
+	margin-top: 6px;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.new .music-pill .progress-fill {
+	height: 100%;
+	background: var(--color-primary);
+	border-radius: 99px;
+	transition: width 0.25s linear;
+}
+
+.new .music-pill .progress-times {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 3px;
+	font-size: 10px;
+	color: var(--color-text-muted);
+}
+
+.new .music-pill .right {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 12px;
+}
+
+.new .music-pill .right img {
+	width: 100px;
+	height: auto;
+	object-fit: cover;
+}
+
+.new .music-pill .music-play {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--color-primary);
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: background 0.15s;
+	flex-shrink: 0;
+	font-family: inherit;
+}
+
+.new .music-pill .music-play i {
+	font-size: 20px;
+	color: #fff;
+	margin-left: 1px;
+}
+
+.new .music-pill .music-play:hover {
+	background: var(--color-primary-hover);
+}
+
+.new .music-pill .music-play .spinner {
+	width: 14px;
+	height: 14px;
+	border: 2px solid rgba(255, 255, 255, 0.4);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: spin 0.8s linear infinite;
+}
+
+.new button:disabled {
+	cursor: default !important;
+	opacity: 0.6 !important;
+}
+
+.new button:disabled:hover {
+	cursor: default !important;
+	box-shadow: none !important;
+	transform: none !important;
+	background: var(--color-primary) !important;
+	border-color: inherit;
+	opacity: 0.6 !important;
+}
+
 .new form .file-upload {
 	display: flex;
 	flex-direction: column;
@@ -420,10 +595,10 @@
 }
 
 .new form .file-upload .upload-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    align-items: start;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	align-items: start;
 }
 
 .new form .file-upload .upload-grid .images-up p {
@@ -1206,6 +1381,22 @@
 	}
 }
 
+@media (width < 480px) {
+	.new form .music-pill {
+		border-radius: 12px;
+		height: fit-content;
+	}
+
+	.new form .music-pill .music-left img {
+		width: 70px;
+		height: 70px;
+	}
+
+	.new form .music-pill .right {
+		margin-left: -20px;
+	}
+}
+
 @media (min-width: 768px) and (max-width: 1023px) {
 	.new .container {
 		max-width: 520px;
@@ -1252,35 +1443,62 @@
 		height: 140px;
 	}
 
-	.new form .music-picker .input-wrap input {
+	.new form .music-pill .music-picker .input-wrap input {
 		width: 85%;
 		font-size: 0.9rem;
 	}
 
-	.new form .music-picker .dropdown .item-wrap {
+	.new form .music-pill .music-picker .dropdown .item-wrap {
 		padding: 4px 8px;
 	}
 
-	.new form .music-picker .dropdown .item img {
+	.new form .music-pill .music-picker .dropdown .item img {
 		width: 34px;
 		height: 34px;
 	}
 
-	.new form .music-picker .dropdown .item .title {
+	.new form .music-pill .music-picker .dropdown .item .title {
 		font-size: 0.85rem;
 	}
 
-	.new form .music-picker .selected-info {
+	.new form .music-pill .music-picker .selected-info {
 		padding: 8px 10px;
 		gap: 8px;
 	}
 
-	.new form .music-picker .selected-info img {
+	.new form .music-pill .music-picker .selected-info img {
 		width: 30px;
 		height: 30px;
 	}
 
-	.new form .file-upload .upload-grid {
+	.new form .music-pill .progress-bar {
+		height: 4px;
+	}
+
+	.new form .music-pill .music-info .title,
+	.new .music-pill .music-info .title .marquee-content span {
+		font-size: 13px;
+	}
+
+	.new form .music-pill .music-info .artist {
+		font-size: 11px;
+	}
+
+	.new form .music-pill .music-left img {
+		width: 80px;
+		height: 80px;
+	}
+
+	.new form .music-pill .right img {
+		width: 80px;
+	}
+
+	.new form .music-pill .music-play {
+		width: 34px;
+		height: 34px;
+	}
+
+	.new form .music-pill .file-upload .upload-grid {
 		grid-template-columns: 1fr;
 	}
 

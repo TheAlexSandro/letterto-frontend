@@ -7,7 +7,7 @@
 	import { resolveFont, getFreshPreview, stripHTML, isEmpty, generateID } from '$lib/utils/utils';
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
-	import deezer from '$lib/assets/deezer2.svg';
+	import deezer from '$lib/assets/deezer.svg';
 	import { showToast } from '$lib/toast';
 	import { isLoggedIn } from '$lib/utils/utils';
 
@@ -29,7 +29,6 @@
 	let audio: HTMLAudioElement | null = $state(null);
 	let debounce: ReturnType<typeof setTimeout>;
 	let currentPlayingId: number | null = $state(null);
-	let duration: string = $state('');
 	let adv: boolean = $state(false);
 	let privacy = $state('public');
 	let viewOnce: boolean = $state(false);
@@ -69,6 +68,9 @@
 	let findErr = $state(false);
 	let audioAutoplay = $state(true);
 	let mscL = $state(false);
+	let duration = $state(0);
+	let currentTime = $state(0);
+	let audioPlayed = $state(false);
 
 	async function scrollToError() {
 		await tick();
@@ -229,6 +231,20 @@
 		results = [];
 	};
 
+	const formatTime = (s: number) => {
+		const m = Math.floor(s / 60);
+		const sec = Math.floor(s % 60);
+		return `${m}:${sec.toString().padStart(2, '0')}`;
+	};
+
+	const seekTo = (e: MouseEvent) => {
+		if (!audio || !duration) return;
+		const bar = e.currentTarget as HTMLElement;
+		const rect = bar.getBoundingClientRect();
+		const ratio = (e.clientX - rect.left) / rect.width;
+		audio.currentTime = ratio * duration;
+	};
+
 	const togglePlay = async (track: Track) => {
 		if (currentPlayingId === track.id) {
 			audio?.pause();
@@ -269,14 +285,64 @@
 			{ once: true }
 		);
 
-		aud.addEventListener('timeupdate', () => {
-			duration = formatWaktu(aud.duration - aud.currentTime);
-		});
-
 		aud.addEventListener('ended', () => {
 			currentPlayingId = null;
 			audio = null;
 		});
+	};
+
+	const togglePlaySelected = async () => {
+		mscL = true;
+
+		const previewUrl = await getFreshPreview(Number(selected!.id));
+		if (!previewUrl) {
+			alert('Preview not available for this track.');
+			mscL = false;
+			return;
+		}
+
+		if (!audio) {
+			audio = new Audio(previewUrl);
+
+			audio.addEventListener(
+				'loadedmetadata',
+				() => {
+					duration = audio!.duration;
+				},
+				{ once: true }
+			);
+
+			audio.addEventListener('timeupdate', () => {
+				currentTime = audio!.currentTime;
+			});
+
+			audio.addEventListener('ended', () => {
+				audioPlayed = false;
+				mscL = false;
+				currentTime = 0;
+				audio!.currentTime = 0;
+			});
+		}
+
+		if (audioPlayed) {
+			mscL = false;
+			audio.pause();
+			audioPlayed = false;
+			return;
+		}
+
+		if (videoEl && !videoEl.paused) {
+			videoEl.pause();
+		}
+
+		try {
+			await audio.play();
+			mscL = false;
+			audioPlayed = true;
+		} catch (err) {
+			alert(err);
+			mscL = false;
+		}
 	};
 
 	const renderPreview = () => {
@@ -590,11 +656,7 @@
 													onkeydown={(e) => e.key === 'Enter' && select(track)}
 													class="info"
 												>
-													<span class="title"
-														>{track.title.length > 40
-															? `${track.title.substring(0, 40)}...`
-															: track.title}</span
-													>
+													<span class="title">{track.title}</span>
 													<span class="artist">{track.artist.name}</span>
 												</div>
 											</div>
@@ -624,46 +686,63 @@
 						{/if}
 
 						{#if selected}
-							<div class="selected-info">
-								<!-- svelte-ignore a11y_click_events_have_key_events -->
-								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-								<img
-									onclick={() => openLightbox(selected!.album.cover_big)}
-									src={selected.album.cover_small}
-									alt={selected.title}
-								/>
-								<div class="info">
-									<span class="title"
-										>{selected.title.length > 40
-											? `${selected.title.substring(0, 40)}...`
-											: selected.title}</span
+							<div class="music-pill">
+								<div class="music-left">
+									<!-- svelte-ignore a11y_click_events_have_key_events -->
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<img
+										onclick={() => openLightbox(selected!.album.cover_big)}
+										src={selected!.album.cover_big}
+										alt={selected.title}
+									/>
+									<div class="music-info">
+										<div class="title-wrap">
+											<span class="title" class:marquee={selected!.title.length > 20}>
+												{#if selected!.title.length > 20}
+													<span class="marquee-content">
+														<span>{selected!.title}</span>
+														<span>{selected!.title}</span>
+													</span>
+												{:else}
+													{selected!.title}
+												{/if}
+											</span>
+										</div>
+										<span class="artist">{selected!.artist.name}</span>
+										<!-- svelte-ignore a11y_click_events_have_key_events -->
+										<!-- svelte-ignore a11y_no_static_element_interactions -->
+										<div class="progress">
+											<div class="progress-bar" onclick={seekTo}>
+												<div
+													class="progress-fill"
+													style="width: {duration ? (currentTime / duration) * 100 : 0}%"
+												></div>
+											</div>
+											<div class="progress-times">
+												<span>{formatTime(currentTime)}</span>
+												<span>{formatTime(duration)}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="right">
+									<img src={deezer} alt="deezer" />
+									<button
+										disabled={mscL}
+										type="button"
+										class="music-play"
+										onclick={togglePlaySelected}
+										aria-label="audio"
 									>
-									<span class="artist">{selected.artist.name}</span>
+										{#if mscL}
+											<div class="spinner"></div>
+										{:else if audioPlayed}
+											<i class="ri-pause-fill"></i>
+										{:else}
+											<i class="ri-play-fill"></i>
+										{/if}
+									</button>
 								</div>
-								<button
-									disabled={buttonLoad || musicLoad === selected.id}
-									type="button"
-									aria-label={currentPlayingId === selected.id ? 'Stop' : 'Play'}
-									class="play"
-									onclick={() => togglePlay(selected!)}
-								>
-									{#if !musicLoad || musicLoad !== selected.id}
-										<i class={currentPlayingId === selected.id ? 'ri-stop-line' : 'ri-play-line'}
-										></i>
-									{:else if musicLoad === selected.id}
-										<div class="spinner"></div>
-									{/if}
-								</button>
-							</div>
-							<div class="pwr">
-								<div class="box">
-									<img src={deezer} alt="Deezer" />
-									<span>Deezer</span>
-								</div>
-
-								{#if audio}
-									<div class="duration">{duration}</div>
-								{/if}
 							</div>
 						{/if}
 
