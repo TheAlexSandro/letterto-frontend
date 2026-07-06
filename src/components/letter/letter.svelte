@@ -17,7 +17,7 @@
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
-	import { stripHTML } from '$lib/utils/utils';
+	import { stripHTML, sanitizeText } from '$lib/utils/utils';
 	import { onMount } from 'svelte';
 	import { isDeletingLetter, openDropdownId } from '$lib/stores/letter';
 
@@ -87,6 +87,11 @@
 		return new Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 })
 			.format(num)
 			.toLowerCase();
+	};
+
+	const renderMessage = (message: string) => {
+		const m = stripHTML(sanitizeText(message));
+		return m.length > 70 ? `${m.substring(0, 70)}...` : m;
 	};
 </script>
 
@@ -185,9 +190,7 @@
 					</div>
 				{:else}
 					<p style="font-family: {resolveFont(font)};">
-						{stripHTML(message).length > 70
-							? stripHTML(message).substring(0, 70) + '...'
-							: stripHTML(message)}
+						{renderMessage(message)}
 					</p>
 				{/if}
 			</div>
@@ -195,9 +198,7 @@
 	{:else}
 		<div class="content">
 			<p style="font-family: {resolveFont(font)};">
-				{stripHTML(message).length > 70
-					? stripHTML(message).substring(0, 70) + '...'
-					: stripHTML(message)}
+				{renderMessage(message)}
 			</p>
 		</div>
 	{/if}
