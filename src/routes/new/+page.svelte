@@ -8,6 +8,7 @@
 	import { tick } from 'svelte';
 	import type Quill from 'quill';
 	import deezer from '$lib/assets/deezer.svg';
+	import deezer2 from '$lib/assets/deezer2.svg';
 	import { showToast } from '$lib/toast';
 	import { isLoggedIn } from '$lib/utils/utils';
 
@@ -755,7 +756,7 @@
 								</div>
 
 								<div class="box">
-									<img src={deezer} alt="Deezer" />
+									<img src={deezer2} alt="Deezer" />
 									<span>Deezer</span>
 								</div>
 							</div>

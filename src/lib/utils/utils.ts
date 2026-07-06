@@ -75,3 +75,25 @@ export const isLoggedIn = async () => {
 	}
 	return data.data as LoggedIn;
 };
+
+export const sanitizeText = (text: string): string => {
+	if (!text) return '';
+
+	return (
+		text
+			.replace(/&nbsp;/gi, ' ')
+			.replace(/&amp;/gi, '&')
+			.replace(/&lt;/gi, '<')
+			.replace(/&gt;/gi, '>')
+			.replace(/&quot;/gi, '"')
+			.replace(/&#39;/gi, "'")
+			.replace(/\u00A0/g, ' ')
+			.replace(/\u200B/g, '')
+			.replace(/\u200C/g, '')
+			.replace(/\u200D/g, '')
+			.replace(/\uFEFF/g, '')
+			.replace(/[ \t]+/g, ' ')
+			.replace(/\n{3,}/g, '\n\n')
+			.trim()
+	);
+};

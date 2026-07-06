@@ -324,67 +324,6 @@
 	color: var(--color-accent);
 }
 
-.new form .music-picker .selected-info {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	padding: 10px 14px;
-	background: var(--color-primary-light);
-	border-radius: 6px;
-	border: 1px solid rgba(24, 119, 242, 0.2);
-}
-
-.new form .music-picker .selected-info img {
-	width: 36px;
-	height: 36px;
-	border-radius: 4px;
-	cursor: zoom-in;
-}
-
-.new form .music-picker .selected-info .info {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.new form .music-picker .selected-info .title {
-	font-size: 0.88rem;
-	font-weight: 500;
-	color: black;
-}
-
-.new form .music-picker .selected-info .artist {
-	font-size: 0.8rem;
-	color: var(--color-text-muted);
-}
-
-.new form .music-picker .selected-info .play {
-	background: none;
-	border: none;
-	cursor: pointer;
-	color: var(--color-primary);
-	font-size: 1.3rem;
-}
-
-.new form .music-picker .selected-info .play .spinner {
-	width: 14px;
-	height: 14px;
-	margin: 2.5px;
-	border: 2px solid rgba(255, 255, 255, 0.4);
-	border-top-color: var(--color-accent);
-	border-radius: 50%;
-	animation: spin 0.8s linear infinite;
-}
-
-.new form .music-picker .duration {
-	margin-top: -5px;
-	display: flex;
-	justify-content: flex-end;
-	font-size: 14px;
-	width: 100%;
-	color: var(--color-text-muted);
-}
-
 .new form .music-picker .pwr {
 	display: flex;
 	align-items: center;
@@ -406,10 +345,6 @@
 .new form .music-picker .pwr .box img {
 	width: 20px;
 	height: auto;
-}
-
-.new form .music-picker .pwr .box p {
-	font-weight: var(--font-medium);
 }
 
 .new form .music-picker .pwr .box span {
@@ -818,18 +753,6 @@
 
 .new form .adv-menu .input-wrap {
 	width: 50%;
-}
-
-.new form .adv-menu .wrapper .input-info {
-	margin-top: 5px;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.new form .adv-menu .wrapper .input-info p {
-	font-size: 13px;
 }
 
 .new form .adv-menu .wrapper input {
@@ -1256,13 +1179,6 @@
 	}
 }
 
-.sucess .divider {
-	height: 1px;
-	background: var(--color-border);
-	margin: 1.5rem 0;
-	opacity: 0.6;
-}
-
 .success .actions {
 	margin-top: 20px;
 	display: flex;
@@ -1401,10 +1317,6 @@
 	.new .container {
 		max-width: 520px;
 	}
-
-	.new form textarea {
-		height: 120px;
-	}
 }
 
 @media (max-width: 767px) {
@@ -1433,42 +1345,9 @@
 		gap: 10px;
 	}
 
-	.new form #name,
-	.new form textarea {
+	.new form #name {
 		padding: 10px;
 		font-size: 0.95rem;
-	}
-
-	.new form textarea {
-		height: 140px;
-	}
-
-	.new form .music-pill .music-picker .input-wrap input {
-		width: 85%;
-		font-size: 0.9rem;
-	}
-
-	.new form .music-pill .music-picker .dropdown .item-wrap {
-		padding: 4px 8px;
-	}
-
-	.new form .music-pill .music-picker .dropdown .item img {
-		width: 34px;
-		height: 34px;
-	}
-
-	.new form .music-pill .music-picker .dropdown .item .title {
-		font-size: 0.85rem;
-	}
-
-	.new form .music-pill .music-picker .selected-info {
-		padding: 8px 10px;
-		gap: 8px;
-	}
-
-	.new form .music-pill .music-picker .selected-info img {
-		width: 30px;
-		height: 30px;
 	}
 
 	.new form .music-pill .progress-bar {
@@ -1498,7 +1377,7 @@
 		height: 34px;
 	}
 
-	.new form .music-pill .file-upload .upload-grid {
+	.new form .file-upload .upload-grid {
 		grid-template-columns: 1fr;
 	}
 
@@ -1522,9 +1401,5 @@
 @media (min-width: 1280px) {
 	.new .container {
 		max-width: 650px;
-	}
-
-	.new form textarea {
-		height: 130px;
 	}
 }

@@ -8,7 +8,7 @@
 	import { DotLottieSvelte } from '@lottiefiles/dotlottie-svelte';
 	import Fire from '$lib/assets/Fire.lottie';
 	import deezer from '$lib/assets/deezer.svg';
-	import { isLoggedIn } from '$lib/utils/utils';
+	import { isLoggedIn, sanitizeText } from '$lib/utils/utils';
 	import { showToast } from '$lib/toast';
 	import { fade } from 'svelte/transition';
 
@@ -364,8 +364,8 @@
 								<div class="warning">
 									<div class="wrap">
 										<i class="ri-information-line"></i>
-										This letter has music autoplay enabled, please check your device volume
-										condition first.
+										This letter has music autoplay enabled, please check your device volume condition
+										first.
 									</div>
 									<button
 										aria-labelledby="close"
@@ -637,7 +637,7 @@
 								<div class="body">
 									<div class="ql-editor">
 										<p class="message" style="font-family: {resolveFont(String(card?.font))};">
-											{@html card?.message}
+											{@html sanitizeText(String(card?.message))}
 										</p>
 									</div>
 								</div>
