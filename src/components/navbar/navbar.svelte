@@ -184,7 +184,7 @@
 <style>
 	.navbar {
 		position: fixed;
-		top: 16px;
+		top: calc(var(--banner-height, 0px) + 16px);
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 999;
@@ -287,7 +287,7 @@
 
 	.navbar .dropdown-menu {
 		position: absolute;
-		top: calc(100% + 8px);
+		top: calc(100% + 15px);
 		right: 0;
 		background: #fff;
 		border-radius: 10px;
@@ -356,7 +356,7 @@
 	.mobile-menu {
 		display: none;
 		position: fixed;
-		top: 84px;
+		top: calc(var(--banner-height, 0px) + 84px);
 		left: 50%;
 		transform: translateX(-50%);
 		width: calc(100% - 48px);
@@ -452,7 +452,7 @@
 	@media (max-width: 767px) {
 		.navbar {
 			width: calc(100% - 24px);
-			top: 10px;
+			top: calc(var(--banner-height, 0px) + 15px);
 			padding: 0 14px;
 			height: 52px;
 		}
@@ -467,7 +467,7 @@
 
 		.mobile-menu {
 			display: flex;
-			top: 74px;
+			top: calc(var(--banner-height, 0px) + 74px);
 			width: calc(100% - 24px);
 		}
 	}

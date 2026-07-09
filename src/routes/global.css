@@ -99,3 +99,47 @@ html {
 	border-radius: 50%;
 	animation: spin 0.8s linear infinite;
 }
+
+.notif-banner {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	padding: 0.6rem 2.5rem 0.6rem 1rem;
+	background: #f59e0b;
+	color: #1a1a1a;
+	font-size: 0.875rem;
+	margin-bottom: 100px;
+	z-index: 999;
+	font-size: 12px;
+}
+
+.notif-banner .c {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	gap: 10px;
+	justify-content: center;
+}
+
+.notif-banner .c span {
+	font-weight: var(--font-semibold);
+}
+
+.notif-banner .c i {
+	font-size: 20px;
+}
+
+.notif-banner .close-btn {
+	position: absolute;
+	right: 0.75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 1rem;
+	color: inherit;
+	padding: 0.25rem;
+	line-height: 1;
+}

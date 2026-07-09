@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { PUBLIC_ASSETS_STORAGE } from '$env/static/public';
+	import {
+		PUBLIC_ASSETS_STORAGE,
+		PUBLIC_BANNER_HEAD,
+		PUBLIC_BANNER_DESC,
+		PUBLIC_BANNER_SHOW
+	} from '$env/static/public';
 	import './global.css';
 	import { afterNavigate } from '$app/navigation';
 	import Toast from '../components/toast/toast.svelte';
@@ -12,6 +17,26 @@
 	});
 
 	let { children } = $props();
+
+	let showBanner = $state(String(PUBLIC_BANNER_SHOW) === 'true' ? true : false);
+	let bannerEl = $state<HTMLElement>();
+	let bannerHeight = $state(0);
+
+	$effect(() => {
+		if (!bannerEl) {
+			bannerHeight = 0;
+			return;
+		}
+		const observer = new ResizeObserver(([entry]) => {
+			bannerHeight = entry.contentRect.height + 10;
+		});
+		observer.observe(bannerEl);
+		return () => observer.disconnect();
+	});
+
+	$effect(() => {
+		document.documentElement.style.setProperty('--banner-height', `${bannerHeight}px`);
+	});
 </script>
 
 <svelte:head>
@@ -56,6 +81,23 @@
 	<meta name="twitter:image:alt" content="LetterTo - Send letters to anyone" />
 </svelte:head>
 
+{#if showBanner}
+	<div class="notif-banner" bind:this={bannerEl}>
+		<div class="c">
+			<i class="ri-alert-line"></i>
+			<div class="desc">
+				<span>{PUBLIC_BANNER_HEAD}</span>
+				<p>
+					{PUBLIC_BANNER_DESC}
+				</p>
+			</div>
+		</div>
+		<!-- <button class="close-btn" onclick={() => (showBanner = false)} aria-label="Tutup notifikasi">
+			<i class="ri-close-line"></i>
+		</button> -->
+	</div>
+{/if}
+
 <Toast
 	message={$toast.message}
 	type={$toast.type as 'success' | 'error' | 'info' | 'warning'}
@@ -68,7 +110,9 @@
 	</div>
 {/if}
 
-{@render children()}
+<div style="padding-top: var(--banner-height, 0px);">
+	{@render children()}
+</div>
 
 <style>
 	:global(.ql-align-center) {

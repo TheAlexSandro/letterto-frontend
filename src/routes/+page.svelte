@@ -148,7 +148,7 @@
 		{/if}
 
 		<div class="any">
-			<section class="features">
+			<section class="features" id="features">
 				<p class="feat-label">FEATURES</p>
 				<h2>Everything you may need</h2>
 				<p class="feat-subtitle">
