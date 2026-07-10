@@ -144,7 +144,7 @@
 	font-size: 13px;
 	font-weight: var(--font-regular);
 	word-break: break-all;
-	max-height: 30vh;
+	max-height: 50vh;
 	overflow-y: auto;
 }
 

@@ -10,7 +10,7 @@
 	import deezer from '$lib/assets/deezer.svg';
 	import deezer2 from '$lib/assets/deezer2.svg';
 	import { showToast } from '$lib/toast';
-	import { isLoggedIn } from '$lib/utils/utils';
+	import { isLoggedIn, sanitizeText } from '$lib/utils/utils';
 
 	type Track = {
 		id: number;
@@ -586,7 +586,10 @@
 					/>
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
-					<div class="checkbox-container">
+					<p class="helper-text" style="margin-top: 3px;">
+						You can also use HTML format inside your message. <a href="/l/gG2OsaNL">Example</a>
+					</p>
+					<div class="checkbox-container" style="margin-top: -7px;">
 						<input
 							type="checkbox"
 							id="view"
@@ -605,7 +608,7 @@
 								{#if isEmpty(letterMessage)}
 									Nothing to show...
 								{:else}
-									{@html letterMessage}
+									{@html sanitizeText(String(letterMessage))}
 								{/if}
 							</div>
 						</div>
