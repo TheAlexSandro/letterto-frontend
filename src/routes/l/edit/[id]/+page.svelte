@@ -203,9 +203,13 @@
 	});
 
 	beforeNavigate(({ cancel }) => {
-		audio?.pause();
-		audio = null;
-		currentPlayingId = null;
+		if (audio) {
+			audio.pause();
+			audioPlayed = false;
+		}
+		if (videoEl) {
+			videoEl!.pause();
+		}
 		if (editSuccess || !login) return;
 		const confirm = window.confirm(
 			'Are you sure you want to leave this page? Changes will not be saved.'
@@ -667,7 +671,7 @@
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
 					<p class="helper-text" style="margin-top: 3px;">
-						You can also use HTML format inside your message. <a href="/l/gG2OsaNL">Example</a>
+						You can also use HTML format inside your message. <a href="https://telegra.ph/LetterTo-HTML-Message-Format-07-10" target="_blank">Example</a>
 					</p>
 					<div class="checkbox-container" style="margin-top: -7px;">
 						<input

@@ -11,6 +11,7 @@
 	import { isLoggedIn, sanitizeText } from '$lib/utils/utils';
 	import { showToast } from '$lib/toast';
 	import { fade } from 'svelte/transition';
+	import { beforeNavigate } from '$app/navigation';
 
 	type Card = {
 		user_id: string;
@@ -119,12 +120,25 @@
 		windowLoad = false;
 	});
 
+	beforeNavigate(() => {
+		if (audio) {
+			audio.pause();
+			audioPlayed = false;
+			currentTime = 0;
+			audio!.currentTime = 0;
+		}
+		if (videoEl) {
+			videoEl.pause();
+			videoEl.currentTime = 0;
+		}
+	});
+
 	const togglePlay = async () => {
 		audioLoad = true;
 
 		const previewUrl = await getFreshPreview(Number(card?.music));
 		if (!previewUrl) {
-			alert('Preview not available for this track.');
+			showToast('Preview not available for this track.', 'error', 5000);
 			audioLoad = false;
 			return;
 		}
@@ -168,7 +182,7 @@
 			audioLoad = false;
 			audioPlayed = true;
 		} catch (err) {
-			alert(err);
+			showToast('Cannot play audio', 'error', 5000);
 			audioLoad = false;
 		}
 	};
