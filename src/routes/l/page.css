@@ -223,10 +223,6 @@
 	animation: gate-text-out 0.2s ease forwards;
 }
 
-.letter-wrap .envelope-gate.opening {
-	animation: gate-dismiss 0.3s ease 3s forwards;
-}
-
 @keyframes seal-break {
 	0% {
 		opacity: 1;

@@ -80,18 +80,38 @@
 		opening = true;
 		let time = card?.audio_autoplay ? 1300 : 1000;
 
-		setTimeout(async () => {
-			if (card?.audio_autoplay) {
-				await togglePlay();
-			}
-			letterOpened = true;
+		setTimeout(() => {
+			const revealLetter = () => {
+				letterOpened = true;
 
-			if (card?.image || card?.video) {
-				slowTimer = setTimeout(() => {
-					if (!imageLoaded || !videoLoaded) {
-						showSlowWarning = true;
-					}
-				}, 5000);
+				if (card?.image || card?.video) {
+					slowTimer = setTimeout(() => {
+						if (!imageLoaded || !videoLoaded) {
+							showSlowWarning = true;
+						}
+					}, 5000);
+				}
+			};
+
+			if (card?.audio_autoplay) {
+				const signal = { cancelled: false };
+				let settled = false;
+				const audioTimeout = setTimeout(() => {
+					if (settled) return;
+					settled = true;
+					signal.cancelled = true;
+					audioLoad = false;
+					revealLetter();
+				}, 10000);
+
+				togglePlay(signal).finally(() => {
+					if (settled) return;
+					settled = true;
+					clearTimeout(audioTimeout);
+					revealLetter();
+				});
+			} else {
+				revealLetter();
 			}
 		}, time);
 	};
@@ -133,10 +153,15 @@
 		}
 	});
 
-	const togglePlay = async () => {
+	const togglePlay = async (signal?: { cancelled: boolean }) => {
 		audioLoad = true;
 
 		const previewUrl = await getFreshPreview(Number(card?.music));
+		if (signal?.cancelled) {
+			audioLoad = false;
+			return;
+		}
+
 		if (!previewUrl) {
 			showToast('Preview not available for this track.', 'error', 5000);
 			audioLoad = false;
@@ -177,11 +202,25 @@
 			videoEl.pause();
 		}
 
+		if (signal?.cancelled) {
+			audioLoad = false;
+			return;
+		}
+
 		try {
 			await audio.play();
+
+			if (signal?.cancelled) {
+				audio.pause();
+				audioPlayed = false;
+				audioLoad = false;
+				return;
+			}
+
 			audioLoad = false;
 			audioPlayed = true;
 		} catch (err) {
+			console.log(err);
 			showToast('Cannot play audio', 'error', 5000);
 			audioLoad = false;
 		}
@@ -442,7 +481,7 @@
 										disabled={audioLoad}
 										type="button"
 										class="music-play"
-										onclick={togglePlay}
+										onclick={() => togglePlay()}
 										aria-label="audio"
 									>
 										{#if audioLoad}
