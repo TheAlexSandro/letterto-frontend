@@ -8,7 +8,7 @@
 	import { DotLottieSvelte } from '@lottiefiles/dotlottie-svelte';
 	import Fire from '$lib/assets/Fire.lottie';
 	import deezer from '$lib/assets/deezer.svg';
-	import { isLoggedIn, sanitizeText } from '$lib/utils/utils';
+	import { isLoggedIn, sanitize } from '$lib/utils/utils';
 	import { showToast } from '$lib/toast';
 	import { fade } from 'svelte/transition';
 	import { beforeNavigate } from '$app/navigation';
@@ -651,7 +651,7 @@
 								<div class="body">
 									<div class="ql-editor">
 										<p class="message" style="font-family: {resolveFont(String(card?.font))};">
-											{@html sanitizeText(String(card?.message))}
+											{@html sanitize(String(card?.message))}
 										</p>
 									</div>
 								</div>

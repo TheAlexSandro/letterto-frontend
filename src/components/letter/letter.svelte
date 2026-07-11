@@ -17,7 +17,7 @@
 	} = $props();
 	import deezer from '$lib/assets/deezer2.svg';
 	import { resolveFont } from '$lib/utils/utils';
-	import { stripHTML, sanitizeText } from '$lib/utils/utils';
+	import { stripHTML, sanitize } from '$lib/utils/utils';
 	import { onMount } from 'svelte';
 	import { isDeletingLetter, openDropdownId } from '$lib/stores/letter';
 
@@ -90,7 +90,7 @@
 	};
 
 	const renderMessage = (message: string) => {
-		const m = stripHTML(sanitizeText(message));
+		const m = stripHTML(sanitize(message));
 		return m.length > 70 ? `${m.substring(0, 70)}...` : m;
 	};
 </script>

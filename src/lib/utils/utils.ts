@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 const previewCache = new Map<number, { url: string; fetchedAt: number }>();
 const CACHE_TTL = 1000 * 60 * 3;
 
@@ -76,24 +78,67 @@ export const isLoggedIn = async () => {
 	return data.data as LoggedIn;
 };
 
-export const sanitizeText = (text: string): string => {
+export const sanitize = (text: string): string => {
 	if (!text) return '';
 
-	return (
-		text
-			.replace(/&nbsp;/gi, ' ')
-			.replace(/&amp;/gi, '&')
-			.replace(/&lt;/gi, '<')
-			.replace(/&gt;/gi, '>')
-			.replace(/&quot;/gi, '"')
-			.replace(/&#39;/gi, "'")
-			.replace(/\u00A0/g, ' ')
-			.replace(/\u200B/g, '')
-			.replace(/\u200C/g, '')
-			.replace(/\u200D/g, '')
-			.replace(/\uFEFF/g, '')
-			.replace(/[ \t]+/g, ' ')
-			.replace(/\n{3,}/g, '\n\n')
-			.trim()
-	);
+	const t = text
+		.replace(/&nbsp;/gi, ' ')
+		.replace(/&amp;/gi, '&')
+		.replace(/&lt;/gi, '<')
+		.replace(/&gt;/gi, '>')
+		.replace(/&quot;/gi, '"')
+		.replace(/&#39;/gi, "'")
+		.replace(/\u00A0/g, ' ')
+		.replace(/\u200B/g, '')
+		.replace(/\u200C/g, '')
+		.replace(/\u200D/g, '')
+		.replace(/\uFEFF/g, '')
+		.replace(/[ \t]+/g, ' ')
+		.replace(/\n{3,}/g, '\n\n')
+		.trim();
+
+	return DOMPurify.sanitize(t, {
+		ALLOWED_TAGS: [
+			'span',
+			'p',
+			'div',
+			'ul',
+			'ol',
+			'li',
+			'br',
+			'hr',
+			'b',
+			'i',
+			'strong',
+			'em',
+			'u',
+			's',
+			'blockquote',
+			'pre',
+			'code',
+			'h1',
+			'h2',
+			'h3',
+			'h4',
+			'h5',
+			'h6',
+			'img',
+			'video',
+			'source',
+			'a'
+		],
+		ALLOWED_ATTR: [
+			'class',
+			'style',
+			'src',
+			'alt',
+			'width',
+			'height',
+			'controls',
+			'poster',
+			'type',
+			'href'
+		],
+		FORBID_TAGS: ['meta', 'script', 'style', 'iframe', 'object', 'embed', 'link', 'base']
+	});
 };

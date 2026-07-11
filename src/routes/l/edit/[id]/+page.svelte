@@ -11,7 +11,7 @@
 	import deezer from '$lib/assets/deezer.svg';
 	import deezer2 from '$lib/assets/deezer2.svg';
 	import { showToast } from '$lib/toast';
-	import { isLoggedIn, sanitizeText } from '$lib/utils/utils';
+	import { isLoggedIn, sanitize } from '$lib/utils/utils';
 
 	type Track = {
 		id: number;
@@ -671,7 +671,7 @@
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
 					<p class="helper-text" style="margin-top: 3px;">
-						You can also use HTML format inside your message. <a href="https://telegra.ph/LetterTo-HTML-Message-Format-07-10" target="_blank">Example</a>
+						You can also use HTML format inside your message. <a href="https://telegra.ph/LetterTo-HTML-Message-Format-07-10" target="_blank">View Docs</a>
 					</p>
 					<div class="checkbox-container" style="margin-top: -7px;">
 						<input
@@ -692,7 +692,7 @@
 								{#if isEmpty(letterMessage)}
 									Nothing to show...
 								{:else}
-									{@html sanitizeText(String(letterMessage))}
+									{@html sanitize(letterMessage)}
 								{/if}
 							</div>
 						</div>

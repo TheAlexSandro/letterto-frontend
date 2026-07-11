@@ -18,6 +18,7 @@
 		"@sveltejs/adapter-cloudflare": "^7.2.8",
 		"@sveltejs/kit": "^2.57.0",
 		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@types/dompurify": "^3.0.5",
 		"@types/node": "^25.6.0",
 		"prettier": "^3.8.1",
 		"prettier-plugin-svelte": "^3.5.1",
@@ -29,6 +30,7 @@
 	},
 	"dependencies": {
 		"@lottiefiles/dotlottie-svelte": "^0.10.0",
+		"dompurify": "^3.4.12",
 		"quill": "^2.0.3"
 	},
 	"allowScripts": {
