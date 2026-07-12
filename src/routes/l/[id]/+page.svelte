@@ -499,13 +499,17 @@
 								<div class="from-to-inline">
 									<div class="avatar">
 										<i class="ri-quill-pen-ai-line"></i>
-										<span>From: <b>{!card?.sender ? 'Anonymous' : card.sender}</b></span>
+										<span>
+											<span class="label">From:</span>
+											<b>{!card?.sender ? 'anonymous' : card.sender}</b>
+										</span>
 									</div>
 									<div class="avatar">
 										<i class="ri-user-heart-line"></i>
-										<span
-											>To: <b>{!card?.recipient_name ? 'Anonymous' : card.recipient_name}</b></span
-										>
+										<span>
+											<span class="label">To:</span>
+											<b>{!card?.recipient_name ? 'anonymous' : card.recipient_name}</b>
+										</span>
 									</div>
 								</div>
 								<div class="date-chip">

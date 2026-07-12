@@ -543,15 +543,10 @@
 .letter-wrap .from-to-inline .avatar {
 	background: transparent;
 	border: 0;
-}
-
-.letter-wrap .from-to-inline .avatar span {
-	font-size: 13px;
-}
-
-.letter-wrap .from-to-inline .avatar span b {
-	font-weight: var(--font-medium);
-	margin-left: 5px;
+	max-width: 90%;
+	word-break: keep-all;
+	display: flex;
+	align-items: center;
 }
 
 .letter-wrap .from-to-inline .avatar i {
@@ -561,6 +556,24 @@
 	padding: 8px;
 	border-radius: 8px;
 	margin-right: 5px;
+	flex-shrink: 0;
+}
+
+.letter-wrap .from-to-inline .avatar span {
+	font-size: 13px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.letter-wrap .from-to-inline .avatar span .label {
+	flex-shrink: 0;
+}
+
+.letter-wrap .from-to-inline .avatar span b {
+	font-weight: var(--font-medium);
+	margin-left: 0;
+	min-width: 0;
 }
 
 .letter-wrap .name-text {
