@@ -527,6 +527,7 @@
 	justify-content: space-between;
 	margin-bottom: 1.25rem;
 	padding: 0 0.25rem;
+	position: relative;
 }
 
 .letter-wrap .from-to-inline {
@@ -541,10 +542,6 @@
 }
 
 .letter-wrap .from-to-inline .avatar {
-	background: transparent;
-	border: 0;
-	max-width: 90%;
-	word-break: keep-all;
 	display: flex;
 	align-items: center;
 }
@@ -560,6 +557,8 @@
 }
 
 .letter-wrap .from-to-inline .avatar span {
+	max-width: 60%;
+	word-break: keep-all;
 	font-size: 13px;
 	display: flex;
 	align-items: center;
@@ -573,7 +572,7 @@
 .letter-wrap .from-to-inline .avatar span b {
 	font-weight: var(--font-medium);
 	margin-left: 0;
-	min-width: 0;
+	min-width: fit-content;
 }
 
 .letter-wrap .name-text {
@@ -588,6 +587,8 @@
 }
 
 .letter-wrap .date-chip {
+	position: absolute;
+	right: 0;
 	display: flex;
 	align-items: center;
 	gap: 4px;
@@ -602,6 +603,10 @@
 	padding: 8px;
 	border-radius: 8px;
 	margin-right: 8px;
+}
+
+.letter-wrap .date-chip span {
+	min-width: fit-content;
 }
 
 .letter-wrap .action {
@@ -1426,6 +1431,10 @@
 
 	.letter-wrap .envelope-gate .warning {
 		max-width: 95%;
+	}
+
+	.letter-wrap .date-chip {
+		position: inherit;
 	}
 }
 
