@@ -73,6 +73,7 @@
 }
 
 .dash .result .no-result {
+	font-size: 13px;
 	margin-top: 50px;
 	text-align: center;
 	color: var(--color-text-muted);
