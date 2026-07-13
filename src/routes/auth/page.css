@@ -107,14 +107,14 @@
 .auth form .field-row .toggle-visibility {
 	position: absolute;
 	right: 10px;
-	background: transparent;
+	background: white;
 	border: 0;
 	color: var(--color-primary);
 	font-size: 12px;
 	font-weight: var(--font-medium);
 	cursor: pointer;
 	font-family: inherit;
-	padding: 4px 6px;
+	padding: 4px 3px 4px 10px;
 }
 
 .auth form .field-err {
