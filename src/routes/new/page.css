@@ -670,6 +670,10 @@
 	border-bottom: 2px solid var(--color-primary);
 }
 
+.new form .adv:hover:disabled {
+	background: transparent !important;
+}
+
 .new form .adv-menu {
 	display: flex;
 	flex-direction: column;
