@@ -350,13 +350,6 @@
 		}
 	};
 
-	const renderPreview = () => {
-		const plainText = stripHTML(letterMessage);
-		if (!plainText.trim()) return 'Lorem ipsum, dolor sit amet consectetur adipisicing.';
-
-		return plainText.length > 52 ? plainText.substring(0, 52) + '...' : plainText;
-	};
-
 	const clearSelected = () => {
 		audio?.pause();
 		audio = null;
@@ -612,7 +605,9 @@
 								{#if isEmpty(letterMessage)}
 									Nothing to show...
 								{:else}
-									{@html sanitize(letterMessage)}
+									<div style="font-family: {resolveFont(String(font))};">
+										{@html sanitize(String(letterMessage))}
+									</div>
 								{/if}
 							</div>
 						</div>
@@ -1013,7 +1008,7 @@
 								</div>
 
 								<div class="preview" style="font-family: {resolveFont(font)};">
-									{@html renderPreview()}
+									Lorem ipsum, dolor sit amet consectetur adipisicing.
 								</div>
 							</div>
 

@@ -228,13 +228,6 @@
 	const openLightbox = (src: string) => (lightboxSrc = src);
 	const closeLightbox = () => (lightboxSrc = null);
 
-	const renderPreview = () => {
-		const plainText = stripHTML(letterMessage);
-		if (!plainText.trim()) return 'Lorem ipsum, dolor sit amet consectetur adipisicing.';
-
-		return plainText.length > 52 ? plainText.substring(0, 52) + '...' : plainText;
-	};
-
 	const search = () => {
 		if (!query.trim()) {
 			audio?.pause();
@@ -671,7 +664,10 @@
 					<label for="message">Your Message</label>
 					<div class="editor" bind:this={editor}></div>
 					<p class="helper-text" style="margin-top: 3px;">
-						You can also use HTML format inside your message. <a href="https://telegra.ph/LetterTo-HTML-Message-Format-07-10" target="_blank">View Docs</a>
+						You can also use HTML format inside your message. <a
+							href="https://telegra.ph/LetterTo-HTML-Message-Format-07-10"
+							target="_blank">View Docs</a
+						>
 					</p>
 					<div class="checkbox-container" style="margin-top: -7px;">
 						<input
@@ -692,7 +688,9 @@
 								{#if isEmpty(letterMessage)}
 									Nothing to show...
 								{:else}
-									{@html sanitize(letterMessage)}
+									<div style="font-family: {resolveFont(String(font))};">
+										{@html sanitize(String(letterMessage))}
+									</div>
 								{/if}
 							</div>
 						</div>
@@ -1116,7 +1114,7 @@
 								</div>
 
 								<div class="preview" style="font-family: {resolveFont(font)};">
-									{@html renderPreview()}
+									Lorem ipsum, dolor sit amet consectetur adipisicing.
 								</div>
 							</div>
 
@@ -1174,7 +1172,8 @@
 							</div>
 							{#if audioAutoplay}
 								<p class="helper-text">
-									To ensure the user safety, user will be given a warning before they open the letter.
+									To ensure the user safety, user will be given a warning before they open the
+									letter.
 								</p>
 							{/if}
 
