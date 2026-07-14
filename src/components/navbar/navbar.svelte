@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { PUBLIC_TGUSN } from '$env/static/public';
 
 	let menuOpen = $state(false);
 	let dropdownOpen = $state(false);
@@ -78,7 +79,7 @@
 
 			{#if dropdownOther}
 				<div class="dropdown-menu">
-					<a href="https://t.me/kcpix" target="_blank" onclick={closeDropdown}>
+					<a href={PUBLIC_TGUSN} target="_blank" onclick={closeDropdown}>
 						<i class="ri-customer-service-2-line"></i> Support
 					</a>
 				</div>
@@ -143,7 +144,7 @@
 
 		<div class="mobile-dropdown-section">
 			<span class="mobile-dropdown-label">Other</span>
-			<a href="https://t.me/kcpix" target="_blank" onclick={closeAll}>
+			<a href={PUBLIC_TGUSN} target="_blank" onclick={closeAll}>
 				<i class="ri-customer-service-2-line"></i> Support
 			</a>
 		</div>

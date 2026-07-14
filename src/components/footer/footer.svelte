@@ -35,7 +35,7 @@
 				</div>
 				<div class="card">
 					<span>Information</span>
-					<a href="https://t.me/{PUBLIC_TGUSN}" target="_blank">Support</a>
+					<a href={PUBLIC_TGUSN} target="_blank">Support</a>
 					<a href={PUBLIC_STATUS_PAGE} target="_blank">Status</a>
 					<a href="{PUBLIC_ASSETS_STORAGE}/tos.txt">ToS</a>
 				</div>
