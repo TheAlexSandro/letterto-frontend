@@ -402,7 +402,7 @@
 
 							<p class="gate-title">
 								A letter for <em
-									>{!card?.recipient_name ? 'anonymous' : card?.recipient_name.toLowerCase()}</em
+									>{!card?.recipient_name ? 'anonymous' : card?.recipient_name.trim().toLowerCase()}</em
 								>
 							</p>
 							<p class="gate-desc">Click the button below to open the letter.</p>
@@ -495,14 +495,14 @@
 										<i class="ri-quill-pen-ai-line"></i>
 										<span>
 											<span class="label">From:</span>
-											<b>{!card?.sender ? 'anonymous' : card.sender}</b>
+											<b>{!card?.sender ? 'anonymous' : card.sender.trim()}</b>
 										</span>
 									</div>
 									<div class="avatar">
 										<i class="ri-user-heart-line"></i>
 										<span>
 											<span class="label">To:</span>
-											<b>{!card?.recipient_name ? 'anonymous' : card.recipient_name}</b>
+											<b>{!card?.recipient_name ? 'anonymous' : card.recipient_name.trim()}</b>
 										</span>
 									</div>
 								</div>
