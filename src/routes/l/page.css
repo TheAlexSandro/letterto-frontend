@@ -1035,19 +1035,45 @@
 	margin-top: 50px;
 }
 
-.letter-wrap .pwd form input {
-	padding: 12px;
-	width: 100%;
-	font-family: inherit;
+.letter-wrap .pwd form .input-wrap {
+	position: relative;
+	flex: 1;
+	display: flex;
+	align-items: center;
 	border: 1.5px solid var(--color-border);
+	width: 100%;
+	transition: all 0.3s ease-in-out;
 	border-radius: 6px;
+}
+
+.letter-wrap .pwd form .input-wrap button {
+	position: absolute;
+	right: 0;
+	background: white;
+	border: 0;
+	color: var(--color-primary);
+	font-size: 12px;
+	font-weight: var(--font-medium);
+	cursor: pointer;
+	font-family: inherit;
+	padding: 12px;
+}
+
+.letter-wrap .pwd form input {
+	border-radius: 6px;
+	padding: 12px;
+	padding-right: 0;
+	height: auto;
+	width: 100%;
 	outline: none;
 	box-sizing: border-box;
 	transition: all 0.3s ease-in-out;
 	text-align: center;
+	font-family: inherit;
+	border: none;
 }
 
-.letter-wrap .pwd form input:focus {
+.letter-wrap .pwd form .input-wrap:focus-within {
 	border-color: var(--color-primary);
 	box-shadow: var(--shadow-md);
 	transition: all 0.3s ease-in-out;
@@ -1057,6 +1083,11 @@
 	margin-top: 20px;
 	display: flex;
 	justify-content: flex-end;
+}
+
+.letter-wrap .pwd form .field-err,
+.letter-wrap .pwd form .field-err:focus {
+	border: 1.5px solid var(--color-danger);
 }
 
 .letter-wrap .pwd form .btns button {

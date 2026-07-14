@@ -38,7 +38,7 @@
 	let audio: HTMLAudioElement | null = $state(null);
 	let audioLoad = $state(false);
 	let audioPlayed = $state(false);
-	let copied = $state(false);
+	let showPass = $state(false);
 	let currentTime = $state(0);
 	let duration = $state(0);
 	let showPassword = $state(false);
@@ -231,12 +231,6 @@
 		lightboxSrc = src;
 	};
 	const closeLightbox = () => (lightboxSrc = null);
-
-	const copyLink = () => {
-		navigator.clipboard.writeText(window.location.href).catch(() => {});
-		copied = true;
-		setTimeout(() => (copied = false), 1800);
-	};
 
 	const dates = (d: string) => {
 		const [day, month, year] = d.split('/').map(Number);
@@ -710,15 +704,25 @@
 						</div>
 
 						<form method="post" onsubmit={unlock}>
-							<input
-								type="password"
-								name="password"
-								id="password"
-								placeholder="••••••••"
-								required
-								bind:value={password}
-								disabled={buttonLoad}
-							/>
+							<div class="input-wrap" class:field-err={passErr}>
+								<input
+									type={showPass ? 'text' : 'password'}
+									name="password"
+									id="password"
+									placeholder="••••••••"
+									required
+									bind:value={password}
+									disabled={buttonLoad}
+								/>
+								<button
+									type="button"
+									class="toggle-visibility"
+									onclick={() => (showPass = !showPass)}
+									tabindex="-1"
+								>
+									{showPass ? 'Hide' : 'Show'}
+								</button>
+							</div>
 							{#if passErr}
 								<span>{passErr}</span>
 							{/if}
