@@ -96,7 +96,7 @@
 
 	const renderReciName = (name: string) => {
 		return name.length > 20 ? `${name.substring(0, 20)}...` : name;
-	}
+	};
 </script>
 
 <section class="l">
@@ -240,7 +240,9 @@
 
 			<div class="view">
 				<i class="ri-eye-line"></i>
-				{formatCompact(Number(view))}x viewed
+				{Number(view) < 1000
+					? `${formatCompact(Number(view))}x`
+					: `${formatCompact(Number(view))} x`} viewed
 			</div>
 		</div>
 	{/if}

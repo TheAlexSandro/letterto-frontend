@@ -179,6 +179,7 @@
 								warn={card.warn}
 								view={card.viewer}
 								edit="true"
+								hide_sender="true"
 							/>
 						{/each}
 					</div>
