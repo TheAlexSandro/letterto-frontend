@@ -93,6 +93,10 @@
 		const m = stripHTML(sanitize(message));
 		return m.length > 70 ? `${m.substring(0, 70)}...` : m;
 	};
+
+	const renderReciName = (name: string) => {
+		return name.length > 20 ? `${name.substring(0, 20)}...` : name;
+	}
 </script>
 
 <section class="l">
@@ -104,7 +108,7 @@
 					{#if !hide_sender}
 						<span><strong>From:</strong><em>{sender ?? 'anonymous'}</em></span>
 					{/if}
-					<span><strong>To:</strong><em>{recipient_name ?? 'anonymous'}</em></span>
+					<span><strong>To:</strong><em>{renderReciName(recipient_name) ?? 'anonymous'}</em></span>
 					{#if edit === 'true'}
 						<span><strong>Created:</strong><b>{created_at}</b></span>
 					{/if}
